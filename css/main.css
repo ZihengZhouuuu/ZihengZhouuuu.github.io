@@ -141,6 +141,25 @@ h6,
     text-decoration: none;
 }
 
+body,
+p,
+a,
+span,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.h01,
+.h02,
+.h03,
+.h04,
+.h05,
+.h06 {
+    text-decoration: none;
+}
+
 h1,
 .h01,
 h2,
