@@ -3455,7 +3455,7 @@ html.no-csstransitions .home-content__main {
  * ------------------------------------------------------------------- */
 
 .s-contact {
-    background-color: #ffffff;
+    background-color: #ffffff00;
     background-image: url("../images/contact-bg.jpg");
     background-repeat: no-repeat;
     background-size: 2000px, 5000px;
