@@ -3458,8 +3458,8 @@ html.no-csstransitions .home-content__main {
     background-color: #ffffff00;
     background-image: url("../images/contact-bg.jpg");
     background-repeat: no-repeat;
-    background-size: 2000px, 5000px;
-    background-position: bottom, top;
+    background-size: cover;
+    background-position: center center;
     padding-top: 13.2rem;
     padding-bottom: 12rem;
     color: rgb(255, 255, 255);
