@@ -1,6 +1,6 @@
-<h1>My Personal Website</h1>
+<h1>Ziheng's Personal Website</h1>
 
-<i>I built it based on a free template HOLA from Styleshout, and works from Charles QC LI(charlesqcl).
+<i>I built it based on a free template HOLA from Styleshout.
 
 Below is the information provided by the author of the template.</i>
 
