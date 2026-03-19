@@ -1,0 +1,1083 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>周子恒 · 视觉创作者</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=Noto+Serif+SC:wght@300;400;600;700;900&family=Space+Mono:wght@400;700&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --accent: #7a9e8a;
+      --accent2: #9b8ec4;
+      --accent-dim: rgba(122,158,138,0.15);
+      --bg: #f4f2ed;
+      --dark: #181816;
+      --mid: #3a3a37;
+      --light: #c4c0b4;
+      --paper: #eceae1;
+      --paper2: #e4e0d5;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--dark);
+      font-family: 'Noto Sans SC', sans-serif;
+      font-size: 15px;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    /* ── NOISE ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 200;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 52px;
+      background: rgba(244,242,237,0.9);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--light);
+    }
+    .nav-logo {
+      font-family: 'Noto Serif SC', serif;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: var(--dark);
+    }
+    .nav-logo span {
+      font-family: 'Space Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.2em;
+      color: var(--accent);
+      margin-left: 12px;
+      vertical-align: middle;
+      text-transform: uppercase;
+    }
+    .nav-links {
+      display: flex;
+      gap: 36px;
+      list-style: none;
+    }
+    .nav-links a {
+      font-family: 'Space Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--mid);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--accent); }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      padding-top: 62px;
+    }
+    .hero-left {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 80px 52px 80px 52px;
+      border-right: 1px solid var(--light);
+    }
+    .hero-eyebrow {
+      font-family: 'Space Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 28px;
+    }
+    .hero-title {
+      font-family: 'Noto Serif SC', serif;
+      font-size: clamp(52px, 6.5vw, 92px);
+      font-weight: 900;
+      line-height: 1.0;
+      color: var(--dark);
+      margin-bottom: 12px;
+      letter-spacing: -0.01em;
+    }
+    .hero-title-en {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(18px, 2.2vw, 30px);
+      font-weight: 400;
+      font-style: italic;
+      color: var(--accent2);
+      letter-spacing: 0.04em;
+      margin-bottom: 36px;
+      display: block;
+    }
+    .hero-desc {
+      font-family: 'Noto Sans SC', sans-serif;
+      font-size: 13.5px;
+      font-weight: 300;
+      color: var(--mid);
+      max-width: 380px;
+      line-height: 1.9;
+      margin-bottom: 52px;
+    }
+    .hero-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 48px;
+    }
+    .hero-tag {
+      font-family: 'Space Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      padding: 5px 12px;
+      border: 1px solid var(--light);
+      color: var(--mid);
+      border-radius: 1px;
+    }
+    .hero-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      font-family: 'Space Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--dark);
+      text-decoration: none;
+      border-bottom: 1.5px solid var(--dark);
+      padding-bottom: 4px;
+      width: fit-content;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .hero-cta:hover { color: var(--accent); border-color: var(--accent); }
+    .hero-cta::after { content: '→'; }
+
+    .hero-right {
+      display: grid;
+      grid-template-rows: 1fr auto;
+      background: var(--dark);
+      overflow: hidden;
+    }
+    .hero-visual {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      padding: 48px;
+    }
+    .hero-big-zh {
+      font-family: 'Noto Serif SC', serif;
+      font-size: 220px;
+      font-weight: 900;
+      color: transparent;
+      -webkit-text-stroke: 1px rgba(122,158,138,0.2);
+      line-height: 1;
+      user-select: none;
+      position: absolute;
+      right: -20px;
+      bottom: -20px;
+    }
+    .hero-big-en {
+      font-family: 'Playfair Display', serif;
+      font-size: 96px;
+      font-weight: 900;
+      font-style: italic;
+      color: transparent;
+      -webkit-text-stroke: 1px rgba(155,142,196,0.25);
+      line-height: 1;
+      user-select: none;
+      position: absolute;
+      top: 40px;
+      left: 30px;
+    }
+    .hero-center-text {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+    }
+    .hero-center-text p {
+      font-family: 'Noto Serif SC', serif;
+      font-size: 13px;
+      font-weight: 300;
+      color: rgba(255,255,255,0.4);
+      letter-spacing: 0.2em;
+      line-height: 2.2;
+    }
+    .hero-center-text p strong {
+      font-weight: 600;
+      color: rgba(255,255,255,0.75);
+    }
+    .hero-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      border-top: 1px solid #2a2a28;
+    }
+    .hero-stat {
+      padding: 28px 32px;
+      border-right: 1px solid #2a2a28;
+    }
+    .hero-stat:last-child { border-right: none; }
+    .hero-stat-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 38px;
+      font-weight: 700;
+      font-style: italic;
+      color: #fff;
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+    .hero-stat-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: #555;
+      line-height: 1.5;
+    }
+    .hero-avatar {
+    position: absolute;
+    top: 96px;
+    left: 36px;
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 2px solid var(--light);
+    box-shadow: 0 0 0 6px rgba(122,158,138,0.10);
+    z-index: 10;
+    transition: box-shadow 0.3s;
+  }
+  .hero-avatar:hover {
+    box-shadow: 0 0 0 8px rgba(122,158,138,0.22);
+  }
+  .hero-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  /* 未上传时的占位样式 */
+  .hero-avatar-placeholder {
+    width: 100%;
+    height: 100%;
+    background: var(--paper2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Noto Serif SC', serif;
+    font-size: 28px;
+    font-weight: 900;
+    color: var(--accent);
+    letter-spacing: 0;
+  }  
+
+    /* ── SECTION COMMON ── */
+    .section-wrap { padding: 110px 52px; }
+    .section-header {
+      display: flex;
+      align-items: baseline;
+      gap: 20px;
+      margin-bottom: 72px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--light);
+    }
+    .section-num {
+      font-family: 'Space Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.2em;
+      color: var(--accent);
+    }
+    .section-title {
+      font-family: 'Noto Serif SC', serif;
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--dark);
+    }
+    .section-title-en {
+      font-family: 'Playfair Display', serif;
+      font-size: 14px;
+      font-style: italic;
+      color: var(--light);
+      font-weight: 400;
+    }
+    .section-rule {
+      flex: 1;
+      height: 1px;
+      background: var(--light);
+      margin-bottom: 2px;
+    }
+    
+
+    /* ── ABOUT ── */
+    #about { background: var(--dark); }
+    #about .section-title { color: #fff; }
+    #about .section-rule { background: #333; }
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1.3fr 1fr;
+      gap: 80px;
+      align-items: start;
+    }
+    .about-quote {
+      font-family: 'Noto Serif SC', serif;
+      font-size: clamp(22px, 2.8vw, 36px);
+      font-weight: 700;
+      line-height: 1.5;
+      color: #fff;
+      margin-bottom: 36px;
+      letter-spacing: 0.02em;
+    }
+    .about-quote em {
+      font-style: normal;
+      color: var(--accent);
+      border-bottom: 1px solid var(--accent);
+    }
+    .about-body {
+      font-family: 'Noto Sans SC', sans-serif;
+      font-size: 15px;
+      font-weight: 300;
+      color: #999;
+      line-height: 1.5;
+    }
+    .about-body strong { color: #ccc; font-weight: 500; }
+    .about-sidebar {}
+    .skill-group { margin-bottom: 36px; }
+    .skill-group-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--accent2);
+      margin-bottom: 14px;
+    }
+    .tags { display: flex; flex-wrap: wrap; gap: 7px; }
+    .tag {
+      font-family: 'Space Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.06em;
+      padding: 5px 12px;
+      border: 1px solid #333;
+      color: #888;
+      border-radius: 1px;
+      transition: border-color 0.2s, color 0.2s;
+      cursor: default;
+    }
+    .tag:hover { border-color: var(--accent); color: var(--accent); }
+    .tag.purple:hover { border-color: var(--accent2); color: var(--accent2); }
+
+    /* ── RESUME ── */
+    #resume { background: var(--paper); }
+    .resume-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+    }
+    .resume-col-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--accent2);
+      margin-bottom: 32px;
+    }
+    .resume-item {
+      padding: 28px 0;
+      border-bottom: 1px solid var(--light);
+    }
+    .resume-item:first-of-type { border-top: 1px solid var(--light); }
+    .resume-year {
+      font-family: 'Space Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      color: var(--dark);
+      margin-bottom: 12px;
+    }
+    .resume-role {
+      font-family: 'Noto Serif SC', serif;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--dark);
+      margin-bottom: 3px;
+      line-height: 1.4;
+    }
+    .resume-org {
+      font-family: 'Playfair Display', serif;
+      font-size: 13px;
+      font-style: italic;
+      color: var(--mid);
+      margin-bottom: 12px;
+    }
+    .resume-desc {
+      font-size: 15px;
+      font-weight: 300;
+      color: var(--mid);
+      line-height: 1.8;
+    }
+    .resume-highlight {
+      display: inline-block;
+      font-family: 'Space Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      padding: 3px 12px;
+      background: var(--accent-dim);
+      color: var(--accent);
+      border-radius: 1px;
+      margin-top: 12px;
+    }
+
+    /* ── PROJECTS ── */
+    #projects { background: var(--bg); }
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 3px;
+    }
+    .proj-card {
+      background: var(--dark);
+      overflow: hidden;
+      position: relative;
+      cursor: pointer;
+      min-height: 260px;
+    }
+    .proj-card:nth-child(1) { grid-column: span 7; grid-row: span 2; min-height: 540px; }
+    .proj-card:nth-child(2) { grid-column: span 5; }
+    .proj-card:nth-child(3) { grid-column: span 5; }
+    .proj-card:nth-child(4) { grid-column: span 4; min-height: 300px; }
+    .proj-card:nth-child(5) { grid-column: span 8; min-height: 300px; }
+
+    .proj-bg-letter {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Noto Serif SC', serif;
+      font-weight: 900;
+      color: transparent;
+      transition: transform 0.7s ease;
+      user-select: none;
+      overflow: hidden;
+    }
+    .proj-card:nth-child(1) .proj-bg-letter { font-size: 320px; -webkit-text-stroke: 1px rgba(122,158,138,0.12); }
+    .proj-card:nth-child(2) .proj-bg-letter { font-size: 180px; -webkit-text-stroke: 1px rgba(155,142,196,0.18); }
+    .proj-card:nth-child(3) .proj-bg-letter { font-size: 180px; -webkit-text-stroke: 1px rgba(122,158,138,0.18); }
+    .proj-card:nth-child(4) .proj-bg-letter { font-size: 160px; -webkit-text-stroke: 1px rgba(155,142,196,0.18); }
+    .proj-card:nth-child(5) .proj-bg-letter { font-size: 240px; -webkit-text-stroke: 1px rgba(122,158,138,0.12); }
+    .proj-card:hover .proj-bg-letter { transform: scale(1.06) rotate(-4deg); }
+
+    .proj-content {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 32px;
+      background: linear-gradient(to top, rgba(0,0,0,0.88) 0%, transparent 55%);
+      transition: background 0.3s;
+    }
+    .proj-card:hover .proj-content {
+      background: linear-gradient(to top, rgba(0,0,0,0.94) 0%, rgba(0,0,0,0.08) 60%);
+    }
+    .proj-type {
+      font-family: 'Space Mono', monospace;
+      font-size: 8.5px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+    .proj-name {
+      font-family: 'Noto Serif SC', serif;
+      font-size: 22px;
+      font-weight: 700;
+      color: #fff;
+      line-height: 1.3;
+      margin-bottom: 12px;
+    }
+    .proj-card:nth-child(1) .proj-name { font-size: 32px; }
+    .proj-name-en {
+      font-family: 'Playfair Display', serif;
+      font-size: 12px;
+      font-style: italic;
+      color: rgba(255,255,255,0.4);
+      margin-bottom: 12px;
+    }
+    .proj-desc {
+      font-size: 12px;
+      font-weight: 300;
+      color: rgba(255,255,255,0.55);
+      line-height: 1.7;
+      max-width: 420px;
+      opacity: 0;
+      transform: translateY(12px);
+      transition: opacity 0.35s, transform 0.35s;
+    }
+    .proj-card:hover .proj-desc { opacity: 1; transform: translateY(0); }
+    .proj-arrow {
+      position: absolute;
+      top: 22px; right: 22px;
+      width: 34px; height: 34px;
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: rgba(255,255,255,0.3);
+      font-size: 13px;
+      transition: all 0.2s;
+    }
+    .proj-card:hover .proj-arrow {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: rgba(122,158,138,0.1);
+    }
+
+    /* ── REEL ── */
+    #reel {
+      background: var(--dark);
+      padding: 110px 52px;
+    }
+    #reel .section-title { color: #fff; }
+    #reel .section-rule { background: #2e2e2c; }
+    .reel-frame {
+      margin: 0 auto;
+      max-width: 880px;
+      aspect-ratio: 16/9;
+      background: #0e0e0c;
+      border: 1px solid #2a2a28;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+    }
+    .reel-bg-text {
+      position: absolute;
+      font-family: 'Playfair Display', serif;
+      font-size: 130px;
+      font-weight: 900;
+      font-style: italic;
+      color: transparent;
+      -webkit-text-stroke: 1px rgba(155,142,196,0.15);
+      user-select: none;
+      letter-spacing: -0.02em;
+    }
+    .reel-play {
+      width: 76px; height: 76px;
+      border: 1.5px solid rgba(255,255,255,0.35);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      z-index: 2;
+      transition: border-color 0.25s, transform 0.25s;
+    }
+    .reel-frame:hover .reel-play {
+      border-color: var(--accent2);
+      transform: scale(1.1);
+    }
+    .reel-play::after {
+      content: '';
+      border-left: 22px solid rgba(255,255,255,0.7);
+      border-top: 13px solid transparent;
+      border-bottom: 13px solid transparent;
+      margin-left: 5px;
+      transition: border-left-color 0.25s;
+    }
+    .reel-frame:hover .reel-play::after { border-left-color: var(--accent2); }
+    .reel-caption {
+      text-align: center;
+      margin-top: 20px;
+      font-family: 'Space Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #444;
+    }
+
+    /* ── CONTACT ── */
+    #contact {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      min-height: 55vh;
+      background: var(--bg);
+    }
+    .contact-left {
+      padding: 100px 64px;
+      border-right: 1px solid var(--light);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .contact-eyebrow {
+      font-family: 'Space Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 22px;
+    }
+    .contact-headline {
+      font-family: 'Noto Serif SC', serif;
+      font-size: clamp(32px, 3.5vw, 52px);
+      font-weight: 900;
+      line-height: 1.2;
+      color: var(--dark);
+      margin-bottom: 28px;
+      letter-spacing: 0.02em;
+    }
+    .contact-headline em {
+      font-style: normal;
+      color: var(--accent2);
+    }
+    .contact-body {
+      font-size: 13.5px;
+      font-weight: 300;
+      color: var(--mid);
+      line-height: 1.9;
+      max-width: 340px;
+    }
+    .contact-right {
+      padding: 100px 64px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 0;
+    }
+    .contact-link {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 24px 0;
+      border-bottom: 1px solid var(--light);
+      text-decoration: none;
+      color: var(--dark);
+      transition: color 0.2s;
+    }
+    .contact-link:first-child { border-top: 1px solid var(--light); }
+    .contact-link:hover { color: var(--accent); }
+    .contact-link-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--light);
+      margin-bottom: 5px;
+    }
+    .contact-link-val {
+      font-family: 'Noto Serif SC', serif;
+      font-size: 18px;
+      font-weight: 700;
+    }
+    .contact-link-arrow {
+      font-size: 18px;
+      opacity: 0.25;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+    .contact-link:hover .contact-link-arrow { opacity: 1; transform: translateX(6px); }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--dark);
+      padding: 36px 52px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid #252523;
+    }
+    .footer-logo {
+      font-family: 'Noto Serif SC', serif;
+      font-size: 18px;
+      font-weight: 900;
+      color: #fff;
+      letter-spacing: 0.05em;
+    }
+    .footer-logo span {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-weight: 400;
+      color: var(--accent2);
+      margin-left: 12px;
+      font-size: 14px;
+    }
+    .footer-copy {
+      font-family: 'Space Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.15em;
+      color: #3a3a38;
+      text-transform: uppercase;
+    }
+    .footer-tagline {
+      font-family: 'Space Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.15em;
+      color: var(--accent);
+      text-transform: uppercase;
+    }
+
+    /* ── SCROLLBAR ── */
+    ::-webkit-scrollbar { width: 3px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--light); }
+    ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 960px) {
+      nav { padding: 14px 24px; }
+      .nav-links { gap: 18px; }
+      .hero { grid-template-columns: 1fr; }
+      .hero-right { min-height: 280px; }
+      .hero-left { padding: 60px 24px; }
+      .section-wrap { padding: 80px 24px; }
+      .about-grid { grid-template-columns: 1fr; gap: 48px; }
+      .resume-grid { grid-template-columns: 1fr; gap: 48px; }
+      .projects-grid { grid-template-columns: 1fr 1fr; }
+      .proj-card:nth-child(1) { grid-column: span 2; min-height: 380px; }
+      .proj-card:nth-child(2),
+      .proj-card:nth-child(3),
+      .proj-card:nth-child(4),
+      .proj-card:nth-child(5) { grid-column: span 1; }
+      #contact { grid-template-columns: 1fr; }
+      .contact-left { border-right: none; border-bottom: 1px solid var(--light); padding: 60px 24px; }
+      .contact-right { padding: 60px 24px; }
+      footer { flex-direction: column; gap: 12px; text-align: center; }
+      #reel { padding: 80px 24px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <div class="nav-logo">周子恒 <span>Portfolio</span></div>
+    <ul class="nav-links">
+      <li><a href="#about">关于</a></li>
+      <li><a href="#resume">简历</a></li>
+      <li><a href="#projects">项目</a></li>
+      <li><a href="#reel">作品集</a></li>
+      <li><a href="#contact">联系</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero" id="home">
+    <div class="hero-left">
+      <div class="hero-avatar">
+      <!-- 上传图片后，将下方 img 取消注释，删除 placeholder div -->
+      <img src="avatar.jpg" alt="周子恒" />
+      </div>
+      <div class="hero-eyebrow">Creative Portfolio · 2025</div>
+      <h1 class="hero-title">周子恒</h1>
+      <span class="hero-title-en">Zhou Ziheng · Visual Creator</span>
+      <p class="hero-desc">
+        建筑学硕士背景 × AIGC 技术落地 × 视觉叙事创作。<br/>
+        将设计美学转化为 AI 生成语言，用图像与影像构建有温度的创意世界。
+      </p>
+      <div class="hero-tags">
+        <span class="hero-tag">AIGC · ComfyUI</span>
+        <span class="hero-tag">视频制作</span>
+        <span class="hero-tag">建筑可视化</span>
+      </div>
+      <a href="#projects" class="hero-cta">查看代表作品</a>
+    </div>
+    <div class="hero-right">
+      <div class="hero-visual">
+        <div class="hero-big-zh">恒</div>
+        <div class="hero-big-en">Z</div>
+        <div class="hero-center-text">
+          <p><strong>建筑美学</strong></p>
+          <p>×</p>
+          <p><strong>AIGC 技术</strong></p>
+          <p>×</p>
+          <p><strong>视觉叙事</strong></p>
+        </div>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <div class="hero-stat-num">UCL</div>
+          <div class="hero-stat-label">一等荣誉<br/>硕士学位</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-num">20+</div>
+          <div class="hero-stat-label">Visual<br/>Assets</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-num">97%</div>
+          <div class="hero-stat-label">ML Model<br/>Accuracy</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="section-wrap">
+      <div class="section-header">
+        <span class="section-num">01</span>
+        <h2 class="section-title">关于我 <span class="section-title-en">About</span></h2>
+        <div class="section-rule"></div>
+      </div>
+      <div class="about-grid">
+        <div>
+          <p class="about-quote">
+            "我相信每一帧画面都是一次<em>决策</em>，每一个空间都在讲述一个故事。"
+          </p>
+          <p class="about-body">
+            我是周子恒——毕业于<strong>伦敦大学学院（UCL）建筑学硕士（一等荣誉）</strong>，专注于 AIGC 技术在视觉创作领域的落地应用。<br/><br/>
+            我拥有复合背景：扎实的建筑设计功底（空间设计、场景建模）与前沿的 AI 生成技术能力并行，熟悉建筑规范与空间逻辑，能将传统设计美学精准转化为 AI 训练语言。<br/><br/>
+            深度使用 <strong>ComfyUI 工作流</strong>，结合 Flux、Qwen 等大模型实现建筑风格化生成；具备构建语义关键词库及参数调优经验，单场景可实现 <strong>10+ 种风格迭代</strong>，生成内容语义准确率达 90% 以上。
+          </p>
+        </div>
+        <div class="about-sidebar">
+          <div class="skill-group">
+            <div class="skill-group-label">AIGC · 生成式设计</div>
+            <div class="tags">
+              <span class="tag">ComfyUI</span>
+              <span class="tag">Runway</span>
+              <span class="tag">提示词工程</span>
+              <span class="tag">风格化生成</span>
+              <span class="tag">Nano Banana</span>
+            </div>
+          </div>
+          <div class="skill-group">
+            <div class="skill-group-label">视频 · 视觉制作</div>
+            <div class="tags">
+              <span class="tag purple">Premiere Pro</span>
+              <span class="tag purple">After Effects</span>
+              <span class="tag purple">DaVinci Resolve</span>
+              <span class="tag purple">Motion Graphics</span>
+              <span class="tag purple">色彩调级</span>
+            </div>
+          </div>
+          <div class="skill-group">
+            <div class="skill-group-label">建模 · 空间设计</div>
+            <div class="tags">
+              <span class="tag">Unity3D + C#</span>
+              <span class="tag">Rhino + Grasshopper</span>
+              <span class="tag">Maya</span>
+              <span class="tag">VRAY / Lumion / D5</span>
+            </div>
+          </div>
+          <div class="skill-group">
+            <div class="skill-group-label">开发 · 算法</div>
+            <div class="tags">
+              <span class="tag purple">Python</span>
+              <span class="tag purple">C# / Unity ML-Agent</span>
+              <span class="tag purple">强化学习</span>
+              <span class="tag purple">Google OR-Tools</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RESUME -->
+  <section id="resume">
+    <div class="section-wrap">
+      <div class="section-header">
+        <span class="section-num">02</span>
+        <h2 class="section-title">简历 <span class="section-title-en">Résumé</span></h2>
+        <div class="section-rule"></div>
+      </div>
+      <div class="resume-grid">
+        <!-- 左列：工作经历 -->
+        <div>
+          <div class="resume-col-label">Work Experience</div>
+
+          <div class="resume-item">
+            <div class="resume-year">2025.05 — 至今</div>
+            <div class="resume-role">商业建筑设计师</div>
+            <div class="resume-org">AICO 建筑设计有限公司</div>
+            <div class="resume-desc">搭建基于 ComfyUI + FLUX/Qwen 的 AIGC 工作流，集成 Canny、Depth、Redux 多通道控制生成图空间结构。在太原某购物中心前期方案设计中，设计迭代效率提升 50%；构建 30+ 专业词汇结构化提示词库，将生成图像语义准确率提升至 90% 以上。</div>
+            <span class="resume-highlight">效率提升 50% · 语义准确率 90%+</span>
+          </div>
+
+          <div class="resume-item">
+            <div class="resume-year">2024.04 — 2025.05</div>
+            <div class="resume-role">研究助理</div>
+            <div class="resume-org">同济大学建筑与城市规划学院</div>
+            <div class="resume-desc">与斯图加特大学团队合作，<strong>探索基于 LLM 的 Text-to-3D 设计-施工一体化流程</strong>。应用 Google OR-Tools 优化模块排列算法，最终实现跨度 1.5 米桥梁结构。参与上海黄浦区学校、崇明高铁站等公共建筑深化设计。</div>
+            <span class="resume-highlight">Text to 3D · 算法优化 · 桥梁结构落地</span>
+          </div>
+
+          <div class="resume-item">
+            <div class="resume-year">2022.09 — 2023.12</div>
+            <div class="resume-role">机器人与算法研究员</div>
+            <div class="resume-org">UCL Bartlett 建筑学院</div>
+            <div class="resume-desc">基于力反馈回路控制系统的地形自适应机器人装配研究。在 Unity3D 中搭建仿真环境，利用 ML-Agents 强化学习训练智能体运动路径，应用 GNN 处理空间拓扑数据，模型准确率达 97%。</div>
+            <span class="resume-highlight">ML 模型准确率 97%</span>
+          </div>
+        </div>
+
+        <!-- 右列：项目 + 教育 -->
+        <div>
+          <div class="resume-col-label">Projects & Education</div>
+
+          <div class="resume-item">
+            <div class="resume-year">2025.09 — 2025.10</div>
+            <div class="resume-role">视觉设计负责人</div>
+            <div class="resume-org">"AI Global Relay Conference"（杜克大学）· 远程</div>
+            <div class="resume-desc"><strong>主导使用 AIGC 生成会议宣发视觉物料。</strong>结合纽约、伦敦、约翰内斯堡、利雅得四地城市地标与人种特征，设计可复用 Prompt 模板，确保多元地域文化呈现与统一视觉调性并存。运用重绘与扩图技术精修，累计产出高质量视觉资产 20+ 套。</div>
+            <span class="resume-highlight">视觉资产 20+ 套 · 风格一致性把控 · 文化在地性</span>
+          </div>
+
+          <div class="resume-item">
+            <div class="resume-year">2022.09 — 2023.12</div>
+            <div class="resume-role">建筑学硕士（一等荣誉）</div>
+            <div class="resume-org">伦敦大学学院（UCL）</div>
+            <div class="resume-desc">研究方向：人工智能与建筑设计的交叉应用，涵盖生成式设计、基于 Unity 的强化学习训练与交互界面设计、模块化空间及数据驱动优化。</div>
+          </div>
+
+          <div class="resume-item">
+            <div class="resume-year">2017.09 — 2022.06</div>
+            <div class="resume-role">建筑学学士（校级优秀毕业生）</div>
+            <div class="resume-org">青岛理工大学</div>
+            <div class="resume-desc">平均绩点 88.9/100，<strong>专业排名 2/81</strong>。2018、2020 年获年度科技创新奖学金（前 4%）；2017、2019 年被评为年度优秀学生（前 4%）。</div>
+            <span class="resume-highlight">排名 2/81 · 科技创新奖学金</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROJECTS -->
+  <section id="projects">
+    <div class="section-wrap">
+      <div class="section-header">
+        <span class="section-num">03</span>
+        <h2 class="section-title">代表项目 <span class="section-title-en">Selected Work</span></h2>
+        <div class="section-rule"></div>
+      </div>
+      <div class="projects-grid">
+
+        <div class="proj-card">
+          <div class="proj-bg-letter">购</div>
+          <div class="proj-content">
+            <div class="proj-type">AIGC 工作流 · 建筑方案 · 2025</div>
+            <div class="proj-name">太原购物中心<br/>前期方案设计</div>
+            <div class="proj-name-en">Taiyuan Shopping Center — AIGC Workflow</div>
+            <div class="proj-desc">基于 ComfyUI + FLUX 工作流，集成 Canny/Depth/Redux 多通道控制，快速生成多风格迭代方案。设计迭代效率提升 50%，生成结果严格符合建筑结构逻辑。</div>
+          </div>
+          <div class="proj-arrow">↗</div>
+        </div>
+
+        <div class="proj-card">
+          <div class="proj-bg-letter">桥</div>
+          <div class="proj-content">
+            <div class="proj-type">Text to 3D · 算法研究 · 2024</div>
+            <div class="proj-name">LLM 驱动<br/>模块化桥梁</div>
+            <div class="proj-name-en">LLM-Driven Modular Bridge Structure</div>
+            <div class="proj-desc">与斯图加特大学合作，利用 LLM 快速迭代设计原型，OR-Tools 优化模块排列，最终实现 1.5 米跨度桥梁结构落地。</div>
+          </div>
+          <div class="proj-arrow">↗</div>
+        </div>
+
+        <div class="proj-card">
+          <div class="proj-bg-letter">视</div>
+          <div class="proj-content">
+            <div class="proj-type">视觉物料 · AIGC · 2025</div>
+            <div class="proj-name">AI Global<br/>Relay Conference</div>
+            <div class="proj-name-en">Duke University · Visual Identity</div>
+            <div class="proj-desc">主导杜克大学 AI 全球接力会议全套视觉物料 AIGC 生成，覆盖四大洲城市，产出 20+ 套高质量视觉资产。</div>
+          </div>
+          <div class="proj-arrow">↗</div>
+        </div>
+
+        <div class="proj-card">
+          <div class="proj-bg-letter">机</div>
+          <div class="proj-content">
+            <div class="proj-type">强化学习 · Unity · 2023</div>
+            <div class="proj-name">地形自适应<br/>机器人系统</div>
+            <div class="proj-name-en">Terrain-Adaptive Robot — UCL Bartlett</div>
+            <div class="proj-desc">ML-Agents 强化学习训练，GNN 空间拓扑分析，模型准确率 97%。</div>
+          </div>
+          <div class="proj-arrow">↗</div>
+        </div>
+
+        <div class="proj-card">
+          <div class="proj-bg-letter">空</div>
+          <div class="proj-content">
+            <div class="proj-type">建筑深化设计 · 2024</div>
+            <div class="proj-name">上海黄浦区学校 & 崇明高铁站</div>
+            <div class="proj-name-en">Shanghai Public Architecture — Tongji</div>
+            <div class="proj-desc">参与同济大学多类型公共建筑深化设计，负责从概念建模到施工对接全流程，确保设计意图在工程端的精准还原。</div>
+          </div>
+          <div class="proj-arrow">↗</div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- REEL -->
+  <section id="reel">
+    <div class="section-wrap">
+      <div class="section-header" style="border-bottom-color:#2a2a28;">
+        <span class="section-num" style="color:var(--accent2);">04</span>
+        <h2 class="section-title" style="color:#fff;">作品集 <span class="section-title-en" style="color:#444;">Showreel</span></h2>
+        <div class="section-rule" style="background:#2a2a28;"></div>
+      </div>
+      <div class="reel-frame">
+        <div class="reel-bg-text">REEL 2025</div>
+        <div class="reel-play"></div>
+      </div>
+      <div class="reel-caption">2025 Showreel — AIGC · Architecture · Motion</div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <div class="contact-left">
+      <div class="contact-eyebrow">05 — 保持联系</div>
+      <h2 class="contact-headline">
+        想一起<em>创作</em>？
+      </h2>
+      <p class="contact-body">
+        开放合作、委托创作与创意交流。无论是 AIGC 视觉方案、建筑可视化、视频制作，还是全新的跨界探索——欢迎联系。
+      </p>
+    </div>
+    <div class="contact-right">
+      <a href="mailto:zhou_ziheng1@outlook.com" class="contact-link">
+        <div>
+          <div class="contact-link-label">Email</div>
+          <div class="contact-link-val">zhou_ziheng1@outlook.com</div>
+        </div>
+        <div class="contact-link-arrow">→</div>
+      </a>
+      <a href="tel:+8615689909650" class="contact-link">
+        <div>
+          <div class="contact-link-label">Phone</div>
+          <div class="contact-link-val">+86 156 8990 9650</div>
+        </div>
+        <div class="contact-link-arrow">→</div>
+      </a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-logo">周子恒 </div>
+    <div class="footer-copy">© 2025 All Rights Reserved</div>
+    <div class="footer-tagline">AIGC · Architecture · Motion</div>
+  </footer>
+
+</body>
+</html>
