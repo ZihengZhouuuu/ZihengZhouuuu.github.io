@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>关于我｜周子恒</title>
+
+  <style>
+    :root {
+      --bg: #f4efe7;
+      --fg: #222222;
+      --paper: #fffdf6;
+      --grey: #8a8377;
+
+      --blue: #2f6bff;
+      --pink: #ff5c9a;
+      --green: #12a889;
+      --yellow: #ffd34d;
+
+      --accent: var(--yellow);
+
+      --pad: clamp(20px, 4vw, 48px);
+      --content-max: 1440px;
+      --text-max: 1280px;
+      --image-max: 1440px;
+      --font: Inter, Arial, "PingFang SC", "Microsoft YaHei", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      width: 100%;
+      min-height: 100vh;
+      font-family: var(--font);
+      background:
+        radial-gradient(circle at 75% 18%, rgba(47, 107, 255, 0.11), transparent 34%),
+        radial-gradient(circle at 18% 82%, rgba(255, 211, 77, 0.16), transparent 30%),
+        radial-gradient(circle at 86% 78%, rgba(255, 92, 154, 0.1),  transparent 30%),
+        var(--bg);
+      color: var(--fg);
+      letter-spacing: -0.04em;
+      overflow-x: hidden;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    img, video { display: block; width: 100%; }
+
+    ::selection { background: var(--fg); color: var(--bg); }
+
+    .page { position: relative; width: 100%; min-height: 100vh; overflow: hidden; }
+
+    .noise {
+      position: fixed; inset: 0; pointer-events: none; opacity: 0.045;
+      background-image:
+        linear-gradient(45deg,  #000 25%, transparent 25%),
+        linear-gradient(-45deg, #000 25%, transparent 25%),
+        linear-gradient(45deg,  transparent 75%, #000 75%),
+        linear-gradient(-45deg, transparent 75%, #000 75%);
+      background-size: 6px 6px; z-index: 100;
+    }
+
+    .grid-lines {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.16;
+      background-image:
+        linear-gradient(to right,  rgba(34,34,34,.08) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(34,34,34,.08) 1px, transparent 1px);
+      background-size: 56px 56px;
+      mask-image: radial-gradient(circle at 55% 30%, #000 0%, transparent 78%);
+    }
+
+    /* ── Topbar ── */
+    .topbar {
+      position: fixed; top: 28px; left: var(--pad); right: var(--pad); z-index: 90;
+      display: flex; align-items: center; justify-content: space-between;
+      font-size: 18px; font-weight: 950; letter-spacing: 0.08em; text-transform: uppercase;
+      color: #fff; mix-blend-mode: difference;
+    }
+    .brand { cursor: pointer; }
+    .top-actions { display: flex; align-items: center; gap: 18px; }
+    .top-link { opacity: .72; transition: opacity .2s; }
+    .top-link:hover, .top-link.active { opacity: 1; }
+
+    /* ── Hero ── */
+    .hero {
+      position: relative; z-index: 5;
+      width: 100%; min-height: 100vh;
+      padding: 108px var(--pad) 64px;
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden; background: var(--fg); color: var(--bg); text-align: center;
+    }
+    .hero::before {
+      content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+      background:
+        radial-gradient(circle at 20% 22%, rgba(47,107,255,.52), transparent 34%),
+        radial-gradient(circle at 82% 28%, rgba(255,92,154,.38),  transparent 34%),
+        radial-gradient(circle at 50% 82%, rgba(255,211,77,.32),  transparent 38%),
+        linear-gradient(180deg, rgba(0,0,0,.14) 0%, rgba(0,0,0,.28) 42%, rgba(0,0,0,.72) 100%);
+    }
+    .hero::after {
+      content: ""; position: absolute; inset: 0; z-index: 2; pointer-events: none;
+      background-image:
+        linear-gradient(to right,  rgba(244,239,231,.08) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(244,239,231,.08) 1px, transparent 1px);
+      background-size: 56px 56px; opacity: .42;
+    }
+    .hero-content {
+      position: relative; z-index: 4;
+      width: min(100%, 1180px); margin: 0 auto;
+      display: flex; flex-direction: column; align-items: center;
+    }
+    .project-kicker {
+      margin-bottom: 18px;
+      font-size: clamp(12px,1vw,18px); font-weight: 950; line-height: 1;
+      letter-spacing: .16em; text-transform: uppercase;
+      color: rgba(244,239,231,.72);
+    }
+    .project-title {
+      font-size: clamp(54px,8.6vw,148px); line-height: .98; font-weight: 950;
+      letter-spacing: -.07em; text-transform: uppercase;
+      color: var(--bg); text-shadow: 0 8px 30px rgba(0,0,0,.34);
+    }
+    .project-title .blue  { color: var(--blue); }
+    .project-title .pink  { color: var(--pink); }
+    .project-title .yellow{ color: var(--yellow); }
+
+    .project-desc {
+      max-width: 680px; margin: 24px auto 0;
+      font-size: clamp(15px,1.05vw,19px); line-height: 1.62; font-weight: 580;
+      letter-spacing: -.03em; text-align: center;
+      color: rgba(244,239,231,.84); text-shadow: 0 4px 18px rgba(0,0,0,.36);
+    }
+    .hero-tags {
+      display: flex; flex-wrap: wrap; justify-content: center;
+      gap: 7px; margin-top: 22px; max-width: 680px;
+    }
+    .hero-tags span {
+      padding: 7px 10px;
+      border: 1.5px solid rgba(244,239,231,.48); border-radius: 999px;
+      background: rgba(255,255,255,.1); backdrop-filter: blur(8px);
+      font-size: 9px; font-weight: 950; letter-spacing: .08em; text-transform: uppercase;
+      color: rgba(244,239,231,.78);
+    }
+    .hero-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 26px; }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      min-height: 42px; padding: 9px 16px;
+      border: 2px solid currentColor; border-radius: 999px;
+      background: rgba(244,239,231,.1); color: var(--bg);
+      font-size: 10px; font-weight: 950; letter-spacing: .08em; text-transform: uppercase;
+      backdrop-filter: blur(10px);
+      transition: transform .2s ease, background .2s ease, color .2s ease;
+    }
+    .btn:hover { transform: translateY(-3px); background: var(--yellow); color: var(--fg); }
+    .btn.primary { background: var(--bg); color: var(--fg); border-color: var(--bg); }
+    .btn.primary:hover { background: var(--blue); border-color: var(--blue); color: #fff; }
+
+    /* ── Section General ── */
+    .section { position: relative; z-index: 5; padding: 72px var(--pad); }
+    .section.soft { background: rgba(255,253,246,.55); }
+    .section.dark { background: var(--fg); color: var(--bg); }
+
+    .section-head {
+      width: min(100%, var(--content-max)); margin: 0 auto 28px;
+      display: grid; grid-template-columns: 170px minmax(0,1fr); gap: 28px;
+      padding-bottom: 16px; border-bottom: 2px solid currentColor;
+    }
+    .section-no {
+      font-size: 11px; font-weight: 950; letter-spacing: .16em; text-transform: uppercase;
+      color: rgba(34,34,34,.5);
+    }
+    .dark .section-no { color: rgba(244,239,231,.5); }
+    .section-title {
+      font-size: clamp(30px,4.2vw,62px); line-height: .96;
+      font-weight: 950; letter-spacing: -.07em; text-transform: uppercase;
+    }
+    .section-text {
+      width: min(100%, var(--text-max));
+      margin-left: calc((100% - min(100%, var(--content-max)))/2 + 170px + 28px);
+      font-size: clamp(15px,1vw,18px); line-height: 1.72;
+      font-weight: 560; letter-spacing: -.025em;
+      color: rgba(34,34,34,.68);
+    }
+    .section-text + .section-text { margin-top: 14px; }
+    .dark .section-text { color: rgba(244,239,231,.72); }
+
+    /* ── Diff Cards ── */
+    .diff-grid {
+      width: min(100%, var(--content-max)); margin: 34px auto 0;
+      display: grid; grid-template-columns: repeat(3,1fr); gap: 12px;
+    }
+    .diff-card {
+      min-height: 210px; padding: 18px;
+      border: 2px solid var(--fg); background: var(--paper); color: var(--fg);
+      box-shadow: 6px 6px 0 rgba(17,17,17,.16);
+    }
+    .diff-card.blue  { background: var(--blue);  color: #fff; border-color: var(--blue); }
+    .diff-card.green { background: var(--green); color: #fff; border-color: var(--green); }
+    .diff-label {
+      margin-bottom: 16px; font-size: 9px; font-weight: 950;
+      letter-spacing: .14em; text-transform: uppercase; opacity: .6;
+    }
+    .diff-title {
+      font-size: clamp(24px,2.6vw,42px); line-height: .94;
+      font-weight: 950; letter-spacing: -.08em; text-transform: uppercase;
+    }
+    .diff-desc {
+      margin-top: 16px; font-size: 16px; line-height: 1.52;
+      font-weight: 650; letter-spacing: -.03em; opacity: .74;
+    }
+
+    /* ── Timeline ── */
+    .timeline {
+      width: min(100%, var(--content-max)); margin: 34px auto 0;
+      border-top: 2px solid currentColor;
+    }
+    .timeline-item {
+      display: grid; grid-template-columns: 170px 1fr 1.4fr; gap: 28px;
+      padding: 28px 0; border-bottom: 2px solid currentColor;
+    }
+    .tl-time {
+      font-size: 11px; font-weight: 950; line-height: 1.4;
+      letter-spacing: .12em; text-transform: uppercase; opacity: .52;
+    }
+    .tl-title {
+      font-size: clamp(22px,2.4vw,40px); line-height: .96;
+      font-weight: 950; letter-spacing: -.075em; text-transform: uppercase;
+    }
+    .tl-right {}
+    .tl-desc {
+      font-size: 18px; line-height: 1.58; font-weight: 620;
+      letter-spacing: -.03em; color: rgba(34,34,34,.64);
+    }
+    .dark .tl-desc { color: rgba(244,239,231,.68); }
+    .tl-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 14px; }
+    .tl-tags span {
+      padding: 5px 7px; border: 1.5px solid currentColor; border-radius: 999px;
+      font-size: 10px; font-weight: 950; letter-spacing: .06em; text-transform: uppercase; opacity: .82;
+    }
+
+    /* ── Image Evidence Grid ── */
+    .ev-grid {
+      width: min(100%, var(--image-max)); margin: 34px auto 0;
+      display: grid; grid-template-columns: repeat(12,1fr); gap: 18px;
+    }
+    .ev-card {
+      grid-column: span 6;
+      border: 2px solid var(--fg); background: var(--paper);
+      box-shadow: 8px 8px 0 rgba(17,17,17,.16); overflow: hidden;
+    }
+    .ev-card.full { grid-column: 1 / -1; }
+
+    /* placeholder when no image */
+    .ev-media {
+      width: 100%; aspect-ratio: 16/10;
+      background:
+        linear-gradient(135deg, rgba(47,107,255,.1), rgba(255,211,77,.14)),
+        var(--paper);
+      display: flex; align-items: center; justify-content: center;
+      color: rgba(34,34,34,.3); font-size: 11px; font-weight: 950;
+      letter-spacing: .1em; text-transform: uppercase;
+    }
+    .ev-media img, .ev-media video {
+      width: 100%; height: 100%; object-fit: cover;
+    }
+    .ev-copy { padding: 16px; border-top: 2px solid var(--fg); }
+    .ev-title {
+      font-size: clamp(20px,2.2vw,34px); line-height: .96;
+      font-weight: 950; letter-spacing: -.075em; text-transform: uppercase;
+    }
+    .ev-desc {
+      margin-top: 9px; font-size: 13px; line-height: 1.5;
+      font-weight: 640; letter-spacing: -.03em; color: rgba(34,34,34,.6);
+    }
+
+    /* ── Cap Strip ── */
+    .cap-strip {
+      width: min(100%, var(--content-max)); margin: 34px auto 0;
+      display: grid; grid-template-columns: repeat(5,1fr); gap: 10px;
+    }
+    .cap-item {
+      min-height: 160px; padding: 14px;
+      border: 2px solid rgba(244,239,231,.5);
+      background: rgba(244,239,231,.06); color: var(--bg);
+    }
+    .cap-no {
+      margin-bottom: 14px; font-size: 9px; font-weight: 950;
+      letter-spacing: .14em; text-transform: uppercase; opacity: .52;
+    }
+    .cap-title {
+      font-size: clamp(18px,1.8vw,30px); line-height: .96;
+      font-weight: 950; letter-spacing: -.075em; text-transform: uppercase;
+    }
+    .cap-desc {
+      margin-top: 12px; font-size: 12.5px; line-height: 1.48;
+      font-weight: 620; letter-spacing: -.03em; color: rgba(244,239,231,.64);
+    }
+
+    /* ── Contact ── */
+    .contact {
+      position: relative; z-index: 5;
+      padding: 88px var(--pad) 52px;
+      background: var(--fg); color: var(--bg);
+    }
+    .contact-inner { width: min(100%, var(--content-max)); margin: 0 auto; }
+    .contact-kicker {
+      margin-bottom: 18px; font-size: 12px; font-weight: 950;
+      letter-spacing: .16em; text-transform: uppercase; color: rgba(244,239,231,.52);
+    }
+    .contact-title {
+      max-width: 1280px;
+      font-size: clamp(54px,8vw,136px); line-height: .88;
+      font-weight: 950; letter-spacing: -.085em; text-transform: uppercase;
+    }
+    .contact-desc {
+      max-width: 680px; margin-top: 22px;
+      font-size: clamp(15px,1.05vw,19px); line-height: 1.62;
+      font-weight: 580; letter-spacing: -.03em; color: rgba(244,239,231,.72);
+    }
+    .contact-links { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 26px; }
+    .contact .btn { background: var(--bg); color: var(--fg); border-color: var(--bg); }
+    .contact .btn:hover { background: var(--yellow); color: var(--fg); }
+
+    /* ── Footer ── */
+    .footer {
+      position: relative; z-index: 5;
+      padding: 24px var(--pad) 32px;
+      background: var(--fg); color: rgba(244,239,231,.52);
+      font-size: 11px; font-weight: 850; letter-spacing: .08em; text-transform: uppercase;
+    }
+    .footer-inner {
+      width: min(100%, var(--content-max)); margin: 0 auto;
+      display: flex; justify-content: space-between; gap: 20px;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 1200px) {
+      .diff-grid   { grid-template-columns: 1fr; }
+      .cap-strip   { grid-template-columns: repeat(2,1fr); }
+    }
+    @media (max-width: 980px) {
+      .topbar { mix-blend-mode: normal; color: #fff; }
+      .section-head { width: 100%; grid-template-columns: 1fr; gap: 10px; }
+      .section-text { margin-left: 0; width: 100%; max-width: 100%; }
+      .timeline-item { grid-template-columns: 1fr; gap: 10px; }
+      .ev-card, .ev-card.full { grid-column: 1 / -1; }
+    }
+    @media (max-width: 720px) {
+      :root { --pad: 20px; }
+      .topbar { top: 18px; font-size: 13px; }
+      .top-actions { gap: 12px; }
+      .hero { min-height: 92svh; padding-top: 86px; padding-bottom: 48px; }
+      .project-title { font-size: clamp(42px,13vw,72px); }
+      .project-desc { font-size: 14.5px; }
+      .section { padding-top: 56px; padding-bottom: 56px; }
+      .section-title { font-size: clamp(30px,11vw,48px); }
+      .section-text { font-size: 14.5px; line-height: 1.68; }
+      .tl-title { font-size: clamp(24px,8vw,38px); }
+      .cap-strip { grid-template-columns: 1fr; }
+      .contact-title { font-size: clamp(42px,13vw,72px); }
+      .footer-inner { flex-direction: column; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page" id="top">
+    <div class="grid-lines"></div>
+    <div class="noise"></div>
+
+    <!-- Topbar -->
+    <header class="topbar">
+      <a class="brand" href="index.html">周子恒</a>
+      <nav class="top-actions">
+        <a class="top-link" href="index.html">Map</a>
+        <a class="top-link active" href="about.html">About</a>
+        <a class="top-link" href="doc/简历.docx" target="_blank" rel="noopener">Resume</a>
+      </nav>
+    </header>
+
+    <!-- ═══════════════════════════
+         Hero
+    ════════════════════════════ -->
+    <main class="hero">
+      <section class="hero-content">
+        <div class="project-kicker">About</div>
+
+        <h1 class="project-title">
+          <span class="blue">设计</span>
+          <span class="pink">智能</span>
+          <br>建筑×AI×机器人
+        </h1>
+
+        <p class="project-desc">
+          我是周子恒。我具备建筑设计与数字化复合背景，关注 AI 工具在真实生成场景中的落地。
+        </p>
+
+        <div class="hero-actions" style="font-size: 18px;">
+          <a class="btn primary" href="doc/简历.docx" target="_blank" rel="noopener">查看简历</a>
+          <a class="btn" href="mailto:zhou_ziheng1@outlook.com">联系我</a>
+          <a class="btn" href="index.html">返回项目地图</a>
+        </div>
+      </section>
+    </main>
+
+    <!-- ═══════════════════════════
+         01 / Differentiation
+    ════════════════════════════ -->
+    <section class="section">
+      <div class="section-head">
+        <div class="section-no">01 / Differentiation</div>
+        <h2 class="section-title">三个别人很难同时具备的能力~</h2>
+      </div>
+
+      <div class="diff-grid">
+        <article class="diff-card blue">
+          <div class="diff-label">01 / Scene Understanding</div>
+          <h3 class="diff-title">真实空间场景理解</h3>
+          <p class="diff-desc">
+            建筑背景让我能理解展厅、商场、园区、工厂中的动线、部署位置与空间尺度。
+          </p>
+        </article>
+
+        <article class="diff-card">
+          <div class="diff-label">02 / Full Delivery</div>
+          <h3 class="diff-title">从需求到方案完整交付</h3>
+          <p class="diff-desc">
+            PRD、竞品分析、多模型 Benchmark、模型选型策略、数据埋点方案。
+          </p>
+        </article>
+
+        <article class="diff-card green">
+          <div class="diff-label">03 / Tech → Business</div>
+          <h3 class="diff-title">连接技术与商业落地</h3>
+          <p class="diff-desc">
+            研究生经历使我理解机器人、生成模型和仿真系统的能力边界，并将其转化为客户或团队能理解的方案表达与落地路径。
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════
+         02 / Timeline
+    ════════════════════════════ -->
+    <section class="section soft">
+      <div class="section-head">
+        <div class="section-no">02 / Timeline</div>
+        <h2 class="section-title">一条从空间设计走向 AI 产品系统的路径。</h2>
+      </div>
+
+      <div class="timeline">
+
+        <!-- QUT -->
+        <article class="timeline-item">
+          <div class="tl-time">2017.09<br>— 2022.06</div>
+          <h3 class="tl-title">建筑背景</h3>
+          <div class="tl-right">
+            <p class="tl-desc">
+              青岛理工大学建筑学本科，建立空间、功能与图面表达基础。排名 2/81，校级优秀毕业生。
+            </p>
+            <div class="tl-tags">
+              <span>建筑</span>
+              <span>空间设计</span>
+              <span>效果展示</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- UCL -->
+        <article class="timeline-item">
+          <div class="tl-time">2022.09<br>— 2023.12</div>
+          <h3 class="tl-title">机器人建造仿真</h3>
+          <div class="tl-right">
+            <p class="tl-desc">
+              UCL 建筑学硕士（一等荣誉）。面向极端环境无人建造任务，设计基于Unity3D的机器人仿真系统，结合强化学习实现自主路径规划与构件搭建。
+            </p>
+            <div class="tl-tags">
+              <span>Unity3D</span>
+              <span>ML-Agents</span>
+              <span>PPO</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- Tongji -->
+        <article class="timeline-item">
+          <div class="tl-time">2024.04<br>— 2025.05</div>
+          <h3 class="tl-title">LLM-to-3D<br>Fabrication</h3>
+          <div class="tl-right">
+            <p class="tl-desc">
+              同济大学 CAUP 研究助理。参与 Text-to-3D 工作流研究，将自然语言需求转化为可编辑几何，使用 OR-Tools 进行模块优化，完成机械臂搭建验证。
+            </p>
+            <div class="tl-tags">
+              <span>Text-to-3D</span>
+              <span>OR-Tools</span>
+              <span>Modular Construction</span>
+              <span>Robotic Fabrication</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- AICO -->
+        <article class="timeline-item">
+          <div class="tl-time">2025.05<br>— Now</div>
+          <h3 class="tl-title">商业建筑AIGC工作流落地</h3>
+          <div class="tl-right">
+            <p class="tl-desc">
+              AICO 商业建筑设计师。搭建 ComfyUI 概念图生成工作流，将草图、Rhino 截图与风格参考转化为可控生成输入，沉淀 Prompt 模板，推动团队前期视觉效率提升。
+            </p>
+            <div class="tl-tags">
+              <span>ComfyUI</span>
+              <span>Prompt System</span>
+              <span>Retail Space</span>
+              <span>Workflow SOP</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- AI Product -->
+        <article class="timeline-item">
+          <div class="tl-time">2026.01<br>— 2026.05</div>
+          <h3 class="tl-title">AI 电商生成平台</h3>
+          <div class="tl-right">
+            <p class="tl-desc">
+              独立完成电商 AIGC 素材生成平台从 0 到 1 的产品方案。覆盖 PRD、7 家竞品分析、5+6 款模型 Benchmark与数据埋点方案。
+            </p>
+            <div class="tl-tags">
+              <span>PRD</span>
+              <span>Benchmark</span>
+              <span>Model Routing</span>
+              <span>Data Tracking</span>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════
+         Contact
+    ════════════════════════════ -->
+    <section class="contact" id="contact">
+      <div class="contact-inner">
+        <div class="contact-kicker">Contact / Collaboration</div>
+        <h2 class="contact-title">
+          让我们一起设计智能。
+        </h2>
+        <p class="contact-desc">
+          如果你关注 AI 产品、AIGC 工作流、空间智能或机器人场景落地，
+        </p>
+        <div class="contact-links">
+          <a class="btn" href="mailto:zhou_ziheng1@outlook.com">zhou_ziheng1@outlook.com</a>
+          <a class="btn" href="doc/简历.docx" target="_blank" rel="noopener">简历</a>
+          <a class="btn" href="index.html">回到项目</a>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        <div>© 2026 Zhou Ziheng Portfolio</div>
+        <div>From Spatial Design to AI Product Systems</div>
+      </div>
+    </footer>
+  </div>
+</body>
+</html>

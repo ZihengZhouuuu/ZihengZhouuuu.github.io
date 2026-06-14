@@ -1,0 +1,1616 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>UCL｜Stigmergic Spaces｜周子恒</title>
+
+  <style>
+    :root {
+      --bg: #f4efe7;
+      --fg: #222222;
+      --paper: #fffdf6;
+      --grey: #8a8377;
+
+      --blue: #2f6bff;
+      --pink: #ff5c9a;
+      --green: #12a889;
+      --yellow: #ffd34d;
+
+      --accent: var(--yellow);
+
+      --pad: clamp(20px, 4vw, 48px);
+      --content-max: 1440px;
+      --text-max: 1280px;
+      --image-max: 1440px;
+      --font: Inter, Arial, "PingFang SC", "Microsoft YaHei", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html,
+    body {
+      width: 100%;
+      min-height: 100%;
+      font-family: var(--font);
+      background:
+        radial-gradient(circle at 75% 18%, rgba(47, 107, 255, 0.11), transparent 34%),
+        radial-gradient(circle at 18% 82%, rgba(255, 211, 77, 0.16), transparent 30%),
+        radial-gradient(circle at 86% 78%, rgba(255, 92, 154, 0.1), transparent 30%),
+        var(--bg);
+      color: var(--fg);
+      letter-spacing: -0.04em;
+    }
+
+    body {
+      overflow-x: hidden;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    img,
+    video {
+      display: block;
+      width: 100%;
+    }
+
+    ::selection {
+      background: var(--fg);
+      color: var(--bg);
+    }
+
+    .page {
+      position: relative;
+      width: 100%;
+      min-height: 100vh;
+      overflow: hidden;
+    }
+
+    .noise {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.045;
+      background-image:
+        linear-gradient(45deg, #000 25%, transparent 25%),
+        linear-gradient(-45deg, #000 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #000 75%),
+        linear-gradient(-45deg, transparent 75%, #000 75%);
+      background-size: 6px 6px;
+      z-index: 100;
+    }
+
+    .grid-lines {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.16;
+      background-image:
+        linear-gradient(to right, rgba(34, 34, 34, 0.08) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(34, 34, 34, 0.08) 1px, transparent 1px);
+      background-size: 56px 56px;
+      mask-image: radial-gradient(circle at 55% 30%, #000 0%, transparent 78%);
+    }
+
+    /* =========================
+       Topbar
+    ========================= */
+    .topbar {
+      position: fixed;
+      top: 28px;
+      left: var(--pad);
+      right: var(--pad);
+      z-index: 90;
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      font-size: 18px;
+      font-weight: 950;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+
+      color: #ffffff;
+      mix-blend-mode: difference;
+    }
+
+    .brand {
+      cursor: pointer;
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .top-link {
+      cursor: pointer;
+      opacity: 0.72;
+    }
+
+    .top-link:hover {
+      opacity: 1;
+    }
+
+    /* =========================
+       Hero
+    ========================= */
+    .hero {
+      position: relative;
+      z-index: 5;
+
+      width: 100%;
+      min-height: 100vh;
+      padding: 108px var(--pad) 64px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      overflow: hidden;
+      background: var(--fg);
+      text-align: center;
+    }
+
+    .hero-bg-image {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    .hero-bg-image img,
+    .hero-bg-image video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+
+      filter:
+        saturate(1.04)
+        contrast(1.06)
+        brightness(0.72);
+      transform: scale(1.02);
+    }
+
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+
+      background:
+        linear-gradient(
+          90deg,
+          rgba(0, 0, 0, 0.46) 0%,
+          rgba(0, 0, 0, 0.26) 32%,
+          rgba(0, 0, 0, 0.22) 68%,
+          rgba(0, 0, 0, 0.5) 100%
+        ),
+        linear-gradient(
+          180deg,
+          rgba(0, 0, 0, 0.62) 0%,
+          rgba(0, 0, 0, 0.22) 42%,
+          rgba(0, 0, 0, 0.72) 100%
+        );
+      pointer-events: none;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 4;
+
+      width: min(100%, 1180px);
+      margin-top: 0;
+
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .project-kicker {
+      margin-bottom: 18px;
+
+      font-size: clamp(12px, 1vw, 18px);
+      font-weight: 950;
+      line-height: 1;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      text-align: center;
+
+      color: rgba(244, 239, 231, 0.72);
+    }
+
+    .project-title {
+      font-size: clamp(54px, 8.6vw, 148px);
+      line-height: 0.98;
+      font-weight: 950;
+      letter-spacing: -0.06em;
+      text-transform: uppercase;
+      text-align: center;
+
+      color: var(--bg);
+      text-shadow: 0 8px 30px rgba(0, 0, 0, 0.34);
+    }
+
+    .project-title .accent {
+      color: var(--yellow);
+    }
+
+    .project-desc {
+      max-width: 980px;
+      margin-top: 28px;
+      margin-left: auto;
+      margin-right: auto;
+
+      font-size: clamp(17px, 1.3vw, 26px);
+      line-height: 1.5;
+      font-weight: 720;
+      letter-spacing: -0.045em;
+      text-align: center;
+
+      color: rgba(244, 239, 231, 0.84);
+      text-shadow: 0 4px 18px rgba(0, 0, 0, 0.36);
+    }
+
+    .hero-tags {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 30px;
+      max-width: 980px;
+    }
+
+    .hero-tags span {
+      padding: 8px 11px;
+      border: 1.5px solid rgba(244, 239, 231, 0.48);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(8px);
+
+      font-size: 10px;
+      line-height: 1;
+      font-weight: 950;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: rgba(244, 239, 231, 0.78);
+    }
+
+    /* =========================
+       Section General
+    ========================= */
+    .section {
+      position: relative;
+      z-index: 5;
+      padding: 88px var(--pad);
+    }
+
+    .section.soft {
+      background: rgba(255, 253, 246, 0.55);
+    }
+
+    .section.dark {
+      background: var(--fg);
+      color: var(--bg);
+    }
+
+    .section-head {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 36px;
+
+      margin-bottom: 34px;
+      padding-bottom: 18px;
+      border-bottom: 2px solid currentColor;
+    }
+
+    .section-no {
+      font-size: 12px;
+      font-weight: 950;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: rgba(34, 34, 34, 0.5);
+    }
+
+    .dark .section-no {
+      color: rgba(244, 239, 231, 0.5);
+    }
+
+    .section-title {
+      font-size: clamp(34px, 5vw, 88px);
+      line-height: 0.9;
+      font-weight: 950;
+      letter-spacing: -0.08em;
+      text-transform: uppercase;
+    }
+
+    .section-text {
+      margin-left: 260px;
+
+      font-size: clamp(17px, 1.28vw, 25px);
+      line-height: 1.56;
+      font-weight: 650;
+      letter-spacing: -0.04em;
+
+      color: rgba(34, 34, 34, 0.68);
+    }
+
+    .section-text + .section-text {
+      margin-top: 18px;
+    }
+
+    .dark .section-text {
+      color: rgba(244, 239, 231, 0.72);
+    }
+
+    .logic-section .section-head {
+      border-bottom: none;
+      padding-bottom: 0;
+      margin-bottom: 24px;
+    }
+
+    /* =========================
+       Logic Matrix
+    ========================= */
+    .logic-matrix {
+      margin-top: 42px;
+
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .logic-cell {
+      position: relative;
+      min-height: 190px;
+      padding: 15px;
+
+      border: 2px solid rgba(244, 239, 231, 0.82);
+      color: var(--bg);
+
+      clip-path: polygon(
+        0 0,
+        calc(100% - 16px) 0,
+        100% 16px,
+        100% 100%,
+        16px 100%,
+        0 calc(100% - 16px)
+      );
+    }
+
+    .logic-problem {
+      background: rgba(244, 239, 231, 0.06);
+    }
+
+    .logic-solution {
+      background: var(--paper);
+      color: var(--fg);
+      border-color: var(--fg);
+      box-shadow: 5px 5px 0 rgba(17, 17, 17, 0.16);
+    }
+
+    .dark .logic-solution {
+      border-color: rgba(244, 239, 231, 0.82);
+      box-shadow: 5px 5px 0 rgba(244, 239, 231, 0.16);
+    }
+
+    .logic-solution::before {
+      content: "";
+      position: absolute;
+      left: 14px;
+      right: 14px;
+      top: -2px;
+      height: 6px;
+      background: var(--accent);
+    }
+
+    .logic-label {
+      margin-bottom: 12px;
+      padding-right: 28px;
+
+      font-size: 8px;
+      font-weight: 950;
+      line-height: 1.1;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+
+      opacity: 0.58;
+    }
+
+    .logic-title {
+      max-width: 100%;
+
+      font-size: clamp(18px, 1.55vw, 28px);
+      line-height: 0.96;
+      font-weight: 950;
+      letter-spacing: -0.07em;
+      text-transform: uppercase;
+    }
+
+    .logic-desc {
+      max-width: 100%;
+      margin-top: 12px;
+
+      font-size: 12px;
+      line-height: 1.36;
+      font-weight: 680;
+      letter-spacing: -0.03em;
+      opacity: 0.72;
+    }
+
+    .logic-solution .logic-desc {
+      color: rgba(34, 34, 34, 0.64);
+      opacity: 1;
+    }
+
+    .logic-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-top: 13px;
+    }
+
+    .logic-tags span {
+      padding: 5px 6px;
+
+      border: 1.5px solid currentColor;
+      border-radius: 999px;
+
+      font-size: 7px;
+      font-weight: 950;
+      line-height: 1;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .logic-arrow {
+      position: absolute;
+      right: 10px;
+      top: 10px;
+
+      min-width: 24px;
+      height: 24px;
+      padding: 0 6px;
+
+      display: grid;
+      place-items: center;
+
+      border: 2px solid currentColor;
+      border-radius: 999px;
+
+      font-size: 11px;
+      font-weight: 950;
+      letter-spacing: -0.02em;
+    }
+
+    /* =========================
+       Media Grid
+    ========================= */
+    .media-grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 20px;
+      margin-top: 42px;
+    }
+
+    .media-item {
+      min-height: 360px;
+      background: var(--fg);
+      overflow: hidden;
+      box-shadow: 9px 9px 0 rgba(17, 17, 17, 0.18);
+    }
+
+    .dark .media-item {
+      border-color: rgba(244, 239, 231, 0.88);
+      box-shadow: 9px 9px 0 rgba(244, 239, 231, 0.12);
+      background: rgba(244, 239, 231, 0.08);
+    }
+
+    .media-item.wide {
+      grid-column: span 7;
+    }
+
+    .media-item.small {
+      grid-column: span 5;
+    }
+
+    .media-item.half {
+      grid-column: span 6;
+    }
+
+    .media-item.full {
+      grid-column: 1 / -1;
+      min-height: 660px;
+    }
+
+    .media-item.tall {
+      min-height: 760px;
+    }
+
+    .media-item img,
+    .media-item video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .media-item.contain img,
+    .media-item.contain video {
+      object-fit: contain;
+      background: #f4efe7;
+    }
+
+    .dark .media-item.contain img,
+    .dark .media-item.contain video {
+      background: #222222;
+    }
+
+    .caption {
+      margin-top: 16px;
+      margin-left: 220px;
+
+      font-size: 13px;
+      line-height: 1.4;
+      font-weight: 750;
+      letter-spacing: -0.02em;
+      color: rgba(34, 34, 34, 0.52);
+    }
+
+    .dark .caption {
+      color: rgba(244, 239, 231, 0.55);
+    }
+
+    /* =========================
+       Result Panel
+    ========================= */
+    .result-panel {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-top: 42px;
+    }
+
+    .result-item {
+      min-height: 260px;
+      padding: 22px;
+
+      border: 2px solid var(--fg);
+      background: var(--paper);
+      color: var(--fg);
+
+      box-shadow: 6px 6px 0 rgba(17, 17, 17, 0.16);
+    }
+
+    .dark .result-item {
+      border-color: var(--bg);
+      background: rgba(244, 239, 231, 0.06);
+      color: var(--bg);
+      box-shadow: none;
+    }
+
+    .result-number {
+      font-size: clamp(32px, 3vw, 64px);
+      line-height: 0.86;
+      font-weight: 950;
+      letter-spacing: -0.1em;
+      word-break: break-word;
+    }
+
+    .result-desc {
+      margin-top: 26px;
+      font-size: 16px;
+      line-height: 1.42;
+      font-weight: 680;
+      letter-spacing: -0.035em;
+
+      color: rgba(34, 34, 34, 0.68);
+    }
+
+    .dark .result-desc {
+      color: rgba(244, 239, 231, 0.68);
+    }
+
+    /* =========================
+       Feature Carousel
+    ========================= */
+    .feature-carousel {
+      margin-top: 40px;
+      width: 100vw;
+      margin-left: calc(-1 * var(--pad));
+      position: relative;
+    }
+
+    .feature-track {
+      display: flex;
+      gap: 20px;
+      overflow-x: auto;
+      scroll-behavior: smooth;
+      scrollbar-width: none;
+      padding: 0 var(--pad) 10px var(--pad);
+      scroll-padding-left: var(--pad);
+    }
+
+    .feature-track::-webkit-scrollbar {
+      display: none;
+    }
+
+    .feature-card {
+      flex: 0 0 min(680px, 74vw);
+      scroll-snap-align: start;
+
+      border: 2px solid var(--fg);
+      background: var(--paper);
+      box-shadow: 9px 9px 0 rgba(17, 17, 17, 0.18);
+
+      clip-path: polygon(
+        0 0,
+        calc(100% - 24px) 0,
+        100% 24px,
+        100% 100%,
+        24px 100%,
+        0 calc(100% - 24px)
+      );
+
+      overflow: hidden;
+    }
+
+    .feature-media {
+      width: 100%;
+      aspect-ratio: 5 / 4;
+      background: var(--fg);
+      overflow: hidden;
+    }
+
+    .feature-media img,
+    .feature-media video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .feature-media.contain img,
+    .feature-media.contain video {
+      object-fit: contain;
+      background: #f4efe7;
+    }
+
+    .feature-copy {
+      padding: 18px 18px 22px;
+    }
+
+    .feature-copy h3 {
+      margin-bottom: 10px;
+
+      font-size: clamp(24px, 3vw, 46px);
+      line-height: 0.9;
+      font-weight: 950;
+      letter-spacing: -0.075em;
+      text-transform: uppercase;
+    }
+
+    .feature-copy p {
+      max-width: 92%;
+      font-size: 15px;
+      line-height: 1.42;
+      font-weight: 700;
+      letter-spacing: -0.035em;
+      color: rgba(34, 34, 34, 0.62);
+    }
+
+    .carousel-controls {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 18px;
+      padding-right: var(--pad);
+    }
+
+    .carousel-arrow {
+      width: 44px;
+      height: 44px;
+
+      border: 2px solid var(--fg);
+      background: var(--paper);
+      color: var(--fg);
+
+      font-size: 24px;
+      font-weight: 950;
+      cursor: pointer;
+
+      box-shadow: 4px 4px 0 rgba(17, 17, 17, 0.16);
+      transition:
+        transform 0.2s ease,
+        background 0.2s ease,
+        color 0.2s ease;
+    }
+
+    .carousel-arrow:hover {
+      transform: translateY(-2px);
+      background: var(--fg);
+      color: var(--bg);
+    }
+
+    /* =========================
+       Footer Nav
+    ========================= */
+    .project-footer {
+      position: relative;
+      z-index: 5;
+
+      padding: 88px var(--pad) 48px;
+
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+
+    .nav-card {
+      position: relative;
+      min-height: 180px;
+      padding: 22px;
+
+      border: 2px solid var(--fg);
+      background: var(--paper);
+      box-shadow: 9px 9px 0 rgba(17, 17, 17, 0.18);
+
+      clip-path: polygon(
+        0 0,
+        calc(100% - 26px) 0,
+        100% 26px,
+        100% 100%,
+        26px 100%,
+        0 calc(100% - 26px)
+      );
+
+      transition:
+        transform 0.24s cubic-bezier(.16, 1, .3, 1),
+        background 0.2s ease,
+        color 0.2s ease;
+    }
+
+    .nav-card:hover {
+      transform: translateY(-5px);
+      background: var(--blue);
+      color: #ffffff;
+      box-shadow: 12px 12px 0 rgba(17, 17, 17, 0.28);
+    }
+
+    .nav-kicker {
+      margin-bottom: 18px;
+
+      font-size: 11px;
+      font-weight: 950;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      opacity: 0.62;
+    }
+
+    .nav-title {
+      font-size: clamp(28px, 4vw, 64px);
+      line-height: 0.9;
+      font-weight: 950;
+      letter-spacing: -0.08em;
+      text-transform: uppercase;
+    }
+
+    .back-home {
+      position: fixed;
+      right: var(--pad);
+      bottom: 28px;
+      z-index: 80;
+
+      width: 86px;
+      height: 44px;
+
+      display: grid;
+      place-items: center;
+
+      border: 2px solid var(--fg);
+      background: var(--paper);
+      color: var(--fg);
+
+      font-size: 11px;
+      font-weight: 950;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+
+      box-shadow: 5px 5px 0 rgba(17, 17, 17, 0.18);
+    }
+
+    .back-home:hover {
+      background: var(--blue);
+      color: #ffffff;
+    }
+
+    /* =========================
+       Responsive
+    ========================= */
+    @media (max-width: 1200px) {
+      .logic-matrix {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .result-panel {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 980px) {
+      .topbar {
+        mix-blend-mode: normal;
+        color: #ffffff;
+      }
+
+      .section-head {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+
+      .section-text,
+      .caption {
+        margin-left: 0;
+      }
+
+      .media-item.wide,
+      .media-item.small,
+      .media-item.half,
+      .media-item.full {
+        grid-column: 1 / -1;
+      }
+    }
+
+    @media (max-width: 720px) {
+      :root {
+        --pad: 20px;
+      }
+
+      .topbar {
+        top: 18px;
+        font-size: 13px;
+      }
+
+      .top-actions {
+        gap: 12px;
+      }
+
+      .hero {
+        min-height: 100svh;
+        padding-top: 86px;
+        padding-bottom: 42px;
+      }
+
+      .hero-content {
+        width: 100%;
+        margin-top: 0;
+      }
+
+      .project-title {
+        font-size: clamp(44px, 15vw, 82px);
+      }
+
+      .project-desc {
+        max-width: 100%;
+        font-size: 15px;
+      }
+
+      .hero-overlay {
+        background:
+          linear-gradient(
+            180deg,
+            rgba(0, 0, 0, 0.76) 0%,
+            rgba(0, 0, 0, 0.42) 45%,
+            rgba(0, 0, 0, 0.76) 100%
+          );
+      }
+
+      .section {
+        padding: 68px var(--pad);
+      }
+
+      .section-title {
+        font-size: clamp(36px, 13vw, 58px);
+      }
+
+      .section-text {
+        font-size: 15px;
+      }
+
+      .logic-matrix {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+
+      .logic-cell {
+        min-height: auto;
+        padding: 18px;
+      }
+
+      .logic-title {
+        font-size: clamp(26px, 9vw, 42px);
+      }
+
+      .logic-desc {
+        font-size: 14px;
+      }
+
+      .feature-card {
+        flex-basis: 82vw;
+      }
+
+      .media-item {
+        min-height: auto;
+        aspect-ratio: 4 / 3;
+      }
+
+      .media-item.full {
+        min-height: auto;
+        aspect-ratio: 1 / 1;
+      }
+
+      .media-item.tall {
+        min-height: auto;
+      }
+
+      .project-footer {
+        grid-template-columns: 1fr;
+      }
+
+      .back-home {
+        right: 20px;
+        bottom: 20px;
+      }
+    }
+    /* =========================================================
+      Comfortable Portfolio Scale Override
+      让页面从“展板尺度”调整为“网页阅读尺度”
+    ========================================================= */
+
+    /* 页面整体不要无限铺开 */
+    .section,
+    .project-footer {
+      padding-left: var(--pad);
+      padding-right: var(--pad);
+    }
+
+    /* Hero 副标题更适合阅读 */
+    .project-desc {
+      max-width: 760px;
+      margin-top: 24px;
+      font-size: clamp(15px, 1.15vw, 20px);
+      line-height: 1.58;
+      font-weight: 650;
+    }
+
+    /* 标签别太抢眼 */
+    .hero-tags {
+      max-width: 760px;
+      gap: 7px;
+      margin-top: 24px;
+    }
+
+    .hero-tags span {
+      padding: 7px 10px;
+      font-size: 9px;
+    }
+
+    /* Section 整体上下留白更克制 */
+    .section {
+      padding-top: 72px;
+      padding-bottom: 72px;
+    }
+
+    /* Section 头部控制在内容宽度内 */
+    .section-head {
+      width: min(100%, var(--content-max));
+      margin-left: auto;
+      margin-right: auto;
+
+      grid-template-columns: 170px minmax(0, 1fr);
+      gap: 28px;
+
+      margin-bottom: 28px;
+      padding-bottom: 16px;
+    }
+
+    /* 小编号不要太远 */
+    .section-no {
+      font-size: 11px;
+    }
+
+    /* Section 大标题降尺度 */
+    .section-title {
+      font-size: clamp(30px, 4.2vw, 62px);
+      line-height: 0.96;
+      letter-spacing: -0.07em;
+    }
+
+    /* 正文收窄，不要横跨整屏 */
+    .section-text {
+      width: min(100%, var(--text-max));
+      max-width: var(--text-max);
+      margin-left: calc((100% - min(100%, var(--content-max))) / 2 + 170px + 28px);
+
+      font-size: clamp(15px, 1vw, 18px);
+      line-height: 1.72;
+      font-weight: 560;
+      letter-spacing: -0.025em;
+    }
+
+    /* 多段正文间距 */
+    .section-text + .section-text {
+      margin-top: 14px;
+    }
+
+    /* 卡片矩阵不要铺满全屏 */
+    .logic-matrix {
+      width: min(100%, var(--content-max));
+      margin-left: auto;
+      margin-right: auto;
+      margin-top: 34px;
+      gap: 12px;
+    }
+
+    /* 卡片高度和字体降低 */
+    .logic-cell {
+      min-height: 160px;
+      padding: 14px;
+    }
+
+    .logic-title {
+      font-size: clamp(17px, 1.25vw, 23px);
+      line-height: 1;
+    }
+
+    .logic-desc {
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    /* 图片区域控制宽度 */
+    .media-grid {
+      width: min(100%, var(--image-max));
+      margin-left: auto;
+      margin-right: auto;
+      margin-top: 34px;
+      gap: 18px;
+    }
+
+    /* 图片不要用固定巨大高度 */
+    .media-item {
+      min-height: auto;
+    }
+
+    /* full 图片改成自然比例 */
+    .media-item.full {
+      min-height: auto;
+    }
+
+    /* 给横向展板图一个舒服比例 */
+    .media-item.full.contain {
+      aspect-ratio: 16 / 9;
+    }
+
+    /* 双栏图片比例 */
+    .media-item.half {
+      min-height: auto;
+      aspect-ratio: 16 / 9;
+    }
+
+    /* 图片完整显示，不裁切 */
+    .media-item.contain img,
+    .media-item.contain video {
+      object-fit: auto;
+      /*background: #f4efe7;*/
+    }
+
+    /* Result 面板控制宽度 */
+    .result-panel {
+      width: min(100%, var(--content-max));
+      margin-left: auto;
+      margin-right: auto;
+      margin-top: 34px;
+      gap: 12px;
+    }
+
+    /* Result 卡片降低压迫感 */
+    .result-item {
+      min-height: 190px;
+      padding: 18px;
+    }
+
+    .result-number {
+      font-size: clamp(34px, 4vw, 68px);
+    }
+
+    .result-desc {
+      margin-top: 20px;
+      font-size: 13.5px;
+      line-height: 1.5;
+    }
+
+    /* Footer 控制宽度 */
+    .project-footer {
+      width: min(100%, calc(var(--content-max) + var(--pad) * 2));
+      margin-left: auto;
+      margin-right: auto;
+      padding-top: 72px;
+    }
+
+    @media (max-width: 980px) {
+      .section-head {
+        grid-template-columns: 1fr;
+        width: 100%;
+      }
+
+      .section-text,
+      .caption {
+        margin-left: 0;
+        width: 100%;
+        max-width: 100%;
+      }
+
+      .section-title {
+        max-width: 100%;
+      }
+
+      .media-grid,
+      .logic-matrix,
+      .result-panel {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .hero {
+        min-height: 86svh;
+        padding-top: 86px;
+        padding-bottom: 48px;
+      }
+
+      .project-title {
+        font-size: clamp(40px, 13vw, 68px);
+      }
+
+      .section {
+        padding-top: 56px;
+        padding-bottom: 56px;
+      }
+
+      .section-title {
+        font-size: clamp(30px, 11vw, 48px);
+      }
+
+      .section-text {
+        font-size: 14.5px;
+        line-height: 1.68;
+      }
+
+      .media-item.full.contain,
+      .media-item.half {
+        aspect-ratio: auto;
+      }
+
+      .media-item img,
+      .media-item video {
+        max-height: none;
+      }
+    }
+
+  </style>
+</head>
+
+<body>
+  <div class="page">
+    <div class="grid-lines"></div>
+    <div class="noise"></div>
+
+    <!-- =========================
+         Topbar
+    ========================== -->
+    <header class="topbar">
+      <a class="brand" href="index.html">周子恒</a>
+
+      <nav class="top-actions">
+        <a class="top-link" href="index.html">Map</a>
+        <a class="top-link" href="index.html#works">Index</a>
+        <a class="top-link" href="mailto:zhou_ziheng1@outlook.com">Contact</a>
+      </nav>
+    </header>
+
+    <!-- =========================
+         Hero
+    ========================== -->
+    <main class="hero">
+      <div class="hero-bg-image">
+        <!-- 推荐使用视频。如果没有视频，可以把 video 替换为下面的 img -->
+        <video src="images/UCL/Hero.mp4" autoplay loop muted playsinline></video>
+        <!-- <img src="images/UCL/01-overview.jpg" alt="Stigmergic Spaces overview"> -->
+      </div>
+
+      <div class="hero-overlay"></div>
+
+      <section class="hero-content">
+        <div class="project-kicker">STIGMERGIC SPACES / UCL BARTLETT</div>
+
+        <h1 class="project-title">
+          极端环境下的<br>
+          <span class="accent">无人建造机器人的原型开发</span>
+        </h1>
+
+        <p class="project-desc">
+          面向极端环境与无人参与的未来建造场景，设计基于 Unity3D 的多机器人建造仿真系统，结合路径规划、强化学习与力反馈算法，实现机器人对模块化构件的自主搬运、协作搭建与空间重构。
+        </p>
+
+        <div class="hero-tags">
+          <span>Unity3D</span>
+          <span>ML-Agents</span>
+          <span>PPO</span>
+          <span>Robot Simulation</span>
+          <span>Spatial Intelligence</span>
+          <span>Autonomous Construction</span>
+        </div>
+      </section>
+    </main>
+
+    <!-- =========================
+         Context + System Logic
+    ========================== -->
+    <section class="section dark logic-section">
+      <div class="section-head">
+        <div class="section-no">System Logic</div>
+        <h2 class="section-title">建立材料、机器人与算法共同反馈的无人建造系统。</h2>
+      </div>
+
+      <p class="section-text">
+        Stigmergic Spaces 探索空间设计、机器人控制、交互仿真与智能建造之间的关系。项目面向极端环境或无人参与的未来建筑搭建任务，设计了一套基于 Unity3D 的多机器人建造仿真系统，并通过强化学习与力反馈算法，使机器人能够在复杂环境中完成自主路径规划、构件搬运、姿态调整与模块搭建。
+      </p>
+
+      <p class="section-text">
+        项目借鉴蚂蚁、白蚁、黏菌等自然群体的自组织行为，将建筑空间理解为由多个智能体共同协商、反馈和重构的动态系统。建筑不再是一次性完成的静态对象，而是可以被机器人持续装配、拆卸、优化和再配置的 living architecture。
+      </p>
+
+      <div class="logic-matrix">
+        <article class="logic-cell logic-problem">
+          <div class="logic-arrow">01</div>
+          <div class="logic-label">Material System</div>
+          <h3 class="logic-title">模块化构件系统</h3>
+          <p class="logic-desc">
+            构件采用木质模块与斜角节点设计，支持连接、拆卸、重组和多方向聚合，为机器人操作提供清晰的几何接口。
+          </p>
+        </article>
+
+        <article class="logic-cell logic-problem">
+          <div class="logic-arrow">02</div>
+          <div class="logic-label">Robotic System</div>
+          <h3 class="logic-title">多机器人协作</h3>
+          <p class="logic-desc">
+            小型机器人通过移动底盘、旋转关节和夹持机构完成构件搬运、姿态调整、桥接与辅助搭建。
+          </p>
+        </article>
+
+        <article class="logic-cell logic-problem">
+          <div class="logic-arrow">03</div>
+          <div class="logic-label">Computational System</div>
+          <h3 class="logic-title">仿真与学习控制</h3>
+          <p class="logic-desc">
+            基于 Unity3D、C# 与 ML-Agents 构建训练环境，通过 PPO 强化学习训练机器人完成目标导向行为。
+          </p>
+        </article>
+
+        <article class="logic-cell logic-problem">
+          <div class="logic-arrow">04</div>
+          <div class="logic-label">Feedback System</div>
+          <h3 class="logic-title">力反馈与结构稳定性</h3>
+          <p class="logic-desc">
+            系统读取构件位置、压力、扭矩与受力数据，并通过图结构可视化和机器学习辅助判断结构是否稳定。
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <!-- =========================
+         01 / System Research
+    ========================== -->
+    <section class="section">
+      <div class="section-head">
+        <div class="section-no">01 / System Research</div>
+        <h2 class="section-title">系统由材料、机器人与计算逻辑共同构成。</h2>
+      </div>
+
+      <p class="section-text">
+        项目将无人建造系统拆解为三个互相反馈的子系统：材料系统、机器人系统与计算系统。材料系统提供可重复连接、可拆卸与可重构的模块化构件；机器人系统负责在空间中移动、抓取、旋转和放置构件；计算系统则通过仿真、机器学习和力反馈算法，持续引导机器人行为并评估结构稳定性。通过将节点连接逻辑简化为可被机器人识别和操作的几何关系，系统能够支持更灵活的聚合、拆卸和再配置过程。
+      </p>
+
+      <div class="media-grid">
+        <div class="media-item full contain">
+          <img src="images/UCL/system.jpg" alt="Stigmergic Spaces system and material research">
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================
+         02 / Robotic Prototype
+    ========================== -->
+    <section class="section soft">
+      <div class="section-head">
+        <div class="section-no">02 / Robotic Prototype</div>
+        <h2 class="section-title">通过 Unity 仿真与物理原型验证机器人动作</h2>
+      </div>
+
+      <p class="section-text">
+        机器人系统围绕模块化构件的搬运、旋转、传递和放置进行设计。项目在 Unity 中建立虚拟控制环境，并通过 Raspberry Pi、舵机与电源模块连接实体机器人，实现仿真动作与物理原型之间的对应测试。
+        机器人原型经历多轮迭代，逐步整合滑轨移动、旋转关节、夹持机构与双机器人协作能力。测试内容包括 Y 轴旋转、Z 轴旋转、X 轴滑动、构件传递、双机器人协同放置以及辅助汇合等动作。
+      </p>
+
+      <div class="media-grid">
+        <div class="media-item full contain">
+          <img src="images/UCL/prototype_1.jpg" alt="Robot control with Unity and Raspberry Pi">
+        </div>
+      </div>
+      
+      <div class="media-grid">
+        <div class="media-item full contain">
+          <video src="images/UCL/Robot_Test.mp4" autoplay loop muted playsinline></video>
+        </div>
+      </div>
+
+      <p class="section-text" style="margin-top: 14px;">
+        机器人原型及控制设计
+      </p>
+    </section>
+
+    <!-- =========================
+         03 / Collaboration Simulation
+    ========================== -->
+    <section class="section">
+      <div class="section-head">
+        <div class="section-no">03 / Collaboration Simulation</div>
+        <h2 class="section-title">水平与垂直方向的构件协作</h2>
+      </div>
+
+      <p class="section-text">
+        在机器人协作仿真中，构件并不是被单个机器人独立放置，而是通过多个机器人共同夹持、旋转、传递与定位。系统测试了水平 Pivot、垂直 Pivot、同层旋转、支点切换与穿越几何等协作动作，用于验证机器人在复杂结构网格中的移动与构件操作能力。理解机器人之间如何共享构件重量、改变支点、交换操作角色，并在有限空间中完成构件的方向转换。
+      </p>
+      
+      <div class="media-grid">
+        <div class="media-item full contain">
+          <img src="images/UCL/simulation.jpg" alt="Robot control with Unity and Raspberry Pi">
+        </div>
+      </div>
+      
+      <p class="section-text" style="margin-top: 14px;">
+        Unity 仿真环境中，通过路径规划对构件的自主搬运、旋转和放置动作进行模拟
+      </p>
+      
+      <div class="media-grid">
+        <div class="media-item full contain">
+          <img src="images/UCL/construction.jpg" alt="Robot collaboration prototype final version">
+        </div>
+      </div>
+
+      <p class="section-text" style="margin-top: 14px;">
+        通过 Raspberry Pi 控制物理原型进行对应测试。
+      </p>
+      <div class="media-grid">
+        <div class="media-item full contain">
+          <video src="images/UCL/Robot_Construction.mp4" autoplay loop muted playsinline></video>
+        </div>
+      </div>
+
+      <p class="section-text" style="margin-top: 14px;">
+        协作仿真重点验证机器人之间如何分担构件重量、调整支点位置，并在有限空间中完成构件旋转和传递。
+      </p>
+    </section>
+
+    <!-- =========================
+         04 / Reinforcement Learning
+    ========================== -->
+    <section class="section dark">
+      <div class="section-head">
+        <div class="section-no">04 / Reinforcement Learning</div>
+        <h2 class="section-title">通过RL训练机器人完成目标导向的自主控制</h2>
+      </div>
+
+      <p class="section-text">
+        项目使用 Unity ML-Agents 构建训练环境，并结合 PPO 强化学习方法训练机器人行为。训练任务包括识别目标位置、调整自身姿态、移动到指定区域、抓取目标物并将其运输到目标点。在训练过程中，机器人状态包含自身位置、目标位置、构件相对方向、关节状态与检测器反馈；动作空间对应多个旋转关节、滑动方向与夹持行为；奖励机制则根据接近目标、正确抓取、成功放置和避免碰撞等条件进行设计。
+      </p>
+
+      <div class="logic-matrix">
+        <article class="logic-cell logic-solution">
+          <div class="logic-label">State</div>
+          <h3 class="logic-title">状态定义</h3>
+          <p class="logic-desc">
+            包括机器人位置、目标点、构件方向、关节状态、检测范围与环境约束。
+          </p>
+          <div class="logic-tags">
+            <span>Position</span>
+            <span>Rotation</span>
+            <span>Detector</span>
+          </div>
+        </article>
+
+        <article class="logic-cell logic-solution">
+          <div class="logic-label">Action</div>
+          <h3 class="logic-title">动作控制</h3>
+          <p class="logic-desc">
+            控制机器人旋转、滑动、抓取、释放以及多个关节的姿态变化。
+          </p>
+          <div class="logic-tags">
+            <span>Rotation</span>
+            <span>Sliding</span>
+            <span>Grabbing</span>
+          </div>
+        </article>
+
+        <article class="logic-cell logic-solution">
+          <div class="logic-label">Reward</div>
+          <h3 class="logic-title">奖励机制</h3>
+          <p class="logic-desc">
+            根据接近目标、正确抓取、成功运输、减少碰撞和完成任务给予正负反馈。
+          </p>
+          <div class="logic-tags">
+            <span>Positive</span>
+            <span>Negative</span>
+            <span>Success</span>
+          </div>
+        </article>
+
+        <article class="logic-cell logic-solution">
+          <div class="logic-label">Training</div>
+          <h3 class="logic-title">PPO 训练</h3>
+          <p class="logic-desc">
+            使用 ML-Agents PPO 方法，使机器人在大量仿真试错中学习稳定的任务完成策略。
+          </p>
+          <div class="logic-tags">
+            <span>ML-Agents</span>
+            <span>PPO</span>
+            <span>Simulation</span>
+          </div>
+        </article>
+      </div>
+
+      <div class="media-grid">
+        <div class="media-item full contain">
+          <img src="images/UCL/Unity.jpg" alt="Reinforcement learning training environment and results">
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================
+         06 / Spatial Rearrangement
+    ========================== -->
+    <section class="section soft">
+      <div class="section-head">
+        <div class="section-no">06 / Spatial Rearrangement</div>
+        <h2 class="section-title">从机器人建造动作转化为空间装配、拆卸与重构场景。</h2>
+      </div>
+
+      <p class="section-text">
+        项目最终将机器人控制与算法系统转化为建筑空间中的装配和重构场景。通过优化建造序列，系统可以根据不同地形条件调整构件放置路径，使结构适应不平整地面、坡地或悬崖等极端环境。
+        在室内场景中，机器人可参与墙体单元的移除与安装，使空间布局根据使用需求进行动态调整。个人居住空间、集体住宅和空间原型共同展示了该系统在未来 living architecture 中的潜在应用。
+      </p>
+
+      <div class="media-grid">
+        <div class="media-item full contain">
+          <video src="images/UCL/Bridge.mp4" autoplay loop muted playsinline></video>
+        </div>
+
+        <div class="media-item half contain">
+          <video src="images/UCL/House.mp4" autoplay loop muted playsinline></video>
+        </div>
+
+        <div class="media-item half contain">
+          <img src="images/UCL/Outcome.jpg" alt="Force aggregation and feedback analysis">
+        </div>
+
+      </div>
+    </section>
+
+    <!-- =========================
+         07 / Technical Summary
+    ========================== -->
+    <section class="section dark">
+      <div class="section-head">
+        <div class="section-no">07 / Technical Summary</div>
+        <h2 class="section-title">将机器人系统的技术边界转化为可观察、可调试的空间方案。</h2>
+      </div>
+
+      <p class="section-text">
+        这个项目的核心价值不只是完成一个机器人原型，而是把机器人运动控制、路径规划、感知范围、构件连接、结构反馈与建筑空间设计整合为一个可被观察和调试的系统。通过 Unity 仿真环境，复杂的建造行为被转化为可测试的状态、动作、奖励与反馈关系。
+        项目展示了从建筑设计到计算控制的跨尺度转译能力：一方面理解空间系统如何被拆解为模块、路径和连接关系；另一方面也理解机器人在真实操作中受到的运动、力学和感知限制，并将这些限制转化为具体的设计策略。
+      </p>
+
+      <div class="result-panel">
+        <article class="result-item">
+          <div class="result-number">Spatial</div>
+          <p class="result-desc">
+            将建筑空间理解为可装配、可拆卸、可重构的动态系统。
+          </p>
+        </article>
+
+        <article class="result-item">
+          <div class="result-number">Robot</div>
+          <p class="result-desc">
+            在 Unity3D 中搭建机器人行为、交互任务和可视化控制环境。
+          </p>
+        </article>
+
+        <article class="result-item">
+          <div class="result-number">RL</div>
+          <p class="result-desc">
+            通过 ML-Agents、PPO 与力反馈系统训练和评估机器人建造行为。
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <!-- =========================
+         Footer Navigation
+    ========================== -->
+    <footer class="project-footer">
+      <a class="nav-card" href="index.html">
+        <div class="nav-kicker">返回</div>
+        <h2 class="nav-title">回到首页</h2>
+      </a>
+
+      <a class="nav-card" href="work-global-relay-conference.html">
+        <div class="nav-kicker">下一个项目</div>
+        <h2 class="nav-title">AI Global Relay Conference</h2>
+      </a>
+    </footer>
+
+    <a class="back-home" href="index.html">Map</a>
+  </div>
+
+  <script>
+    /* =========================
+       Feature Carousel Arrows
+    ========================= */
+    document.querySelectorAll("[data-feature-carousel]").forEach(carousel => {
+      const track = carousel.querySelector("[data-feature-track]");
+      const prev = carousel.querySelector("[data-carousel-prev]");
+      const next = carousel.querySelector("[data-carousel-next]");
+
+      function getScrollAmount() {
+        const card = track.querySelector(".feature-card");
+        if (!card) return 400;
+        const gap = 20;
+        return card.offsetWidth + gap;
+      }
+
+      if (prev) {
+        prev.addEventListener("click", () => {
+          track.scrollBy({
+            left: -getScrollAmount(),
+            behavior: "smooth"
+          });
+        });
+      }
+
+      if (next) {
+        next.addEventListener("click", () => {
+          track.scrollBy({
+            left: getScrollAmount(),
+            behavior: "smooth"
+          });
+        });
+      }
+    });
+  </script>
+</body>
+</html>

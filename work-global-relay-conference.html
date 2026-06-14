@@ -1,0 +1,1851 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Global Relay Conference｜周子恒</title>
+
+  <style>
+    :root {
+      --bg: #f4efe7;
+      --fg: #222222;
+      --paper: #fffdf6;
+      --grey: #8a8377;
+
+      --blue: #2f6bff;
+      --pink: #ff5c9a;
+      --green: #12a889;
+      --yellow: #ffd34d;
+
+      --accent: var(--yellow);
+
+      --pad: clamp(20px, 4vw, 48px);
+      --content-max: 1440px;
+      --text-max: 1280px;
+      --image-max: 1440px;
+      --font: Inter, Arial, "PingFang SC", "Microsoft YaHei", sans-serif;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html,
+    body {
+      width: 100%;
+      min-height: 100%;
+      font-family: var(--font);
+      background:
+        radial-gradient(circle at 75% 18%, rgba(47, 107, 255, 0.11), transparent 34%),
+        radial-gradient(circle at 18% 82%, rgba(255, 211, 77, 0.16), transparent 30%),
+        radial-gradient(circle at 86% 78%, rgba(255, 92, 154, 0.1), transparent 30%),
+        var(--bg);
+      color: var(--fg);
+      letter-spacing: -0.04em;
+    }
+
+    body {
+      overflow-x: hidden;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    img,
+    video {
+      display: block;
+      width: 100%;
+    }
+
+    ::selection {
+      background: var(--fg);
+      color: var(--bg);
+    }
+
+    .page {
+      position: relative;
+      width: 100%;
+      min-height: 100vh;
+      overflow: hidden;
+    }
+
+    .noise {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.045;
+      background-image:
+        linear-gradient(45deg, #000 25%, transparent 25%),
+        linear-gradient(-45deg, #000 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #000 75%),
+        linear-gradient(-45deg, transparent 75%, #000 75%);
+      background-size: 6px 6px;
+      z-index: 100;
+    }
+
+    .grid-lines {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.16;
+      background-image:
+        linear-gradient(to right, rgba(34, 34, 34, 0.08) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(34, 34, 34, 0.08) 1px, transparent 1px);
+      background-size: 56px 56px;
+      mask-image: radial-gradient(circle at 55% 30%, #000 0%, transparent 78%);
+    }
+
+    /* =========================
+       Topbar
+    ========================= */
+    .topbar {
+      position: fixed;
+      top: 28px;
+      left: var(--pad);
+      right: var(--pad);
+      z-index: 90;
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      font-size: 18px;
+      font-weight: 950;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+
+      color: #ffffff;
+      mix-blend-mode: difference;
+    }
+
+    .brand {
+      cursor: pointer;
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .top-link {
+      cursor: pointer;
+      opacity: 0.72;
+    }
+
+    .top-link:hover {
+      opacity: 1;
+    }
+
+    /* =========================
+       Full Background Hero
+    ========================= */
+    .hero {
+      position: relative;
+      z-index: 5;
+
+      width: 100%;
+      min-height: 100vh;
+      padding: 108px var(--pad) 64px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      overflow: hidden;
+      background: var(--fg);
+      text-align: center;
+    }
+
+    .hero-bg-image {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    .hero-bg-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+
+      filter:
+        saturate(0.98)
+        contrast(1.06)
+        brightness(0.9);
+      transform: scale(1.02);
+    }
+
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+
+      background:
+        linear-gradient(
+          90deg,
+          rgba(0, 0, 0, 0.42) 0%,
+          rgba(0, 0, 0, 0.28) 32%,
+          rgba(0, 0, 0, 0.2) 68%,
+          rgba(0, 0, 0, 0.42) 100%
+        ),
+        linear-gradient(
+          180deg,
+          rgba(0, 0, 0, 0.58) 0%,
+          rgba(0, 0, 0, 0.2) 42%,
+          rgba(0, 0, 0, 0.62) 100%
+        );
+      pointer-events: none;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 4;
+
+      width: min(100%, 1120px);
+      margin-top: 0;
+
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .project-kicker {
+      margin-bottom: 18px;
+
+      font-size: clamp(12px, 1vw, 18px);
+      font-weight: 950;
+      line-height: 1;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      text-align: center;
+
+      color: rgba(244, 239, 231, 0.72);
+    }
+
+    .project-title {
+      font-size: clamp(58px, 9vw, 160px);
+      line-height: 0.98;
+      font-weight: 950;
+      letter-spacing: -0.05em;
+      text-transform: uppercase;
+      text-align: center;
+
+      color: var(--bg);
+      text-shadow: 0 8px 30px rgba(0, 0, 0, 0.34);
+    }
+
+
+    .project-title .accent {
+      color: var(--yellow);
+    }
+
+    .project-desc {
+      max-width: 820px;
+      margin-top: 28px;
+      margin-left: auto;
+      margin-right: auto;
+
+      font-size: clamp(18px, 1.35vw, 28px);
+      line-height: 1.42;
+      font-weight: 720;
+      letter-spacing: -0.045em;
+      text-align: center;
+
+      color: rgba(244, 239, 231, 0.82);
+      text-shadow: 0 4px 18px rgba(0, 0, 0, 0.36);
+    }
+
+    /* =========================
+       Section General
+    ========================= */
+    .section {
+      position: relative;
+      z-index: 5;
+      padding: 88px var(--pad);
+    }
+
+    .section.soft {
+      background: rgba(255, 253, 246, 0.45);
+    }
+
+    .section.dark {
+      background: var(--fg);
+      color: var(--bg);
+    }
+
+    .section-head {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 36px;
+
+      margin-bottom: 34px;
+      padding-bottom: 18px;
+      border-bottom: 1px solid currentColor;
+    }
+
+    .section-no {
+      font-size: 12px;
+      font-weight: 950;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: rgba(34, 34, 34, 0.5);
+    }
+
+    .dark .section-no {
+      color: rgba(244, 239, 231, 0.5);
+    }
+
+    .section-title {
+      font-size: clamp(32px, 5vw, 72px);
+      line-height: 1;
+      font-weight: 950;
+      text-transform: uppercase;
+    }
+
+    .section-text {
+      margin-left: 220px;
+      font-size: clamp(17px, 1.28vw, 25px);
+      line-height: 1.56;
+      font-weight: 650;
+      letter-spacing: -0.04em;
+
+      color: rgba(34, 34, 34, 0.68);
+    }
+
+    .section-text + .section-text {
+      margin-top: 18px;
+    }
+
+    .dark .section-text {
+      color: rgba(244, 239, 231, 0.72);
+    }
+
+    /* =========================
+       Problem / Solution Matrix
+       4 Columns x 2 Rows
+    ========================= */
+    .logic-matrix {
+      margin-top: 42px;
+
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .logic-cell {
+      position: relative;
+      min-height: 170px;
+      padding: 15px;
+
+      border: 2px solid rgba(244, 239, 231, 0.82);
+      color: var(--bg);
+
+      clip-path: polygon(
+        0 0,
+        calc(100% - 16px) 0,
+        100% 16px,
+        100% 100%,
+        16px 100%,
+        0 calc(100% - 16px)
+      );
+    }
+
+    .logic-problem {
+      background: rgba(244, 239, 231, 0.06);
+    }
+
+    .logic-solution {
+      background: var(--paper);
+      color: var(--fg);
+      box-shadow: 5px 5px 0 rgba(244, 239, 231, 0.14);
+    }
+
+    .logic-solution::before {
+      content: "";
+      position: absolute;
+      left: 14px;
+      right: 14px;
+      top: -2px;
+      height: 6px;
+      background: var(--accent);
+    }
+
+    .logic-label {
+      margin-bottom: 12px;
+      padding-right: 28px;
+
+      font-size: 12px;
+      font-weight: 950;
+      line-height: 1.1;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+
+      opacity: 0.58;
+    }
+
+    .logic-title {
+      max-width: 100%;
+
+      font-size: clamp(18px, 1.55vw, 32px);
+      line-height: 0.96;
+      font-weight: 950;
+      letter-spacing: -0.07em;
+      text-transform: uppercase;
+    }
+
+    .logic-desc {
+      max-width: 100%;
+      margin-top: 12px;
+
+      font-size: 14px;
+      line-height: 1.36;
+      font-weight: 680;
+      letter-spacing: -0.03em;
+      opacity: 0.72;
+    }
+
+    .logic-solution .logic-desc {
+      color: rgba(34, 34, 34, 0.64);
+      opacity: 1;
+    }
+
+    .logic-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-top: 13px;
+    }
+
+    .logic-tags span {
+      padding: 5px 6px;
+
+      border: 1.5px solid currentColor;
+      border-radius: 999px;
+
+      font-size: 7px;
+      font-weight: 950;
+      line-height: 1;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .logic-arrow {
+      position: absolute;
+      right: 10px;
+      top: 10px;
+
+      width: 24px;
+      height: 24px;
+
+      display: grid;
+      place-items: center;
+
+      border: 2px solid currentColor;
+      border-radius: 999px;
+
+      font-size: 12px;
+      font-weight: 950;
+    }
+
+    /* =========================
+       Feature Carousel
+    ========================= */
+    .feature-carousel {
+      margin-top: 40px;
+      width: 100vw;
+      margin-left: calc(-1 * var(--pad));
+      position: relative;
+    }
+
+    .feature-track {
+      display: flex;
+      gap: 20px;
+      overflow-x: auto;
+      scroll-behavior: smooth;
+      scrollbar-width: none;
+      padding: 0 var(--pad) 10px var(--pad);
+      scroll-padding-left: var(--pad);
+    }
+
+    .feature-track::-webkit-scrollbar {
+      display: none;
+    }
+
+    .feature-card {
+      flex: 0 0 min(620px, 72vw);
+      scroll-snap-align: start;
+
+      border: 2px solid var(--fg);
+      background: var(--paper);
+      box-shadow: 9px 9px 0 rgba(17, 17, 17, 0.18);
+
+      clip-path: polygon(
+        0 0,
+        calc(100% - 24px) 0,
+        100% 24px,
+        100% 100%,
+        24px 100%,
+        0 calc(100% - 24px)
+      );
+
+      overflow: hidden;
+    }
+
+    .feature-media {
+      width: 100%;
+      aspect-ratio: 5 / 4;
+      background: var(--fg);
+      overflow: hidden;
+    }
+
+    .feature-media img,
+    .feature-media video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .feature-copy {
+      padding: 18px 18px 22px;
+    }
+
+    .feature-copy h3 {
+      margin-bottom: 10px;
+
+      font-size: clamp(24px, 3vw, 46px);
+      line-height: 0.9;
+      font-weight: 950;
+      letter-spacing: -0.075em;
+      text-transform: uppercase;
+    }
+
+    .feature-copy p {
+      max-width: 92%;
+      font-size: 15px;
+      line-height: 1.42;
+      font-weight: 700;
+      letter-spacing: -0.035em;
+      color: rgba(34, 34, 34, 0.62);
+    }
+
+    .carousel-controls {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 18px;
+      padding-right: var(--pad);
+    }
+
+    .carousel-arrow {
+      width: 44px;
+      height: 44px;
+
+      border: 2px solid var(--fg);
+      background: var(--paper);
+      color: var(--fg);
+
+      font-size: 24px;
+      font-weight: 950;
+      cursor: pointer;
+
+      box-shadow: 4px 4px 0 rgba(17, 17, 17, 0.16);
+      transition:
+        transform 0.2s ease,
+        background 0.2s ease,
+        color 0.2s ease;
+    }
+
+    .carousel-arrow:hover {
+      transform: translateY(-2px);
+      background: var(--fg);
+      color: var(--bg);
+    }
+
+    /* =========================
+       Before / After Slider
+    ========================= */
+    .compare-4grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-top: 42px;
+    }
+
+    .compare-card {
+      position: relative;
+
+      border: 2px solid var(--fg);
+      background: var(--paper);
+      box-shadow: 9px 9px 0 rgba(17, 17, 17, 0.18);
+
+      clip-path: polygon(
+        0 0,
+        calc(100% - 24px) 0,
+        100% 24px,
+        100% 100%,
+        24px 100%,
+        0 calc(100% - 24px)
+      );
+
+      overflow: hidden;
+    }
+
+    .slider-wrap {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      overflow: hidden;
+      cursor: ew-resize;
+      user-select: none;
+      background: var(--fg);
+    }
+
+    .slider-after,
+    .slider-before {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .slider-before {
+      clip-path: inset(0 50% 0 0);
+    }
+
+    .slider-divider {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 3px;
+      background: var(--paper);
+      pointer-events: none;
+      box-shadow: 0 0 0 1px var(--fg);
+    }
+
+    .slider-handle {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+
+      width: 46px;
+      height: 46px;
+
+      border-radius: 50%;
+      background: var(--fg);
+      border: 2px solid var(--paper);
+      box-shadow: 0 4px 0 rgba(0, 0, 0, 0.28);
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      pointer-events: none;
+    }
+
+    .slider-handle svg {
+      width: 18px;
+      height: 18px;
+      fill: none;
+      stroke: var(--bg);
+      stroke-width: 2.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .slider-tag {
+      position: absolute;
+      bottom: 12px;
+
+      padding: 5px 10px;
+
+      border: 2px solid var(--fg);
+      background: var(--paper);
+
+      font-size: 9px;
+      font-weight: 950;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      pointer-events: none;
+      box-shadow: 3px 3px 0 rgba(17, 17, 17, 0.2);
+    }
+
+    .slider-tag.before {
+      left: 12px;
+      color: var(--fg);
+    }
+
+    .slider-tag.after {
+      right: 12px;
+      background: var(--fg);
+      color: var(--bg);
+    }
+
+    .compare-label {
+      padding: 0;
+      cursor: zoom-in;
+      border-top: 2px solid var(--fg);
+    }
+
+    .compare-label:hover {
+      background: color-mix(in srgb, var(--accent) 16%, var(--paper));
+    }
+
+    /* =========================
+       Footer Nav
+    ========================= */
+    .project-footer {
+      position: relative;
+      z-index: 5;
+
+      padding: 88px var(--pad) 48px;
+
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+
+    .nav-card {
+      position: relative;
+      min-height: 180px;
+      padding: 22px;
+
+      border: 2px solid var(--fg);
+      background: var(--paper);
+      box-shadow: 9px 9px 0 rgba(17, 17, 17, 0.18);
+
+      clip-path: polygon(
+        0 0,
+        calc(100% - 26px) 0,
+        100% 26px,
+        100% 100%,
+        26px 100%,
+        0 calc(100% - 26px)
+      );
+
+      transition:
+        transform 0.24s cubic-bezier(.16, 1, .3, 1),
+        background 0.2s ease,
+        color 0.2s ease;
+    }
+
+    .nav-card:hover {
+      transform: translateY(-5px);
+      background: var(--accent);
+      color: #ffffff;
+      box-shadow: 12px 12px 0 rgba(17, 17, 17, 0.28);
+    }
+
+    .nav-kicker {
+      margin-bottom: 18px;
+
+      font-size: 11px;
+      font-weight: 950;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      opacity: 0.62;
+    }
+
+    .nav-title {
+      max-width: 620px;
+
+      font-size: clamp(28px, 4vw, 64px);
+      line-height: 0.9;
+      font-weight: 950;
+      letter-spacing: -0.08em;
+      text-transform: uppercase;
+    }
+
+    .back-home {
+      position: fixed;
+      right: var(--pad);
+      bottom: 28px;
+      z-index: 80;
+
+      width: 86px;
+      height: 44px;
+
+      display: grid;
+      place-items: center;
+
+      border: 2px solid var(--fg);
+      background: var(--fg);
+      color: var(--bg);
+
+      font-size: 11px;
+      font-weight: 950;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+
+      box-shadow: 5px 5px 0 rgba(17, 17, 17, 0.18);
+    }
+
+    .back-home:hover {
+      background: var(--accent);
+      color: #ffffff;
+    }
+
+    /* =========================
+       Modal
+    ========================= */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+
+      background: rgba(10, 10, 10, 0.95);
+
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+
+      padding: 32px;
+    }
+
+    .modal-overlay.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 24px;
+      right: 32px;
+
+      padding: 9px 14px;
+
+      border: 2px solid rgba(244, 239, 231, 0.5);
+      background: transparent;
+      color: rgba(244, 239, 231, 0.7);
+
+      font-size: 11px;
+      font-weight: 950;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+
+      cursor: pointer;
+    }
+
+    .modal-close:hover {
+      color: #ffffff;
+      border-color: #ffffff;
+    }
+
+    .modal-titlebar {
+      width: 100%;
+      max-width: 1100px;
+      margin-bottom: 20px;
+    }
+
+    .modal-title {
+      font-size: clamp(28px, 3vw, 48px);
+      line-height: 1;
+      font-weight: 950;
+      letter-spacing: -0.07em;
+      color: #ffffff;
+      text-transform: uppercase;
+    }
+
+    .modal-slider-wrap {
+      position: relative;
+      width: 100%;
+      max-width: 1100px;
+      height: min(70vh, 700px);
+      overflow: hidden;
+      cursor: ew-resize;
+      user-select: none;
+      border: 2px solid rgba(244, 239, 231, 0.22);
+      background: #111111;
+    }
+
+    .modal-slider-wrap .slider-handle {
+      width: 56px;
+      height: 56px;
+    }
+
+    .modal-slider-wrap .slider-handle svg {
+      width: 22px;
+      height: 22px;
+    }
+
+    .modal-slider-wrap .slider-tag {
+      bottom: 18px;
+    }
+
+    .modal-slider-wrap .slider-tag.before {
+      left: 18px;
+    }
+
+    .modal-slider-wrap .slider-tag.after {
+      right: 18px;
+    }
+
+    /* =========================
+       Responsive
+    ========================= */
+    @media (max-width: 1200px) {
+      .logic-matrix {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 980px) {
+      .topbar {
+        mix-blend-mode: normal;
+        color: #ffffff;
+      }
+
+      .section-head {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+
+      .section-text {
+        margin-left: 0;
+      }
+
+      .compare-4grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 720px) {
+      :root {
+        --pad: 20px;
+      }
+
+      .topbar {
+        top: 18px;
+        font-size: 13px;
+      }
+
+      .top-actions {
+        gap: 12px;
+      }
+
+      .hero {
+        min-height: 100svh;
+        padding-top: 86px;
+        padding-bottom: 42px;
+      }
+
+      .hero-content {
+        width: 100%;
+        margin-top: 0;
+      }
+
+      .project-title {
+        font-size: clamp(46px, 15vw, 82px);
+      }
+
+      .project-desc {
+        max-width: 100%;
+        font-size: 15px;
+      }
+
+      .hero-overlay {
+        background:
+          linear-gradient(
+            180deg,
+            rgba(0, 0, 0, 0.76) 0%,
+            rgba(0, 0, 0, 0.42) 45%,
+            rgba(0, 0, 0, 0.76) 100%
+          );
+      }
+
+      .section {
+        padding: 68px var(--pad);
+      }
+
+      .section-title {
+        font-size: clamp(36px, 13vw, 58px);
+      }
+
+      .section-text {
+        font-size: 15px;
+      }
+
+      .logic-matrix {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+
+      .logic-cell {
+        min-height: auto;
+        padding: 18px;
+      }
+
+      .logic-title {
+        font-size: clamp(26px, 9vw, 42px);
+      }
+
+      .logic-desc {
+        font-size: 14px;
+      }
+
+      .feature-card {
+        flex-basis: 82vw;
+      }
+
+      .project-footer {
+        grid-template-columns: 1fr;
+      }
+
+      .back-home {
+        right: 20px;
+        bottom: 20px;
+      }
+
+      .modal-overlay {
+        padding: 20px;
+      }
+
+      .modal-slider-wrap {
+        height: 62vh;
+      }
+    }
+     /* =========================================================
+      Comfortable Portfolio Scale Override
+      让页面从“展板尺度”调整为“网页阅读尺度”
+    ========================================================= */
+
+    /* 页面整体不要无限铺开 */
+    .section,
+    .project-footer {
+      padding-left: var(--pad);
+      padding-right: var(--pad);
+    }
+
+    /* Hero 副标题更适合阅读 */
+    .project-desc {
+      max-width: 760px;
+      margin-top: 24px;
+      font-size: clamp(15px, 1.15vw, 20px);
+      line-height: 1.58;
+      font-weight: 650;
+    }
+
+    /* 标签别太抢眼 */
+    .hero-tags {
+      max-width: 760px;
+      gap: 7px;
+      margin-top: 24px;
+    }
+
+    .hero-tags span {
+      padding: 7px 10px;
+      font-size: 9px;
+    }
+
+    /* Section 整体上下留白更克制 */
+    .section {
+      padding-top: 72px;
+      padding-bottom: 72px;
+    }
+
+    /* Section 头部控制在内容宽度内 */
+    .section-head {
+      width: min(100%, var(--content-max));
+      margin-left: auto;
+      margin-right: auto;
+
+      grid-template-columns: 170px minmax(0, 1fr);
+      gap: 28px;
+
+      margin-bottom: 28px;
+      padding-bottom: 16px;
+    }
+
+    /* 小编号不要太远 */
+    .section-no {
+      font-size: 11px;
+    }
+
+    /* Section 大标题降尺度 */
+    .section-title {
+      font-size: clamp(30px, 4.2vw, 62px);
+      line-height: 0.96;
+      letter-spacing: -0.07em;
+    }
+
+    /* 正文收窄，不要横跨整屏 */
+    .section-text {
+      width: min(100%, var(--text-max));
+      max-width: var(--text-max);
+      margin-left: calc((100% - min(100%, var(--content-max))) / 2 + 170px + 28px);
+
+      font-size: clamp(15px, 1vw, 18px);
+      line-height: 1.72;
+      font-weight: 560;
+      letter-spacing: -0.025em;
+    }
+
+    /* 多段正文间距 */
+    .section-text + .section-text {
+      margin-top: 14px;
+    }
+
+    /* 卡片矩阵不要铺满全屏 */
+    .logic-matrix {
+      width: min(100%, var(--content-max));
+      margin-left: auto;
+      margin-right: auto;
+      margin-top: 34px;
+      gap: 12px;
+    }
+
+    /* 卡片高度和字体降低 */
+    .logic-cell {
+      min-height: 160px;
+      padding: 14px;
+    }
+
+    .logic-title {
+      font-size: clamp(17px, 1.25vw, 23px);
+      line-height: 1;
+    }
+
+    .logic-desc {
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    /* 图片区域控制宽度 */
+    .media-grid {
+      width: min(100%, var(--image-max));
+      margin-left: auto;
+      margin-right: auto;
+      margin-top: 34px;
+      gap: 18px;
+    }
+
+    /* 图片不要用固定巨大高度 */
+    .media-item {
+      min-height: auto;
+    }
+
+    /* full 图片改成自然比例 */
+    .media-item.full {
+      min-height: auto;
+    }
+
+    /* 给横向展板图一个舒服比例 */
+    .media-item.full.contain {
+      aspect-ratio: 16 / 9;
+    }
+
+    /* 双栏图片比例 */
+    .media-item.half {
+      min-height: auto;
+      aspect-ratio: 16 / 9;
+    }
+
+    /* 图片完整显示，不裁切 */
+    .media-item.contain img,
+    .media-item.contain video {
+      object-fit: auto;
+      /*background: #f4efe7;*/
+    }
+
+    /* Result 面板控制宽度 */
+    .result-panel {
+      width: min(100%, var(--content-max));
+      margin-left: auto;
+      margin-right: auto;
+      margin-top: 34px;
+      gap: 12px;
+    }
+
+    /* Result 卡片降低压迫感 */
+    .result-item {
+      min-height: 190px;
+      padding: 18px;
+    }
+
+    .result-number {
+      font-size: clamp(34px, 4vw, 68px);
+    }
+
+    .result-desc {
+      margin-top: 20px;
+      font-size: 13.5px;
+      line-height: 1.5;
+    }
+
+    /* Footer 控制宽度 */
+    .project-footer {
+      width: min(100%, calc(var(--content-max) + var(--pad) * 2));
+      margin-left: auto;
+      margin-right: auto;
+      padding-top: 72px;
+    }
+
+    @media (max-width: 980px) {
+      .section-head {
+        grid-template-columns: 1fr;
+        width: 100%;
+      }
+
+      .section-text,
+      .caption {
+        margin-left: 0;
+        width: 100%;
+        max-width: 100%;
+      }
+
+      .section-title {
+        max-width: 100%;
+      }
+
+      .media-grid,
+      .logic-matrix,
+      .result-panel {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .hero {
+        min-height: 86svh;
+        padding-top: 86px;
+        padding-bottom: 48px;
+      }
+
+      .project-title {
+        font-size: clamp(40px, 13vw, 68px);
+      }
+
+      .section {
+        padding-top: 56px;
+        padding-bottom: 56px;
+      }
+
+      .section-title {
+        font-size: clamp(30px, 11vw, 48px);
+      }
+
+      .section-text {
+        font-size: 14.5px;
+        line-height: 1.68;
+      }
+
+      .media-item.full.contain,
+      .media-item.half {
+        aspect-ratio: auto;
+      }
+
+      .media-item img,
+      .media-item video {
+        max-height: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page">
+    <div class="grid-lines"></div>
+    <div class="noise"></div>
+
+    <header class="topbar">
+      <a class="brand" href="index.html">周子恒</a>
+
+      <nav class="top-actions">
+        <a class="top-link" href="index.html">Map</a>
+        <a class="top-link" href="index.html#works">Index</a>
+        <a class="top-link" href="mailto:zhou_ziheng1@outlook.com">Contact</a>
+      </nav>
+    </header>
+
+    <!-- =========================
+         Hero
+    ========================== -->
+    <main class="hero">
+      <div class="hero-bg-image">
+        <img src="images/AGR/City-NY.jpg" alt="AI Global Relay Conference Hero Image">
+      </div>
+
+      <div class="hero-overlay"></div>
+
+      <section class="hero-content">
+        <div class="project-kicker">03 / MULTI-CITY AIGC VISUAL SYSTEM</div>
+
+        <h1 class="project-title">
+          AI Global<br>
+          Relay<br>
+          <span class="accent">Conference</span>
+        </h1>
+
+        <p class="project-desc">
+          为跨纽约、伦敦、约翰内斯堡、利雅得四城市联动会议构建 AIGC 视觉系统。通过可复用 Prompt 模板，在不同城市语境下生成具有统一视觉调性、地域差异与未来感叙事的会议视觉资产。
+        </p>
+      </section>
+    </main>
+
+    <!-- =========================
+         Context + System Logic
+    ========================== -->
+    <section class="section dark">
+      <div class="section-head">
+        <div class="section-no">System Logic</div>
+        <h2 class="section-title">一套跨城市视觉系统。</h2>
+      </div>
+
+      <!--<p class="section-text">
+        这个项目的挑战不在于能不能生成有冲击力的未来城市图像，而在于能否在纽约、伦敦、约翰内斯堡、利雅得四个城市之间，维持统一的会议品牌视觉语言，同时保留每座城市的地域特征。
+      </p>
+
+      <p class="section-text">
+        因此，我将图像生成过程拆解为一套可复用的系统：从城市语义提取、Prompt 模板化、视觉控制，到最终的媒介适配。每一个问题都对应一套明确的生成控制方法。
+      </p>-->
+
+      <div class="logic-matrix">
+        <!-- Row 01 / Problems -->
+        <article class="logic-cell logic-problem">
+          <div class="logic-arrow">?</div>
+          <div class="logic-label">Problem 01</div>
+          <h3 class="logic-title">不同城市如何保持可辨识？</h3>
+          <p class="logic-desc">
+            四座城市具有不同的地理、文化和建筑语境。如果只使用统一风格生成，城市差异会被抹平。
+          </p>
+        </article>
+
+        <article class="logic-cell logic-problem">
+          <div class="logic-arrow">?</div>
+          <div class="logic-label">Problem 02</div>
+          <h3 class="logic-title">多城市视觉如何保持统一？</h3>
+          <p class="logic-desc">
+            每张图都重新写 Prompt，会导致构图、材质、光照、色调和未来感强度发生漂移。
+          </p>
+        </article>
+
+        <article class="logic-cell logic-problem">
+          <div class="logic-arrow">?</div>
+          <div class="logic-label">Problem 03</div>
+          <h3 class="logic-title">AI 生成如何避免随机试错？</h3>
+          <p class="logic-desc">
+            纯文本生成容易出现语义不稳定、空间层次失控、画面重点漂移等问题。
+          </p>
+        </article>
+
+        <article class="logic-cell logic-problem">
+          <div class="logic-arrow">?</div>
+          <div class="logic-label">Problem 04</div>
+          <h3 class="logic-title">一套视觉如何适配多种媒介？</h3>
+          <p class="logic-desc">
+            官网横幅、宣传视频、社媒传播图和现场大屏对画幅、细节和信息密度要求不同。
+          </p>
+        </article>
+
+        <!-- Row 02 / Methods -->
+        <article class="logic-cell logic-solution">
+          <div class="logic-arrow">→</div>
+          <div class="logic-label">Method 01 / City Semantics</div>
+          <h3 class="logic-title">提取城市语义变量。</h3>
+          <p class="logic-desc">
+            将每座城市拆解为可替换变量：天际线、地貌、气候、基础设施、文化符号和空间尺度。
+          </p>
+          <div class="logic-tags">
+            <span>City Variable</span>
+            <span>Geography</span>
+            <span>Landmark</span>
+          </div>
+        </article>
+
+        <article class="logic-cell logic-solution">
+          <div class="logic-arrow">→</div>
+          <div class="logic-label">Method 02 / Prompt Template</div>
+          <h3 class="logic-title">建立可复用 Prompt 模板。</h3>
+          <p class="logic-desc">
+            使用统一结构组织 Prompt：风格框架、城市变量、地理变量、文化符号和媒介约束。
+          </p>
+          <div class="logic-tags">
+            <span>Prompt System</span>
+            <span>Template</span>
+            <span>Consistency</span>
+          </div>
+        </article>
+
+        <article class="logic-cell logic-solution">
+          <div class="logic-arrow">→</div>
+          <div class="logic-label">Method 03 / Visual Control</div>
+          <h3 class="logic-title">控制参考图与构图约束。</h3>
+          <p class="logic-desc">
+            通过参考图权重、风格描述、构图约束和人工后期修正，控制画面层次与未来感表达。
+          </p>
+          <div class="logic-tags">
+            <span>Reference</span>
+            <span>Composition</span>
+            <span>Iteration</span>
+          </div>
+        </article>
+
+        <article class="logic-cell logic-solution">
+          <div class="logic-arrow">→</div>
+          <div class="logic-label">Method 04 / Media Delivery</div>
+          <h3 class="logic-title">按媒介拆分输出规格。</h3>
+          <p class="logic-desc">
+            适配为官网 Banner、视频关键帧、社媒竖图或方图，以及会议现场大屏背景。
+          </p>
+          <div class="logic-tags">
+            <span>Web Banner</span>
+            <span>Trailer</span>
+            <span>Event Screen</span>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- =========================
+         Style 01 Carousel
+    ========================== -->
+    <section class="section soft">
+      <div class="section-head">
+        <div class="section-no">Style 01</div>
+        <h2 class="section-title">现代城市风格</h2>
+      </div>
+
+      <p class="section-text">
+        第一组视觉以未来城市为核心，将不同城市的地标、天际线、基础设施和城市尺度转化为统一的会议主视觉语言。
+      </p>
+
+      <div class="feature-carousel" data-feature-carousel>
+        <div class="feature-track" data-feature-track>
+          <article class="feature-card">
+            <div class="feature-media">
+              <img src="images/AGR/City-NY.jpg" alt="New York">
+            </div>
+            <div class="feature-copy">
+              <h3>New York</h3>
+              <p>
+                强调高密度城市峡谷、垂直天际线和基础设施光流，形成高压、高速的未来都市感。
+              </p>
+            </div>
+          </article>
+
+          <article class="feature-card">
+            <div class="feature-media">
+              <img src="images/AGR/City-LDN.jpg" alt="London">
+            </div>
+            <div class="feature-copy">
+              <h3>London</h3>
+              <p>
+                在历史城市轮廓中加入未来交通、反射材质与冷色光环境，平衡古典城市与未来科技。
+              </p>
+            </div>
+          </article>
+
+          <article class="feature-card">
+            <div class="feature-media">
+              <img src="images/AGR/City-JNB.jpg" alt="Johannesburg">
+            </div>
+            <div class="feature-copy">
+              <h3>Johannesburg</h3>
+              <p>
+                将非洲城市地貌、开阔尺度与未来基础设施结合，营造具有地域感的 Afrofuturism 叙事。
+              </p>
+            </div>
+          </article>
+
+          <article class="feature-card">
+            <div class="feature-media">
+              <img src="images/AGR/City-RUH.jpg" alt="Riyadh">
+            </div>
+            <div class="feature-copy">
+              <h3>Riyadh</h3>
+              <p>
+                结合沙漠、绿洲、现代塔楼和未来城市基础设施，形成沙漠现代主义的视觉方向。
+              </p>
+            </div>
+          </article>
+        </div>
+
+        <div class="carousel-controls">
+          <button class="carousel-arrow" data-carousel-prev type="button">‹</button>
+          <button class="carousel-arrow" data-carousel-next type="button">›</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================
+         Style 02 Compare Slider
+    ========================== -->
+    <section class="section">
+      <div class="section-head">
+        <div class="section-no">Style 02</div>
+        <h2 class="section-title">2100s：从自然地貌到未来基础设施</h2>
+      </div>
+
+      <p class="section-text">
+        第二组视觉使用前后对比的方式展示城市语义迁移：左侧保留自然、地理或文化基底，右侧将其转译为未来城市、基础设施和科幻视觉系统。
+      </p>
+
+      <div class="compare-4grid">
+        <article class="compare-card">
+          <div class="slider-wrap" data-slider>
+            <div class="slider-after" style="background:url('images/AGR/America-A.jpg') center/cover no-repeat;"></div>
+            <div class="slider-before" style="background:url('images/AGR/America-B.jpg') center/cover no-repeat;"></div>
+            <div class="slider-divider"></div>
+            <div class="slider-handle">
+              <svg viewBox="0 0 24 24"><polyline points="15,18 9,12 15,6"/><polyline points="9,6 15,12 9,18"/></svg>
+            </div>
+            <span class="slider-tag before">Natural</span>
+            <span class="slider-tag after">Future</span>
+          </div>
+
+          <div class="compare-label" data-modal
+            data-after="url('images/AGR/America-A.jpg') center/cover no-repeat"
+            data-before="url('images/AGR/America-B.jpg') center/cover no-repeat"
+            data-title="New York — Canyon → Infrastructure">
+            <div class="feature-copy">
+              <h3>New York</h3>
+              <p>
+                将峡谷、都市密度与基础设施想象结合，形成类似城市峡谷的未来空间叙事。
+              </p>
+            </div>
+          </div>
+        </article>
+
+        <article class="compare-card">
+          <div class="slider-wrap" data-slider>
+            <div class="slider-after" style="background:url('images/AGR/Europe-A.jpg') center/cover no-repeat;"></div>
+            <div class="slider-before" style="background:url('images/AGR/Europe-B.jpg') center/cover no-repeat;"></div>
+            <div class="slider-divider"></div>
+            <div class="slider-handle">
+              <svg viewBox="0 0 24 24"><polyline points="15,18 9,12 15,6"/><polyline points="9,6 15,12 9,18"/></svg>
+            </div>
+            <span class="slider-tag before">Natural</span>
+            <span class="slider-tag after">Future</span>
+          </div>
+
+          <div class="compare-label" data-modal
+            data-after="url('images/AGR/Europe-A.jpg') center/cover no-repeat"
+            data-before="url('images/AGR/Europe-B.jpg') center/cover no-repeat"
+            data-title="London — Pastoral → Metropolis">
+            <div class="feature-copy">
+              <h3>London</h3>
+              <p>
+                从欧洲田园和历史城市意象出发，转译为未来化的都会结构与光环境。
+              </p>
+            </div>
+          </div>
+        </article>
+
+        <article class="compare-card">
+          <div class="slider-wrap" data-slider>
+            <div class="slider-after" style="background:url('images/AGR/Africa-A.jpg') center/cover no-repeat;"></div>
+            <div class="slider-before" style="background:url('images/AGR/Africa-B.jpg') center/cover no-repeat;"></div>
+            <div class="slider-divider"></div>
+            <div class="slider-handle">
+              <svg viewBox="0 0 24 24"><polyline points="15,18 9,12 15,6"/><polyline points="9,6 15,12 9,18"/></svg>
+            </div>
+            <span class="slider-tag before">Natural</span>
+            <span class="slider-tag after">Future</span>
+          </div>
+
+          <div class="compare-label" data-modal
+            data-after="url('images/AGR/Africa-A.jpg') center/cover no-repeat"
+            data-before="url('images/AGR/Africa-B.jpg') center/cover no-repeat"
+            data-title="Johannesburg — Savanna → Afrofuturism">
+            <div class="feature-copy">
+              <h3>Johannesburg</h3>
+              <p>
+                将草原、开阔地貌与未来基础设施结合，构建具有地域识别度的非洲未来主义视觉。
+              </p>
+            </div>
+          </div>
+        </article>
+
+        <article class="compare-card">
+          <div class="slider-wrap" data-slider>
+            <div class="slider-after" style="background:url('images/AGR/Asia-A.jpg') center/cover no-repeat;"></div>
+            <div class="slider-before" style="background:url('images/AGR/Asia-B.jpg') center/cover no-repeat;"></div>
+            <div class="slider-divider"></div>
+            <div class="slider-handle">
+              <svg viewBox="0 0 24 24"><polyline points="15,18 9,12 15,6"/><polyline points="9,6 15,12 9,18"/></svg>
+            </div>
+            <span class="slider-tag before">Natural</span>
+            <span class="slider-tag after">Future</span>
+          </div>
+
+          <div class="compare-label" data-modal
+            data-after="url('images/AGR/Asia-A.jpg') center/cover no-repeat"
+            data-before="url('images/AGR/Asia-B.jpg') center/cover no-repeat"
+            data-title="Riyadh — Oasis → Desert Modernism">
+            <div class="feature-copy">
+              <h3>Riyadh</h3>
+              <p>
+                从沙漠、绿洲与现代城市意象出发，生成具有高温、反射和未来都市感的视觉系统。
+              </p>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- =========================
+         Style 03
+    ========================== -->
+    <section class="section soft">
+      <div class="section-head">
+        <div class="section-no">Style 03</div>
+        <h2 class="section-title">媒体适配性</h2>
+      </div>
+
+      <p class="section-text">
+        除城市环境外，项目也探索了不同媒介中的视觉延展方式。通过统一视觉系统，图像可以适配官网、社媒、视频和现场屏幕等多个触点。
+      </p>
+
+      <div class="feature-carousel" data-feature-carousel>
+        <div class="feature-track" data-feature-track>
+          <article class="feature-card">
+            <div class="feature-media">
+              <img src="images/AGR/human-base.jpg" alt="Base Avatar">
+            </div>
+            <div class="feature-copy">
+              <h3>Base Avatar</h3>
+              <p>
+                设定基础人物面部比例、视觉调性和角色身份，为后续城市与种族变化提供统一底稿。
+              </p>
+            </div>
+          </article>
+
+          <article class="feature-card">
+            <div class="feature-media">
+              <img src="images/AGR/human-city.png" alt="City Avatar">
+            </div>
+            <div class="feature-copy">
+              <h3>Urban Avatar</h3>
+              <p>
+                将人物与未来城市语境结合，强调科技感、会议品牌气质与全球城市网络。
+              </p>
+            </div>
+          </article>
+
+          <article class="feature-card">
+            <div class="feature-media">
+              <img src="images/AGR/human-mountain.png" alt="Mountain Avatar">
+            </div>
+            <div class="feature-copy">
+              <h3>Terrain Avatar</h3>
+              <p>
+                将人物视觉与地貌、自然环境和区域特征结合，用于扩展会议的全球叙事维度。
+              </p>
+            </div>
+          </article>
+
+          <article class="feature-card">
+            <div class="feature-media">
+              <img src="images/AGR/City-RUH.jpg" alt="Context Avatar">
+            </div>
+            <div class="feature-copy">
+              <h3>Context Extension</h3>
+              <p>
+                将角色视觉与城市主视觉并置，形成从人物、场景到传播图像的完整视觉系统。
+              </p>
+            </div>
+          </article>
+        </div>
+
+        <div class="carousel-controls">
+          <button class="carousel-arrow" data-carousel-prev type="button">‹</button>
+          <button class="carousel-arrow" data-carousel-next type="button">›</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================
+         Footer Navigation
+    ========================== -->
+    <footer class="project-footer">
+      <a class="nav-card" href="index.html">
+        <div class="nav-kicker">返回</div>
+        <h2 class="nav-title">回到首页</h2>
+      </a>
+
+      <a class="nav-card" href="work-aigc-product-system.html">
+        <div class="nav-kicker">下一个项目</div>
+        <h2 class="nav-title">AIGC Product System</h2>
+      </a>
+    </footer>
+
+    <a class="back-home" href="index.html">Map</a>
+  </div>
+
+  <!-- =========================
+       Modal
+  ========================== -->
+  <div class="modal-overlay" id="modal">
+    <button class="modal-close" id="modalClose" type="button">✕ Close</button>
+
+    <div class="modal-titlebar">
+      <div class="modal-title" id="modalTitle"></div>
+    </div>
+
+    <div class="modal-slider-wrap" data-slider id="modalSlider">
+      <div class="slider-after" id="modalAfter"></div>
+      <div class="slider-before" id="modalBefore"></div>
+      <div class="slider-divider"></div>
+      <div class="slider-handle">
+        <svg viewBox="0 0 24 24"><polyline points="15,18 9,12 15,6"/><polyline points="9,6 15,12 9,18"/></svg>
+      </div>
+      <span class="slider-tag before">Natural</span>
+      <span class="slider-tag after">Future</span>
+    </div>
+  </div>
+
+  <script>
+    /* =========================
+       Before / After Slider
+    ========================= */
+    function initSlider(wrap) {
+      const before = wrap.querySelector(".slider-before");
+      const divider = wrap.querySelector(".slider-divider");
+      const handle = wrap.querySelector(".slider-handle");
+      let dragging = false;
+
+      function setPos(x) {
+        const rect = wrap.getBoundingClientRect();
+        let pct = Math.min(Math.max((x - rect.left) / rect.width, 0), 1) * 100;
+
+        before.style.clipPath = `inset(0 ${100 - pct}% 0 0)`;
+        divider.style.left = `${pct}%`;
+        handle.style.left = `${pct}%`;
+        handle.style.transform = "translate(-50%, -50%)";
+      }
+
+      wrap.addEventListener("mousedown", (e) => {
+        dragging = true;
+        setPos(e.clientX);
+        e.preventDefault();
+      });
+
+      window.addEventListener("mousemove", (e) => {
+        if (dragging) setPos(e.clientX);
+      });
+
+      window.addEventListener("mouseup", () => {
+        dragging = false;
+      });
+
+      wrap.addEventListener("touchstart", (e) => {
+        dragging = true;
+        setPos(e.touches[0].clientX);
+      }, { passive: true });
+
+      window.addEventListener("touchmove", (e) => {
+        if (dragging) setPos(e.touches[0].clientX);
+      }, { passive: true });
+
+      window.addEventListener("touchend", () => {
+        dragging = false;
+      });
+    }
+
+    document.querySelectorAll(".slider-wrap").forEach(initSlider);
+
+    /* =========================
+       Modal
+    ========================= */
+    const modal = document.getElementById("modal");
+    const modalClose = document.getElementById("modalClose");
+    const modalSlider = document.getElementById("modalSlider");
+    const modalAfter = document.getElementById("modalAfter");
+    const modalBefore = document.getElementById("modalBefore");
+    const modalTitle = document.getElementById("modalTitle");
+
+    function resetModalSlider() {
+      const before = modalSlider.querySelector(".slider-before");
+      const divider = modalSlider.querySelector(".slider-divider");
+      const handle = modalSlider.querySelector(".slider-handle");
+
+      before.style.clipPath = "inset(0 50% 0 0)";
+      divider.style.left = "50%";
+      handle.style.left = "50%";
+      handle.style.transform = "translate(-50%, -50%)";
+    }
+
+    document.querySelectorAll("[data-modal]").forEach(el => {
+      el.addEventListener("click", () => {
+        const afterVal = el.dataset.after;
+        const beforeVal = el.dataset.before;
+
+        modalAfter.style.background = afterVal || "";
+        modalBefore.style.background = beforeVal || "";
+        modalTitle.textContent = el.dataset.title || "";
+
+        resetModalSlider();
+        modal.classList.add("open");
+        document.body.style.overflow = "hidden";
+      });
+    });
+
+    function closeModal() {
+      modal.classList.remove("open");
+      document.body.style.overflow = "";
+    }
+
+    modalClose.addEventListener("click", closeModal);
+
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) closeModal();
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeModal();
+    });
+
+    initSlider(modalSlider);
+
+    /* =========================
+       Feature Carousel Arrows
+    ========================= */
+    document.querySelectorAll("[data-feature-carousel]").forEach(carousel => {
+      const track = carousel.querySelector("[data-feature-track]");
+      const prev = carousel.querySelector("[data-carousel-prev]");
+      const next = carousel.querySelector("[data-carousel-next]");
+
+      function getScrollAmount() {
+        const card = track.querySelector(".feature-card");
+        if (!card) return 400;
+        const gap = 20;
+        return card.offsetWidth + gap;
+      }
+
+      if (prev) {
+        prev.addEventListener("click", () => {
+          track.scrollBy({
+            left: -getScrollAmount(),
+            behavior: "smooth"
+          });
+        });
+      }
+
+      if (next) {
+        next.addEventListener("click", () => {
+          track.scrollBy({
+            left: getScrollAmount(),
+            behavior: "smooth"
+          });
+        });
+      }
+    });
+  </script>
+</body>
+</html>

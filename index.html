@@ -1,0 +1,2486 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>周子恒｜AI Product / Spatial Intelligence Portfolio</title>
+
+  <style>
+    :root {
+      --bg: #f4efe7;
+      --fg: #222222;
+      --grey: #8a8377;
+      --paper: #fffdf6;
+
+      --blue: #2f6bff;
+      --pink: #ff5c9a;
+      --green: #12a889;
+      --yellow: #ffd34d;
+
+      --line: rgba(34, 34, 34, 0.18);
+      --pad: clamp(22px, 4vw, 56px);
+      --font: Inter, Arial, "PingFang SC", "Microsoft YaHei", sans-serif;
+      
+      --stage-x: 4vw;
+      --stage-y: -5vh;
+      --index-x: 4vw;
+      --index-y: 0vh;
+
+      --card-scale: 1.1;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: var(--font);
+      background:
+        radial-gradient(circle at 68% 38%, rgba(17, 17, 17, 0.045), transparent 32%),
+        radial-gradient(circle at 18% 82%, rgba(245, 200, 75, 0.12), transparent 30%),
+        var(--bg);
+      color: var(--fg);
+      letter-spacing: -0.04em;
+    }
+
+    body {
+      transition: background 0.35s ease;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button {
+      font-family: inherit;
+    }
+
+    /* =========================
+       Background
+    ========================= */
+    .page {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      overflow: hidden;
+    }
+
+    .noise {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.045;
+      background-image:
+        linear-gradient(45deg, #000 25%, transparent 25%),
+        linear-gradient(-45deg, #000 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #000 75%),
+        linear-gradient(-45deg, transparent 75%, #000 75%);
+      background-size: 6px 6px;
+      z-index: 1;
+    }
+
+    .grid-lines {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.18;
+      background-image:
+        linear-gradient(to right, rgba(34, 34, 34, 0.08) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(34, 34, 34, 0.08) 1px, transparent 1px);
+      background-size: 56px 56px;
+      mask-image: radial-gradient(circle at 62% 44%, #000 0%, transparent 74%);
+    }
+
+    .main-content {
+      position: relative;
+      flex: 1;
+      height: 100%;
+      display: grid;
+      place-items: center;
+      transition:
+        opacity 0.6s cubic-bezier(.16, 1, .3, 1),
+        filter 0.6s cubic-bezier(.16, 1, .3, 1);
+      z-index: 5;
+    }
+
+    /* =========================
+       Topbar
+    ========================= */
+    .topbar {
+      position: absolute;
+      top: 28px;
+      left: var(--pad);
+      right: var(--pad);
+      z-index: 999;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 24px;
+      font-weight: 950;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      pointer-events: auto;
+    }
+
+    .brand {
+      font-size: 24px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .view-toggle {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 24px;
+      letter-spacing: 0.08em;
+      font-weight: 950;
+      color: rgba(34, 34, 34, 0.42);
+    }
+
+    .view-toggle button {
+      border: none;
+      background: transparent;
+      color: inherit;
+      font-size: inherit;
+      font-weight: inherit;
+      text-transform: uppercase;
+      letter-spacing: inherit;
+      cursor: pointer;
+      padding: 6px 0;
+      opacity: 0.55;
+    }
+
+    .view-toggle button.active {
+      color: var(--fg);
+      opacity: 1;
+    }
+
+    .view-dot {
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: currentColor;
+      opacity: 0.45;
+    }
+
+    /* =========================
+       Slogan
+    ========================= */
+    .slogan {
+      position: absolute;
+      left: var(--pad);
+      bottom: clamp(34px, 7vh, 72px);
+      z-index: 40;
+      max-width: 620px;
+      pointer-events: none;
+    }
+
+    .slogan-kicker {
+      font-size: 18px;
+      font-weight: 950;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      opacity: 0.56;
+      margin-bottom: 14px;
+    }
+
+    .slogan-title {
+      font-size: clamp(38px, 5.6vw, 108px);
+      line-height: 0.95;
+      font-weight: 950;
+      letter-spacing: -0.075em;
+      text-transform: uppercase;
+      max-width: 650px;
+    }
+
+    .slogan-desc {
+      margin-top: 20px;
+      max-width: 620px;
+      font-size: clamp(18px, 1.05vw, 30px);
+      line-height: 1.45;
+      font-weight: 650;
+      letter-spacing: -0.04em;
+      opacity: 0.62;
+    }
+
+    .hero-actions {
+      margin-top: 24px;
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      pointer-events: auto;
+    }
+
+    .hero-btn {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 48px;
+      padding: 10px 15px;
+      border: 1.5px solid var(--fg);
+      border-radius: 999px;
+      background: rgba(255, 253, 246, 0.42);
+      color: var(--fg);
+      font-size: 18px;
+      font-weight: 950;
+      line-height: 1;
+      white-space: nowrap;
+      text-transform: uppercase;
+      box-shadow: 0 4px 0 rgba(17, 17, 17, 0.08);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      transform: translateY(0);
+      transition:
+        transform 0.2s cubic-bezier(.16, 1, .3, 1),
+        box-shadow 0.2s cubic-bezier(.16, 1, .3, 1),
+        background 0.2s ease,
+        color 0.2s ease;
+    }
+
+    .hero-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 7px 0 rgba(17, 17, 17, 0.13);
+      background: var(--yellow);
+    }
+
+    .hero-btn-primary {
+      background: var(--fg);
+      color: var(--bg);
+    }
+
+    .hero-btn-primary:hover {
+      background: var(--blue);
+      color: #ffffff;
+    }
+
+    /* =========================
+       Compass
+    ========================= */
+    .compass-stage {
+      position: relative;
+      z-index: 10;
+      width: min(112vmin, 1120px);
+      height: min(112vmin, 1120px);
+      display: grid;
+      place-items: center;
+
+      transform: translate(var(--stage-x), var(--stage-y));
+
+      transition:
+        transform 0.6s cubic-bezier(.16, 1, .3, 1),
+        opacity 0.4s ease;
+    }
+
+    .index-mode .compass-stage {
+      transform: translate(var(--stage-x), calc(var(--stage-y) - 3%)) scale(0.78);
+      opacity: 0.13;
+      pointer-events: none;
+    }
+
+    .category-mode .compass-stage {
+      transform: translate(var(--stage-x), var(--stage-y)) scale(0.92);
+    }
+
+    .category-mode #mapViewBtn {
+      color: var(--fg);
+      opacity: 1;
+    }
+
+    .category-mode #mapViewBtn::after {
+      content: " / BACK";
+      opacity: 0.45;
+    }
+
+    .compass-wrap {
+      position: relative;
+      z-index: 20;
+      width: min(86vmin, 860px);
+      height: min(86vmin, 860px);
+      display: grid;
+      place-items: center;
+    }
+
+    .compass {
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+    }
+
+    .sector-group {
+      cursor: pointer;
+      transform-origin: 500px 500px;
+      transition:
+        transform 0.3s cubic-bezier(.16, 1, .3, 1),
+        filter 0.3s ease;
+      outline: none;
+    }
+
+    .sector-group:hover {
+      transform: scale(1.05);
+      filter: drop-shadow(0 14px 0 rgba(17, 17, 17, 0.12));
+    }
+
+    .ring-sector {
+      fill: var(--fg);
+      stroke: var(--grey);
+      stroke-width: 0.5;
+      cursor: pointer;
+      transform-origin: 500px 500px;
+      filter: url(#flat-shadow-initial);
+      transition:
+        fill 0.24s ease,
+        transform 0.28s cubic-bezier(.16, 1, .3, 1),
+        filter 0.28s ease;
+    }
+
+    .sector-group:hover .ring-sector,
+    .sector-group.touch-active .ring-sector {
+      transform: scale(1.05);
+      filter: url(#flat-shadow-active);
+    }
+
+    .sector-group[data-id="product"]:hover .ring-sector,
+    .sector-group[data-id="product"].touch-active .ring-sector {
+      fill: var(--blue);
+    }
+
+    .sector-group[data-id="spatial"]:hover .ring-sector,
+    .sector-group[data-id="spatial"].touch-active .ring-sector {
+      fill: var(--pink);
+    }
+
+    .sector-group[data-id="robotics"]:hover .ring-sector,
+    .sector-group[data-id="robotics"].touch-active .ring-sector {
+      fill: var(--green);
+    }
+
+    .sector-group[data-id="about"]:hover .ring-sector,
+    .sector-group[data-id="about"].touch-active .ring-sector {
+      fill: var(--yellow);
+    }
+
+    .ring-label {
+      font-size: 24px;
+      font-weight: 950;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      fill: var(--bg);
+      pointer-events: none;
+      transition: fill 0.28s cubic-bezier(.16, 1, .3, 1);
+    }
+
+    .sector-group:hover .ring-label,
+    .sector-group.touch-active .ring-label {
+      fill: #ffffff;
+    }
+
+    .guide-path {
+      fill: none;
+      stroke: none;
+    }
+
+    .bg-deco-ring {
+      fill: none;
+      stroke: var(--fg);
+      stroke-width: 1.2;
+      opacity: 0.15;
+      pointer-events: none;
+    }
+
+    .sketch-arrow-path {
+      fill: none;
+      stroke: var(--paper);
+      stroke-width: 1.2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      opacity: 0.95;
+      pointer-events: none;
+    }
+
+    .sketch-arrow-path.ghost {
+      stroke-width: 1.8;
+      opacity: 0.35;
+    }
+
+    /* =========================
+       Center Media
+    ========================= */
+    .center-media {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 28.5%;
+      height: 28.5%;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      overflow: hidden;
+      background: var(--paper);
+      z-index: 24;
+      pointer-events: none;
+      box-shadow:
+        inset 0 0 0 1px rgba(34, 34, 34, 0.1),
+        0 16px 0 rgba(17, 17, 17, 0.08);
+    }
+
+    .center-media img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0;
+      transform: scale(1.12);
+      transition:
+        opacity 0.32s ease,
+        transform 0.42s cubic-bezier(.16, 1, .3, 1);
+    }
+
+    .center-media img.active {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    /* =========================
+       Project Orbit - Flat Patch Style
+    ========================= */
+    .project-orbit {
+      position: absolute;
+      inset: 0;
+      z-index: 16;
+      pointer-events: none;
+      transition:
+        opacity 0.45s ease,
+        transform 0.6s cubic-bezier(.16, 1, .3, 1);
+    }
+
+    .index-mode .project-orbit {
+      opacity: 0;
+      transform: scale(0.92);
+      pointer-events: none;
+    }
+
+    .orbit-line {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: min(101vmin, 1010px);
+      height: min(101vmin, 1010px);
+      transform: translate(-50%, -50%);
+      border: 1px solid rgba(34, 34, 34, 0.13);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .orbit-line:nth-child(2) {
+      width: min(77vmin, 770px);
+      height: min(77vmin, 770px);
+      border-style: dashed;
+      opacity: 0.55;
+    }
+
+    .project-card {
+      --x: 0%;
+      --y: 0%;
+      --rot: 0deg;
+      --accent: var(--blue);
+
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: clamp(150px, 13vw, 230px);
+      min-height: 138px;
+
+      transform:
+        translate(-50%, -50%)
+        translate(var(--x), var(--y))
+        rotate(var(--rot))
+        scale(var(--card-scale));
+
+      pointer-events: auto;
+      cursor: pointer;
+
+      background: var(--paper);
+      color: var(--fg);
+
+      border: 2px solid var(--fg);
+      border-radius: 0;
+
+      clip-path: polygon(
+        0 0,
+        calc(100% - 18px) 0,
+        100% 18px,
+        100% 100%,
+        18px 100%,
+        0 calc(100% - 18px)
+      );
+
+      box-shadow: 9px 9px 0 rgba(17, 17, 17, 0.22);
+
+      transition:
+        transform 0.34s cubic-bezier(.16, 1, .3, 1),
+        opacity 0.25s ease,
+        filter 0.25s ease,
+        background 0.18s ease,
+        color 0.18s ease,
+        box-shadow 0.25s ease;
+    }
+
+    .project-card:hover {
+      transform:
+        translate(-50%, -50%)
+        translate(var(--x), var(--y))
+        rotate(0deg)
+        scale(calc(var(--card-scale) * 1.075));
+      z-index: 50;
+      background: var(--accent);
+      color: #ffffff;
+      box-shadow: 14px 14px 0 rgba(17, 17, 17, 0.34);
+    }
+
+
+    .project-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 5;
+      pointer-events: none;
+      border: 2px solid var(--fg);
+      clip-path: polygon(
+        0 0,
+        calc(100% - 18px) 0,
+        100% 18px,
+        100% 100%,
+        18px 100%,
+        0 calc(100% - 18px)
+      );
+    }
+
+    .project-card::after {
+      content: "";
+      position: absolute;
+      right: -1px;
+      top: -1px;
+      width: 34px;
+      height: 34px;
+      background: var(--accent);
+      border-left: 2px solid var(--fg);
+      border-bottom: 2px solid var(--fg);
+      clip-path: polygon(100% 0, 100% 100%, 0 0);
+      z-index: 6;
+      pointer-events: none;
+    }
+
+    .project-card:hover::after {
+      background: var(--paper);
+    }
+
+    .project-orbit.has-focus .project-card {
+      opacity: 0.18;
+      filter: grayscale(1);
+    }
+
+    .project-orbit.has-focus .project-card.is-related {
+      opacity: 1;
+      filter: none;
+      background: var(--accent);
+      color: #ffffff;
+      box-shadow: 14px 14px 0 rgba(17, 17, 17, 0.34);
+    }
+
+    .project-orbit.has-focus .project-card.is-related::after {
+      background: var(--paper);
+    }
+
+    .project-thumb {
+      position: relative;
+      height: 82px;
+      margin: 10px 10px 0;
+      background: var(--fg);
+      border: 2px solid var(--fg);
+      overflow: hidden;
+      clip-path: polygon(
+        0 0,
+        calc(100% - 10px) 0,
+        100% 10px,
+        100% 100%,
+        0 100%
+      );
+    }
+
+    .project-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      filter: saturate(0.95) contrast(1.04);
+      transform: scale(1.02);
+      transition:
+        transform 0.35s cubic-bezier(.16, 1, .3, 1),
+        filter 0.25s ease;
+    }
+
+    .project-card:hover .project-thumb img,
+    .project-card.is-related .project-thumb img {
+      transform: scale(1.1);
+      filter: saturate(1.15) contrast(1.08);
+    }
+
+    .project-meta {
+      position: relative;
+      padding: 11px 12px 14px;
+      z-index: 10;
+    }
+
+    .project-kicker {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 8px;
+      font-size: 9px;
+      line-height: 1;
+      font-weight: 950;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(34, 34, 34, 0.58);
+    }
+
+    .project-card:hover .project-kicker,
+    .project-card.is-related .project-kicker {
+      color: rgba(255, 255, 255, 0.75);
+    }
+
+    .project-dot {
+      width: 18px;
+      height: 8px;
+      background: var(--accent);
+      border: 1.5px solid var(--fg);
+      border-radius: 999px;
+      flex: 0 0 auto;
+    }
+
+    .project-card:hover .project-dot,
+    .project-card.is-related .project-dot {
+      background: var(--paper);
+    }
+
+    .project-title {
+      font-size: clamp(15px, 1.18vw, 22px);
+      line-height: 0.92;
+      font-weight: 950;
+      letter-spacing: -0.075em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .project-desc {
+      font-size: 11px;
+      line-height: 1.35;
+      font-weight: 750;
+      letter-spacing: -0.03em;
+      color: rgba(34, 34, 34, 0.62);
+    }
+
+    .project-card:hover .project-desc,
+    .project-card.is-related .project-desc {
+      color: rgba(255, 255, 255, 0.82);
+    }
+
+    /* =========================
+      Category Focus Panel
+    ========================= */
+    .category-panel {
+      position: absolute;
+      right: var(--pad);
+      top: 50%;
+      z-index: 60;
+
+      width: min(420px, 34vw);
+      min-height: 420px;
+
+      transform: translateY(-50%) translateX(28px);
+      opacity: 0;
+      pointer-events: none;
+
+      background: var(--paper);
+      border: 2px solid var(--fg);
+      color: var(--fg);
+
+      clip-path: polygon(
+        0 0,
+        calc(100% - 28px) 0,
+        100% 28px,
+        100% 100%,
+        28px 100%,
+        0 calc(100% - 28px)
+      );
+
+      box-shadow: 14px 14px 0 rgba(17, 17, 17, 0.24);
+
+      padding: 28px 28px 30px;
+
+      transition:
+        opacity 0.38s ease,
+        transform 0.46s cubic-bezier(.16, 1, .3, 1);
+    }
+
+    .category-panel::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border: 2px solid var(--fg);
+      pointer-events: none;
+
+      clip-path: polygon(
+        0 0,
+        calc(100% - 28px) 0,
+        100% 28px,
+        100% 100%,
+        28px 100%,
+        0 calc(100% - 28px)
+      );
+    }
+
+    .category-panel::after {
+      content: "";
+      position: absolute;
+      right: -1px;
+      top: -1px;
+      width: 52px;
+      height: 52px;
+      background: var(--category-color, var(--yellow));
+      border-left: 2px solid var(--fg);
+      border-bottom: 2px solid var(--fg);
+      clip-path: polygon(100% 0, 100% 100%, 0 0);
+      pointer-events: none;
+    }
+
+    .category-mode .category-panel {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(-50%) translateX(0);
+    }
+
+    .category-close {
+      position: absolute;
+      right: 20px;
+      bottom: 18px;
+
+      z-index: 5;
+
+      width: 64px;
+      height: 34px;
+
+      border: 2px solid var(--fg);
+      background: var(--fg);
+      color: var(--bg);
+
+      font-size: 10px;
+      font-weight: 950;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+
+      cursor: pointer;
+      box-shadow: 4px 4px 0 rgba(17, 17, 17, 0.2);
+    }
+
+    .category-close:hover {
+      background: var(--category-color, var(--yellow));
+      color: var(--fg);
+    }
+
+    .category-kicker {
+      margin-bottom: 16px;
+
+      font-size: 11px;
+      font-weight: 950;
+      line-height: 1;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+
+      color: rgba(34, 34, 34, 0.52);
+    }
+
+    .category-title {
+      margin-bottom: 18px;
+
+      font-size: clamp(36px, 3.4vw, 64px);
+      line-height: 0.92;
+      font-weight: 950;
+      letter-spacing: -0.08em;
+      text-transform: uppercase;
+    }
+
+    .category-desc {
+      max-width: 340px;
+      margin-bottom: 26px;
+
+      font-size: 15px;
+      line-height: 1.55;
+      font-weight: 720;
+      letter-spacing: -0.035em;
+
+      color: rgba(34, 34, 34, 0.64);
+    }
+
+    .category-works {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding-bottom: 48px;
+    }
+
+    .category-work {
+      position: relative;
+
+      display: grid;
+      grid-template-columns: 42px 1fr 54px;
+      align-items: center;
+      gap: 12px;
+
+      padding: 12px 0;
+
+      border-top: 2px solid var(--fg);
+
+      cursor: pointer;
+
+      transition:
+        transform 0.24s cubic-bezier(.16, 1, .3, 1),
+        background 0.2s ease;
+    }
+
+    .category-work:last-child {
+      border-bottom: 2px solid var(--fg);
+    }
+
+    .category-work:hover {
+      transform: translateX(8px);
+      background: color-mix(in srgb, var(--category-color, var(--yellow)) 16%, transparent);
+    }
+
+    .category-work-no {
+      font-size: 11px;
+      font-weight: 950;
+      letter-spacing: 0.12em;
+      color: rgba(34, 34, 34, 0.5);
+    }
+
+    .category-work-main {
+      min-width: 0;
+    }
+
+    .category-work-title {
+      font-size: 18px;
+      line-height: 0.98;
+      font-weight: 950;
+      letter-spacing: -0.06em;
+      text-transform: uppercase;
+    }
+
+    .category-work-meta {
+      margin-top: 5px;
+      font-size: 10px;
+      line-height: 1.25;
+      font-weight: 850;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: rgba(34, 34, 34, 0.48);
+    }
+
+    .category-work-view {
+      justify-self: end;
+
+      width: 48px;
+      height: 28px;
+
+      display: grid;
+      place-items: center;
+
+      border: 2px solid var(--fg);
+      background: var(--paper);
+
+      font-size: 9px;
+      font-weight: 950;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+
+      box-shadow: 3px 3px 0 rgba(17, 17, 17, 0.18);
+    }
+
+    .category-work:hover .category-work-view {
+      background: var(--fg);
+      color: var(--bg);
+    }
+
+    .category-mode .project-orbit.has-focus .project-card:not(.is-related) {
+      opacity: 0.12;
+    }
+
+    .category-mode .slogan {
+      max-width: 540px;
+    }
+
+    @media (max-width: 768px) {
+      .category-panel {
+        left: var(--pad);
+        right: var(--pad);
+        top: auto;
+        bottom: max(22px, env(safe-area-inset-bottom));
+
+        width: auto;
+        min-height: auto;
+        max-height: 58svh;
+        overflow-y: auto;
+
+        transform: translateY(24px);
+        padding: 22px 22px 26px;
+      }
+
+      .category-mode .category-panel {
+        transform: translateY(0);
+      }
+
+      .category-mode .compass-stage {
+        transform: translate(-50%, -50%) scale(0.72);
+        opacity: 0.18;
+      }
+
+      .category-title {
+        font-size: clamp(34px, 11vw, 52px);
+      }
+
+      .category-desc {
+        font-size: 13px;
+      }
+
+      .category-work {
+        grid-template-columns: 36px 1fr 46px;
+      }
+
+      .category-work-title {
+        font-size: 16px;
+      }
+
+      .category-close {
+        position: relative;
+        right: auto;
+        bottom: auto;
+        margin-top: 16px;
+      }
+    }
+
+
+    /* =========================
+       Index View
+    ========================= */
+    .index-panel {
+      position: absolute;
+      z-index: 35;
+
+      left: calc(50% + var(--stage-x));
+      top: 50%;
+
+      width: min(1080px, 82vw);
+      max-height: min(70vh, 760px);
+
+      transform: translate(-50%, -45%) scale(0.96);
+
+      opacity: 0;
+      pointer-events: none;
+
+      transition:
+        opacity 0.45s ease,
+        transform 0.55s cubic-bezier(.16, 1, .3, 1);
+    }
+
+
+    .index-mode .index-panel {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+      pointer-events: auto;
+    }
+
+    .index-head {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 28px;
+      padding-bottom: 18px;
+      border-bottom: 2px solid var(--fg);
+    }
+
+    .index-title {
+      font-size: clamp(40px, 6vw, 96px);
+      line-height: 0.88;
+      font-weight: 950;
+      letter-spacing: -0.085em;
+      text-transform: uppercase;
+    }
+
+    .index-desc {
+      max-width: 330px;
+      font-size: 14px;
+      line-height: 1.45;
+      font-weight: 750;
+      letter-spacing: -0.035em;
+      color: rgba(34, 34, 34, 0.58);
+    }
+
+    .work-list {
+      display: flex;
+      flex-direction: column;
+      border-top: 2px solid var(--fg);
+    }
+
+    .work-row {
+      display: grid;
+      grid-template-columns: 64px 1.2fr 1fr 96px;
+      align-items: center;
+      gap: 20px;
+      padding: 20px 0;
+      border-bottom: 2px solid var(--fg);
+      cursor: pointer;
+      transition:
+        transform 0.25s cubic-bezier(.16, 1, .3, 1),
+        background 0.2s ease;
+    }
+
+    .work-row:hover {
+      transform: translateX(12px);
+      background: rgba(255, 211, 77, 0.18);
+    }
+
+    .work-no {
+      font-size: 12px;
+      font-weight: 950;
+      letter-spacing: 0.14em;
+      opacity: 0.52;
+    }
+
+    .work-name {
+      font-size: clamp(22px, 2.4vw, 42px);
+      line-height: 0.95;
+      font-weight: 950;
+      letter-spacing: -0.07em;
+      text-transform: uppercase;
+    }
+
+    .work-tags {
+      font-size: 11px;
+      line-height: 1.4;
+      font-weight: 850;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: rgba(34, 34, 34, 0.48);
+    }
+
+    .work-cta {
+      justify-self: end;
+      width: 54px;
+      height: 32px;
+      display: grid;
+      place-items: center;
+      border: 2px solid var(--fg);
+      border-radius: 0;
+      font-size: 10px;
+      font-weight: 950;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      box-shadow: 4px 4px 0 rgba(17, 17, 17, 0.18);
+      transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        box-shadow 0.2s ease;
+    }
+
+    .work-row:hover .work-cta {
+      background: var(--fg);
+      color: var(--bg);
+      box-shadow: 6px 6px 0 rgba(17, 17, 17, 0.28);
+    }
+
+    .hover-badge {
+      position: fixed;
+      left: 50%;
+      top: 50%;
+      z-index: 80;
+      pointer-events: none;
+      width: 78px;
+      height: 78px;
+      border-radius: 50%;
+      background: var(--fg);
+      color: var(--bg);
+      display: grid;
+      place-items: center;
+      font-size: 14px;
+      font-weight: 950;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      transform: translate(-50%, -50%) scale(0);
+      transition: transform 0.18s ease;
+      mix-blend-mode: difference;
+    }
+
+    .hover-badge.visible {
+      transform: translate(-50%, -50%) scale(1);
+    }
+
+    /* =========================
+       Responsive
+    ========================= */
+    @media (max-width: 1180px) {
+      .project-card {
+        width: 170px;
+      }
+
+      .project-card:nth-of-type(3),
+      .project-card:nth-of-type(6) {
+        display: none;
+      }
+    }
+
+    @media (max-width: 1024px) {
+      .compass-stage {
+        width: min(96vmin, 760px);
+        height: min(96vmin, 760px);
+      }
+
+      .compass-wrap {
+        width: min(86vmin, 720px);
+        height: min(86vmin, 720px);
+      }
+
+      .slogan {
+        max-width: 420px;
+      }
+
+      .slogan-title {
+        font-size: clamp(34px, 8vw, 72px);
+      }
+
+      .project-card {
+        width: 150px;
+      }
+
+      .project-desc {
+        display: none;
+      }
+
+      .project-thumb {
+        height: 74px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      :root {
+        --pad: 22px;
+      }
+
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        letter-spacing: -0.03em;
+      }
+
+      .page {
+        width: 100vw;
+        height: 100svh;
+        min-height: 100svh;
+      }
+
+      .main-content {
+        display: block;
+        height: 100svh;
+        overflow: hidden;
+      }
+
+      .topbar {
+        top: 18px;
+        left: var(--pad);
+        right: var(--pad);
+        font-size: 11px;
+      }
+
+      .brand {
+        font-size: 15px;
+      }
+
+      .topbar-actions {
+        gap: 12px;
+      }
+
+      .view-toggle {
+        font-size: 10px;
+        gap: 5px;
+      }
+
+      .compass-stage {
+        position: absolute;
+        left: 50%;
+        top: 39%;
+        width: min(112vw, 520px);
+        height: min(112vw, 520px);
+        transform: translate(-50%, -50%);
+      }
+
+      .index-mode .compass-stage {
+        transform: translate(-50%, -50%) scale(0.7);
+      }
+
+      .compass-wrap {
+        width: 92vw;
+        height: 92vw;
+      }
+
+      .center-media {
+        width: 26%;
+        height: 26%;
+      }
+
+      .project-orbit {
+        display: none;
+      }
+
+      .slogan {
+        left: var(--pad);
+        right: var(--pad);
+        bottom: max(28px, env(safe-area-inset-bottom));
+        max-width: none;
+        z-index: 45;
+      }
+
+      .index-mode .slogan {
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .slogan-kicker {
+        font-size: 10px;
+        margin-bottom: 10px;
+        letter-spacing: 0.12em;
+      }
+
+      .slogan-title {
+        font-size: clamp(34px, 12vw, 54px);
+        line-height: 0.9;
+        max-width: 320px;
+        letter-spacing: -0.095em;
+      }
+
+      .slogan-desc {
+        margin-top: 14px;
+        max-width: 330px;
+        font-size: 13px;
+        line-height: 1.5;
+        letter-spacing: -0.02em;
+        opacity: 0.68;
+      }
+
+      .ring-label {
+        font-size: 21px;
+        letter-spacing: 0.1em;
+      }
+
+      .hover-badge {
+        display: none;
+      }
+
+
+      .hero-actions {
+        margin-top: 16px;
+        gap: 8px;
+      }
+
+      .hero-btn {
+        min-height: 34px;
+        padding: 9px 13px;
+        font-size: 11px;
+        border-width: 1.4px;
+        box-shadow: 0 3px 0 rgba(17, 17, 17, 0.08);
+      }
+
+      .index-panel {
+        left: 50%;
+        top: 53%;
+        width: calc(100vw - 44px);
+        max-height: 64svh;
+        overflow-y: auto;
+      }
+
+      .index-head {
+        display: block;
+        margin-bottom: 16px;
+      }
+
+      .index-title {
+        font-size: clamp(42px, 14vw, 70px);
+        margin-bottom: 14px;
+      }
+
+      .index-desc {
+        font-size: 12px;
+      }
+
+      .work-row {
+        grid-template-columns: 42px 1fr 52px;
+        gap: 10px;
+        padding: 15px 0;
+      }
+
+      .work-tags {
+        grid-column: 2 / 4;
+        font-size: 10px;
+        margin-top: -6px;
+      }
+
+      .work-name {
+        font-size: 24px;
+      }
+
+      .work-cta {
+        width: 48px;
+        height: 28px;
+      }
+    }
+
+    @media (max-width: 430px) {
+      :root {
+        --pad: 18px;
+      }
+
+      .topbar {
+        top: 16px;
+      }
+
+      .compass-stage {
+        top: 38%;
+        width: 92vw;
+        height: 92vw;
+      }
+
+      .compass-wrap {
+        width: 92vw;
+        height: 92vw;
+      }
+
+      .slogan {
+        bottom: max(24px, env(safe-area-inset-bottom));
+      }
+
+      .slogan-title {
+        font-size: clamp(31px, 12.5vw, 46px);
+        max-width: 300px;
+      }
+
+      .slogan-desc {
+        max-width: 300px;
+        font-size: 12.5px;
+      }
+
+      .ring-label {
+        font-size: 19px;
+      }
+
+
+      .hero-actions {
+        margin-top: 14px;
+        gap: 7px;
+      }
+
+      .hero-btn {
+        min-height: 32px;
+        padding: 8px 11px;
+        font-size: 10.5px;
+      }
+    }
+
+    @supports (height: 100svh) {
+      html,
+      body,
+      .page,
+      .main-content {
+        height: 100svh;
+      }
+    }
+
+    @media (hover: none), (pointer: coarse) {
+      .sector-group:hover {
+        transform: none;
+        filter: none;
+      }
+
+      .sector-group:hover .ring-sector {
+        transform: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page" id="pageContainer">
+    <div class="grid-lines"></div>
+    <div class="noise"></div>
+
+    <div class="main-content" id="mainContent">
+      <header class="topbar">
+        <div class="brand" id="brand">周子恒</div>
+
+        <div class="topbar-actions">
+          <div class="view-toggle" aria-label="视图切换">
+            <button id="mapViewBtn" class="active" type="button">Map</button>
+            <span class="view-dot"></span>
+            <button id="indexViewBtn" type="button">Index</button>
+          </div>
+        </div>
+      </header>
+
+      <section class="slogan">
+        <div class="slogan-kicker" id="sloganKicker">设计智能 / DESIGN INTELLIGENCE</div>
+
+        <h1 class="slogan-title" id="sloganTitle">空间智能与 <br>人机协同工作流设计者</h1>
+
+        <p class="slogan-desc" id="sloganDesc">
+          我设计 AI 驱动的产品系统、空间生成工作流与智能体仿真工具。将专业判断转化为可计算、可评估、可落地的设计智能系统。
+        </p>
+
+        <div class="hero-actions" aria-label="主要操作">
+          <a class="hero-btn hero-btn-primary" href="doc/简历.docx" target="_blank" rel="noopener">
+            查看简历
+          </a>
+
+          <a class="hero-btn" href="mailto:zhou_ziheng1@outlook.com">
+            联系我
+          </a>
+        </div>
+      </section>
+
+      <section class="compass-stage" id="compassStage">
+        <div class="project-orbit" id="projectOrbit">
+          <div class="orbit-line"></div>
+          <div class="orbit-line"></div>
+
+          <article
+            class="project-card"
+            data-project="aigc-product"
+            data-tags="product"
+            data-link="work-aigc-product-system.html"
+            style="--x: -43vmin; --y: -21vmin; --rot: -7deg; --accent: var(--blue);"
+          >
+            <div class="project-thumb">
+              <img src="images/EC/0.jpg" alt="AI 电商素材生成平台">
+            </div>
+            <div class="project-meta">
+              <div class="project-kicker">
+                <span>01 / Product</span>
+                <span class="project-dot"></span>
+              </div>
+              <h2 class="project-title">AI 电商素材生成平台</h2>
+              <p class="project-desc">模型 Benchmark、任务路由与数据埋点驱动的素材生产系统。</p>
+            </div>
+          </article>
+
+          <article
+            class="project-card"
+            data-project="NEOCLAW LOOP"
+            data-tags="product"
+            data-link="work-neoclaw.html"
+            style="--x: 41vmin; --y: -20vmin; --rot: 8deg; --accent: var(--blue);"
+          >
+            <div class="project-thumb">
+              <img src="images/EC/1.jpg" alt="NEOCLAW LOOP">
+            </div>
+            <div class="project-meta">
+              <div class="project-kicker">
+                <span>02 / Product</span>
+                <span class="project-dot"></span>
+              </div>
+              <h2 class="project-title">NEOCLAW LOOP</h2>
+              <p class="project-desc">对不同生成模型进行质量、成本、速度与场景适配评估。</p>
+            </div>
+          </article>
+
+          <article
+            class="project-card"
+            data-project="spatial-workflow"
+            data-tags="spatial"
+            data-link="work-global-relay-conference.html"
+            style="--x: 48vmin; --y: 13vmin; --rot: -5deg; --accent: var(--pink);"
+          >
+            <div class="project-thumb">
+              <img src="images/AGR/City-NY.jpg" alt="AI GLOBAL RELAY会议">
+            </div>
+            <div class="project-meta">
+              <div class="project-kicker">
+                <span>03 / Spatial</span>
+                <span class="project-dot"></span>
+              </div>
+              <h2 class="project-title">AI GLOBAL RELAY会议</h2>
+              <p class="project-desc">从语言、草图、参考图到可迭代空间视觉方案。</p>
+            </div>
+          </article>
+
+          <article
+            class="project-card"
+            data-project="interior-ai"
+            data-tags="spatial"
+            data-link="work-interior-ai.html"
+            style="--x: 18vmin; --y: 43vmin; --rot: 7deg; --accent: var(--pink);"
+          >
+            <div class="project-thumb">
+              <img src="images/ARC/1.jpg" alt="商业空间视觉设计">
+            </div>
+            <div class="project-meta">
+              <div class="project-kicker">
+                <span>04 / Spatial</span>
+                <span class="project-dot"></span>
+              </div>
+              <h2 class="project-title">商业空间视觉设计</h2>
+              <p class="project-desc">室内场景的风格控制、参考约束与视觉生成流程。</p>
+            </div>
+          </article>
+
+          <article
+            class="project-card"
+            data-project="robotic-simulation"
+            data-tags="robotics"
+            data-link="work-LLM_to_Construction.html"
+            style="--x: -21vmin; --y: 43vmin; --rot: -8deg; --accent: var(--green);"
+          >
+            <div class="project-thumb">
+              <image src="images/llmToConstruction/BRIDGE_00.jpg" autoplay loop muted playsinline></video>
+            </div>
+            <div class="project-meta">
+              <div class="project-kicker">
+                <span>05 / Robotics</span>
+                <span class="project-dot"></span>
+              </div>
+              <h2 class="project-title">自然语言需求转化</h2>
+              <p class="project-desc">Unity3D、ML-Agents 与智能体空间行为模拟。</p>
+            </div>
+          </article>
+
+          <article
+            class="project-card"
+            data-project="pathfinding"
+            data-tags="robotics"
+            data-link="work-ucl.html"
+            style="--x: -49vmin; --y: 9vmin; --rot: 6deg; --accent: var(--green);"
+          >
+            <div class="project-thumb">
+              <image src="images/UCL/STIG_00.jpg" alt="极端环境下的无人建造">
+            </div>
+            <div class="project-meta">
+              <div class="project-kicker">
+                <span>06 / Systems</span>
+                <span class="project-dot"></span>
+              </div>
+              <h2 class="project-title">极端环境下的无人建造</h2>
+              <p class="project-desc">基于 A* 与空间约束的路径规划和建造逻辑实验。</p>
+            </div>
+          </article>
+        </div>
+
+        <section class="compass-wrap">
+          <svg class="compass" viewBox="0 0 1000 1000">
+            <defs id="defs">
+              <filter id="flat-shadow-initial" x="-20%" y="-20%" width="140%" height="150%">
+                <feDropShadow dx="0" dy="15" stdDeviation="0" flood-color="#111111" flood-opacity="0.4" />
+              </filter>
+
+              <filter id="flat-shadow-active" x="-30%" y="-30%" width="160%" height="170%">
+                <feDropShadow dx="0" dy="20" stdDeviation="0" flood-color="#111111" flood-opacity="0.6" />
+              </filter>
+            </defs>
+
+            <g id="bg-decorations">
+              <circle cx="500" cy="500" r="475" class="bg-deco-ring" stroke-dasharray="2200 800" transform="rotate(-45 500 500)" />
+              <circle cx="500" cy="500" r="302.5" class="bg-deco-ring" stroke-dasharray="950 950" transform="rotate(30 500 500)" />
+              <circle cx="500" cy="500" r="195" class="bg-deco-ring" stroke-dasharray="900 300" transform="rotate(-120 500 500)" />
+              <circle cx="500" cy="500" r="460" class="bg-deco-ring" stroke-dasharray="4 12" style="opacity: 0.05;" />
+            </g>
+
+            <g id="rings"></g>
+            <g id="sketch-arrows"></g>
+          </svg>
+
+          <div class="center-media">
+            <img class="active" id="center-default" src="images/portrait.jpg" alt="">
+            <img id="center-product" src="images/EC/0.jpg" alt="">
+            <img id="center-spatial" src="images/AGR/City-NY.jpg" alt="空间智能仿真">
+            <img id="center-robotics" src="images/UCL/STIG_01.jpg" alt="极端环境下的无人建造">
+            <img id="center-about" src="images/portrait.jpg" alt="">
+          </div>
+        </section>
+      </section>
+
+      <section class="index-panel" id="indexPanel" aria-label="作品索引">
+        <div class="index-head">
+          <h2 class="index-title">项目经历</h2>
+          <p class="index-desc">
+            6 个项目对应 3 种能力维度：空间意图生成、空间智能仿真、生成能力产品化。
+          </p>
+        </div>
+
+        <div class="work-list">
+          <article class="work-row" data-link="Project Detail Page Template.html">
+            <div class="work-no">01</div>
+            <h3 class="work-name">AI 电商素材生成平台</h3>
+            <div class="work-tags">PRD文档 · 竞品分析报告 · 多模型Benchmark评测报告</div>
+            <div class="work-cta">View</div>
+          </article>
+
+          <article class="work-row" data-link="Project Detail Page Template.html">
+            <div class="work-no">02</div>
+            <h3 class="work-name">NEOCLAW LOOP</h3>
+            <div class="work-tags">Model Evaluation / Cost / Quality Control</div>
+            <div class="work-cta">View</div>
+          </article>
+
+          <article class="work-row" data-link="Project Detail Page Template.html">
+            <div class="work-no">03</div>
+            <h3 class="work-name">AI GLOBAL RELAY会议</h3>
+            <div class="work-tags">Spatial AIGC / Sketch / Reference / Prompt</div>
+            <div class="work-cta">View</div>
+          </article>
+
+          <article class="work-row" data-link="Project Detail Page Template.html">
+            <div class="work-no">04</div>
+            <h3 class="work-name">商业空间视觉设计</h3>
+            <div class="work-tags">AIGC工作流落地 · Prompt体系沉淀 · 流程标准化</div>
+            <div class="work-cta">View</div>
+          </article>
+
+          <article class="work-row" data-link="Project Detail Page Template.html">
+            <div class="work-no">05</div>
+            <h3 class="work-name">自然语言需求转化</h3>
+            <div class="work-tags">TEXT-TO-3D × 模块化建造 × 跨团队协作</div>
+            <div class="work-cta">View</div>
+          </article>
+
+          <article class="work-row" data-link="Project Detail Page Template.html">
+            <div class="work-no">06</div>
+            <h3 class="work-name">极端环境下的无人建造</h3>
+            <div class="work-tags">"空间设计 × 机器人控制 × 交互仿真 × 智能建造</div>
+            <div class="work-cta">View</div>
+          </article>
+        </div>
+      </section>
+      
+      <section class="category-panel" id="categoryPanel" aria-label="主题聚焦">
+        <button class="category-close" id="categoryClose" type="button">CLOSE</button>
+
+        <div class="category-kicker" id="categoryKicker">01 / SPATIAL GENERATION</div>
+        <h2 class="category-title" id="categoryTitle">空间意图如何<br>被生成？</h2>
+        <p class="category-desc" id="categoryDesc">
+          从自然语言、草图、模型与空间参考出发，构建可控的 AIGC 工作流，将模糊设计意图转化为可讨论、可迭代的空间视觉方案。
+        </p>
+
+        <div class="category-works" id="categoryWorks"></div>
+      </section>
+    </div>
+
+    <div class="hover-badge" id="hoverBadge">View</div>
+  </div>
+
+  <script>
+    const INNER_RING_START = 205;
+    const INNER_RING_WIDTH = 85;
+
+    const OUTER_RING_START = 315;
+    const OUTER_RING_WIDTH = 130;
+
+    const CX = 500;
+    const CY = 500;
+
+    const defs = document.getElementById("defs");
+    const rings = document.getElementById("rings");
+    const sketchArrows = document.getElementById("sketch-arrows");
+    const pageContainer = document.getElementById("pageContainer");
+    const mainContent = document.getElementById("mainContent");
+    const brand = document.getElementById("brand");
+
+    const sloganKicker = document.getElementById("sloganKicker");
+    const sloganTitle = document.getElementById("sloganTitle");
+    const sloganDesc = document.getElementById("sloganDesc");
+
+    const hoverBadge = document.getElementById("hoverBadge");
+    const projectOrbit = document.getElementById("projectOrbit");
+
+    const mapViewBtn = document.getElementById("mapViewBtn");
+    const indexViewBtn = document.getElementById("indexViewBtn");
+
+    const categoryPanel = document.getElementById("categoryPanel");
+    const categoryClose = document.getElementById("categoryClose");
+    const categoryKicker = document.getElementById("categoryKicker");
+    const categoryTitle = document.getElementById("categoryTitle");
+    const categoryDesc = document.getElementById("categoryDesc");
+    const categoryWorks = document.getElementById("categoryWorks");
+
+    const isTouchDevice = window.matchMedia("(hover: none), (pointer: coarse)").matches;
+    let activeTouchId = null;
+
+    const defaultCopy = {
+      kicker: "设计智能 / DESIGN INTELLIGENCE",
+      title: "空间智能与 <br>人机协同工作流设计者",
+      desc: "我设计 AI 驱动的产品系统、空间生成工作流与智能体仿真工具。将专业判断转化为可计算、可评估、可落地的设计智能系统。"
+    };
+
+    const sectors = [
+      {
+        id: "spatial",
+        label: "空间意图如何生成？",
+        start: -30,
+        end: 90,
+        inner: OUTER_RING_START,
+        outer: OUTER_RING_START + OUTER_RING_WIDTH,
+        textRadius: OUTER_RING_START + (OUTER_RING_WIDTH / 2),
+        reverseText: false,
+        color: "var(--pink)",
+        kicker: "01 / SPATIAL GENERATION",
+        title: "空间意图如何被生成？",
+        desc: "从自然语言、草图、模型与空间参考出发，构建可控的 AIGC 工作流，将模糊设计意图转化为可讨论、可迭代的空间视觉方案。",
+        works: [
+          {
+            no: "03",
+            title: "AI GLOBAL RELAY会议",
+            meta: "Spatial AIGC / Sketch / Reference / Prompt",
+            link: "work-global-relay-conference.html"
+          },
+          {
+            no: "04",
+            title: "商业空间视觉设计",
+            meta: "AIGC工作流落地 · Prompt体系沉淀 · 流程标准化",
+            link: "work-interior-ai.html"
+          }
+        ]
+      },
+      {
+        id: "robotics",
+        label: "空间智能如何行动？",
+        start: 90,
+        end: 210,
+        inner: OUTER_RING_START,
+        outer: OUTER_RING_START + OUTER_RING_WIDTH,
+        textRadius: OUTER_RING_START + (OUTER_RING_WIDTH / 2),
+        reverseText: true,
+        color: "var(--green)",
+        kicker: "02 / SPATIAL INTELLIGENCE",
+        title: "空间智能如何行动？",
+        desc: "基于 Unity3D、ML-Agents 强化学习与 A* 算法，在虚拟仿真环境中训练智能体与机器人，探索空间中的自主路径规划与建造逻辑。",
+        works: [
+          {
+            no: "05",
+            title: "自然语言需求转化",
+            meta: "TEXT-TO-3D × 模块化建造 × 跨团队协作",
+            link: "work-LLM_to_Construction.html"
+          },
+          {
+            no: "06",
+            title: "极端环境下的无人建造",
+            meta: "空间设计 × 机器人控制 × 交互仿真 × 智能建造",
+            link: "work-ucl.html"
+          }
+        ]
+      },
+      {
+        id: "about",
+        label: "关于我",
+        isFullRing: true,
+        inner: INNER_RING_START,
+        outer: INNER_RING_START + INNER_RING_WIDTH,
+        textRadius: INNER_RING_START + (INNER_RING_WIDTH / 2),
+        color: "var(--yellow)",
+        kicker: "根目录 / THE ROOT QUESTION",
+        title: "设计智能",
+        desc: "我连接产品需求、生成模型与行业场景。不追逐瞬息万变的 AI 工具，只专注于将专业领域的隐性判断转化为可复用的设计智能系统。",
+        works: [
+          {
+            no: "CV",
+            title: "About / Resume",
+            meta: "Profile / Experience / Contact",
+            link: "about.html"
+          }
+        ]
+      },
+      {
+        id: "product",
+        label: "生成能力如何产品化？",
+        start: -150,
+        end: -30,
+        inner: OUTER_RING_START,
+        outer: OUTER_RING_START + OUTER_RING_WIDTH,
+        textRadius: OUTER_RING_START + (OUTER_RING_WIDTH / 2),
+        reverseText: false,
+        color: "var(--blue)",
+        kicker: "03 / PRODUCTIZED AIGC",
+        title: "生成能力如何产品化？",
+        desc: "将 AIGC 图像、视频生成能力封装为可控的商业生产系统：模型 Benchmark、任务路由、质量评估、成本控制与数据反馈。",
+        works: [
+          {
+            no: "01",
+            title: "AI 电商素材生成平台",
+            meta: "PRD文档 · 竞品分析报告 · 多模型Benchmark评测报告",
+            link: "work-aigc-product-system.html"
+          },
+          {
+            no: "02",
+            title: "NEOCLAW LOOP",
+            meta: "Model Evaluation / Cost / Quality Control",
+            link: "work-benchmark-router.html"
+          }
+        ]
+      },
+    ];
+
+    function polarToCartesian(cx, cy, r, angleDeg) {
+      const angleRad = (angleDeg - 90) * Math.PI / 180;
+
+      return {
+        x: cx + r * Math.cos(angleRad),
+        y: cy + r * Math.sin(angleRad)
+      };
+    }
+
+    function ringSectorPath(cx, cy, innerR, outerR, startAngle, endAngle) {
+      const largeArcFlag = Math.abs(endAngle - startAngle) > 180 ? 1 : 0;
+      const outerStart = polarToCartesian(cx, cy, outerR, startAngle);
+      const outerEnd = polarToCartesian(cx, cy, outerR, endAngle);
+      const innerEnd = polarToCartesian(cx, cy, innerR, endAngle);
+      const innerStart = polarToCartesian(cx, cy, innerR, startAngle);
+
+      return [
+        "M", outerStart.x, outerStart.y,
+        "A", outerR, outerR, 0, largeArcFlag, 1, outerEnd.x, outerEnd.y,
+        "L", innerEnd.x, innerEnd.y,
+        "A", innerR, innerR, 0, largeArcFlag, 0, innerStart.x, innerStart.y,
+        "Z"
+      ].join(" ");
+    }
+
+    function textArcPath(cx, cy, r, startAngle, endAngle, reverse = false) {
+      const largeArcFlag = Math.abs(endAngle - startAngle) > 180 ? 1 : 0;
+      let start;
+      let end;
+      let sweep;
+
+      if (!reverse) {
+        start = polarToCartesian(cx, cy, r, startAngle);
+        end = polarToCartesian(cx, cy, r, endAngle);
+        sweep = 1;
+      } else {
+        start = polarToCartesian(cx, cy, r, endAngle);
+        end = polarToCartesian(cx, cy, r, startAngle);
+        sweep = 0;
+      }
+
+      return [
+        "M", start.x, start.y,
+        "A", r, r, 0, largeArcFlag, sweep, end.x, end.y
+      ].join(" ");
+    }
+
+    function createSvgElement(tag, attrs = {}) {
+      const el = document.createElementNS("http://www.w3.org/2000/svg", tag);
+
+      Object.entries(attrs).forEach(([key, value]) => {
+        el.setAttribute(key, value);
+      });
+
+      return el;
+    }
+
+    function setCenterImage(id) {
+      document.querySelectorAll(".center-media img").forEach(img => {
+        img.classList.remove("active");
+      });
+
+      const target = document.getElementById(`center-${id}`);
+
+      if (target) {
+        target.classList.add("active");
+      } else {
+        document.getElementById("center-default").classList.add("active");
+      }
+    }
+
+    function setCopy(item) {
+      sloganKicker.textContent = item.kicker;
+      sloganTitle.innerHTML = item.title;
+      sloganDesc.textContent = item.desc;
+    }
+
+    function focusProjectsByTag(tag) {
+      if (!projectOrbit) return;
+
+      projectOrbit.classList.add("has-focus");
+
+      document.querySelectorAll(".project-card").forEach(card => {
+        const tags = card.getAttribute("data-tags") || "";
+        const related = tags.split(/\s+/).includes(tag);
+
+        card.classList.toggle("is-related", related);
+      });
+    }
+
+    function clearProjectFocus() {
+      if (!projectOrbit) return;
+
+      projectOrbit.classList.remove("has-focus");
+
+      document.querySelectorAll(".project-card").forEach(card => {
+        card.classList.remove("is-related");
+      });
+    }
+
+    function resetHero() {
+      sloganKicker.textContent = defaultCopy.kicker;
+      sloganTitle.innerHTML = defaultCopy.title;
+      sloganDesc.textContent = defaultCopy.desc;
+
+      document.querySelectorAll(".center-media img").forEach(img => {
+        img.classList.remove("active");
+      });
+
+      document.getElementById("center-default").classList.add("active");
+
+      document.querySelectorAll(".sector-group").forEach(group => {
+        group.classList.remove("touch-active");
+      });
+
+      clearProjectFocus();
+    }
+
+    function openCategory(item) {
+      if (!item) return;
+
+      pageContainer.classList.remove("index-mode");
+      pageContainer.classList.add("category-mode");
+      hoverBadge.classList.remove("visible");
+
+      mapViewBtn.classList.add("active");
+      indexViewBtn.classList.remove("active");
+
+      setCenterImage(item.id);
+      setCopy(item);
+
+      if (item.id !== "about") {
+        focusProjectsByTag(item.id);
+      } else {
+        clearProjectFocus();
+      }
+
+      categoryPanel.style.setProperty("--category-color", item.color || "var(--yellow)");
+
+      categoryKicker.textContent = item.kicker;
+      categoryTitle.innerHTML = item.title;
+      categoryDesc.textContent = item.desc;
+
+      categoryWorks.innerHTML = "";
+
+      if (item.works && item.works.length) {
+        item.works.forEach(work => {
+          const row = document.createElement("article");
+          row.className = "category-work";
+          row.setAttribute("data-link", work.link);
+
+          row.innerHTML = `
+            <div class="category-work-no">${work.no}</div>
+            <div class="category-work-main">
+              <div class="category-work-title">${work.title}</div>
+              <div class="category-work-meta">${work.meta}</div>
+            </div>
+            <div class="category-work-view">View</div>
+          `;
+
+          row.addEventListener("click", () => {
+            navigateTo(work.link);
+          });
+
+          categoryWorks.appendChild(row);
+        });
+      }
+    }
+
+    function closeCategory() {
+      pageContainer.classList.remove("category-mode");
+      pageContainer.classList.remove("index-mode");
+
+      mapViewBtn.classList.add("active");
+      indexViewBtn.classList.remove("active");
+
+      activeTouchId = null;
+
+      hoverBadge.classList.remove("visible");
+
+      resetHero();
+    }
+
+    function navigateTo(link) {
+      document.body.style.transition = "background 0.35s ease";
+      document.body.style.background = "#111111";
+
+      setTimeout(() => {
+        window.location.href = link;
+      }, 220);
+    }
+
+    function previewSector(item) {
+      setCenterImage(item.id);
+      setCopy(item);
+      activeTouchId = item.id;
+
+      if (item.id !== "about") {
+        focusProjectsByTag(item.id);
+      } else {
+        clearProjectFocus();
+      }
+
+      document.querySelectorAll(".sector-group").forEach(group => {
+        group.classList.toggle("touch-active", group.getAttribute("data-id") === item.id);
+      });
+    }
+
+    function bindSectorEvents(group, item) {
+      group.addEventListener("mouseenter", () => {
+        if (isTouchDevice) return;
+
+        if (pageContainer.classList.contains("category-mode")) return;
+
+        setCenterImage(item.id);
+        setCopy(item);
+
+        if (item.id !== "about") {
+          focusProjectsByTag(item.id);
+        } else {
+          clearProjectFocus();
+        }
+
+        hoverBadge.classList.add("visible");
+      });
+
+      group.addEventListener("mouseleave", () => {
+        if (isTouchDevice) return;
+
+        if (pageContainer.classList.contains("category-mode")) return;
+
+        resetHero();
+        hoverBadge.classList.remove("visible");
+      });
+
+      group.addEventListener("click", (e) => {
+        e.stopPropagation();
+
+        if (item.id === "about") {
+          navigateTo("about.html");
+          return;
+        }
+
+        activeTouchId = item.id;
+        openCategory(item);
+      });
+
+      group.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+
+          if (item.id === "about") {
+            navigateTo("about.html");
+            return;
+          }
+
+          activeTouchId = item.id;
+          openCategory(item);
+        }
+      });
+    }
+
+    function buildCompass() {
+      sectors.forEach((item) => {
+        if (item.isFullRing) {
+          const group = createSvgElement("g", {
+            class: "sector-group",
+            "data-id": item.id,
+            role: "link",
+            tabindex: "0",
+            "aria-label": item.label
+          });
+
+          const outerStart = polarToCartesian(CX, CY, item.outer, -180);
+          const outerMid = polarToCartesian(CX, CY, item.outer, 0);
+          const innerStart = polarToCartesian(CX, CY, item.inner, -180);
+          const innerMid = polarToCartesian(CX, CY, item.inner, 0);
+
+          const fullRingD = [
+            "M", outerStart.x, outerStart.y,
+            "A", item.outer, item.outer, 0, 1, 1, outerMid.x, outerMid.y,
+            "A", item.outer, item.outer, 0, 1, 1, outerStart.x, outerStart.y,
+            "M", innerStart.x, innerStart.y,
+            "A", item.inner, item.inner, 0, 1, 0, innerMid.x, innerMid.y,
+            "A", item.inner, item.inner, 0, 1, 0, innerStart.x, innerStart.y,
+            "Z"
+          ].join(" ");
+
+          const sectorPath = createSvgElement("path", {
+            class: "ring-sector",
+            d: fullRingD
+          });
+
+          group.appendChild(sectorPath);
+
+          const topPathId = `text-path-${item.id}-top`;
+          const topTextPathShape = createSvgElement("path", {
+            id: topPathId,
+            class: "guide-path",
+            d: textArcPath(CX, CY, item.textRadius, -90, 90, false)
+          });
+
+          defs.appendChild(topTextPathShape);
+
+          const topText = createSvgElement("text", {
+            class: "ring-label",
+            dy: "-6"
+          });
+
+          const topTextPath = createSvgElement("textPath", {
+            href: `#${topPathId}`,
+            startOffset: "50%",
+            "text-anchor": "middle"
+          });
+
+          topTextPath.textContent = item.label.toUpperCase();
+          topText.appendChild(topTextPath);
+          group.appendChild(topText);
+
+          const bottomPathId = `text-path-${item.id}-bottom`;
+          const bottomTextPathShape = createSvgElement("path", {
+            id: bottomPathId,
+            class: "guide-path",
+            d: textArcPath(CX, CY, item.textRadius, 90, 270, true)
+          });
+
+          defs.appendChild(bottomTextPathShape);
+
+          const bottomText = createSvgElement("text", {
+            class: "ring-label",
+            dy: "16"
+          });
+
+          const bottomTextPath = createSvgElement("textPath", {
+            href: `#${bottomPathId}`,
+            startOffset: "50%",
+            "text-anchor": "middle"
+          });
+
+          bottomTextPath.textContent = item.label.toUpperCase();
+          bottomText.appendChild(bottomTextPath);
+          group.appendChild(bottomText);
+
+          rings.appendChild(group);
+          bindSectorEvents(group, item);
+
+        } else {
+          const pathId = `text-path-${item.id}`;
+
+          const textPathShape = createSvgElement("path", {
+            id: pathId,
+            class: "guide-path",
+            d: textArcPath(CX, CY, item.textRadius, item.start + 8, item.end - 8, item.reverseText)
+          });
+
+          defs.appendChild(textPathShape);
+
+          const group = createSvgElement("g", {
+            class: "sector-group",
+            "data-id": item.id,
+            role: "link",
+            tabindex: "0",
+            "aria-label": item.label
+          });
+
+          const sectorPath = createSvgElement("path", {
+            class: "ring-sector",
+            d: ringSectorPath(CX, CY, item.inner, item.outer, item.start, item.end)
+          });
+
+          const text = createSvgElement("text", {
+            class: "ring-label",
+            dy: item.reverseText ? "16" : "-6"
+          });
+
+          const textPath = createSvgElement("textPath", {
+            href: `#${pathId}`,
+            startOffset: "50%",
+            "text-anchor": "middle"
+          });
+
+          textPath.textContent = item.label.toUpperCase();
+
+          text.appendChild(textPath);
+          group.appendChild(sectorPath);
+          group.appendChild(text);
+          rings.appendChild(group);
+
+          bindSectorEvents(group, item);
+        }
+      });
+    }
+
+    function arcPathByAngles(cx, cy, r, startAngle, endAngle) {
+      const start = polarToCartesian(cx, cy, r, startAngle);
+      const end = polarToCartesian(cx, cy, r, endAngle);
+      const largeArcFlag = Math.abs(endAngle - startAngle) > 180 ? 1 : 0;
+
+      return [
+        "M", start.x, start.y,
+        "A", r, r, 0, largeArcFlag, 1, end.x, end.y
+      ].join(" ");
+    }
+
+    function addSketchArrow(startAngle, endAngle, r) {
+      const mainPath = createSvgElement("path", {
+        class: "sketch-arrow-path",
+        d: arcPathByAngles(CX, CY, r, startAngle, endAngle)
+      });
+
+      sketchArrows.appendChild(mainPath);
+
+      const ghostPath = createSvgElement("path", {
+        class: "sketch-arrow-path ghost",
+        d: arcPathByAngles(CX, CY, r + 2, startAngle + 1.8, endAngle - 1.8)
+      });
+
+      sketchArrows.appendChild(ghostPath);
+
+      const tip = polarToCartesian(CX, CY, r, endAngle);
+      const angleRad = (endAngle - 90) * Math.PI / 180;
+
+      const tangent = {
+        x: -Math.sin(angleRad),
+        y: Math.cos(angleRad)
+      };
+
+      const normal = {
+        x: -tangent.y,
+        y: tangent.x
+      };
+
+      const headLength = 24;
+      const headWidth = 12;
+
+      const back = {
+        x: tip.x - tangent.x * headLength,
+        y: tip.y - tangent.y * headLength
+      };
+
+      const wingA = {
+        x: back.x + normal.x * headWidth,
+        y: back.y + normal.y * headWidth
+      };
+
+      const wingB = {
+        x: back.x - normal.x * headWidth,
+        y: back.y - normal.y * headWidth
+      };
+
+      const arrowHeadA = createSvgElement("path", {
+        class: "sketch-arrow-path",
+        d: `M ${wingA.x} ${wingA.y} L ${tip.x} ${tip.y}`
+      });
+
+      const arrowHeadB = createSvgElement("path", {
+        class: "sketch-arrow-path",
+        d: `M ${wingB.x} ${wingB.y} L ${tip.x} ${tip.y}`
+      });
+
+      sketchArrows.appendChild(arrowHeadA);
+      sketchArrows.appendChild(arrowHeadB);
+    }
+
+    function buildSketchArrows() {
+      sketchArrows.innerHTML = "";
+
+      const arrowRadius = 395;
+
+      addSketchArrow(-55, -15, arrowRadius);
+      addSketchArrow(65, 110, arrowRadius);
+      addSketchArrow(190, 230, arrowRadius);
+    }
+
+    function bindProjectCards() {
+      document.querySelectorAll(".project-card").forEach(card => {
+        const link = card.getAttribute("data-link");
+        const tags = card.getAttribute("data-tags") || "";
+
+        card.addEventListener("mouseenter", () => {
+          if (isTouchDevice) return;
+
+          // 如果当前已经打开分类面板，不要再重写左侧文案
+          if (pageContainer.classList.contains("category-mode")) {
+            hoverBadge.classList.add("visible");
+            return;
+          }
+
+          const tag = tags.split(/\s+/)[0];
+          const config = sectors.find(s => s.id === tag);
+
+          if (config) {
+            setCenterImage(config.id);
+            setCopy(config);
+            focusProjectsByTag(config.id);
+          }
+
+          hoverBadge.classList.add("visible");
+        });
+
+        card.addEventListener("mouseleave", () => {
+          if (isTouchDevice) return;
+
+          // 分类状态下，移出卡片不要 resetHero
+          if (pageContainer.classList.contains("category-mode")) {
+            hoverBadge.classList.remove("visible");
+            return;
+          }
+
+          resetHero();
+          hoverBadge.classList.remove("visible");
+        });
+
+        card.addEventListener("click", (e) => {
+          e.stopPropagation();
+
+          if (link) {
+            navigateTo(link);
+          }
+        });
+      });
+    }
+
+    function bindWorkRows() {
+      document.querySelectorAll(".work-row").forEach(row => {
+        const link = row.getAttribute("data-link");
+
+        row.addEventListener("click", () => {
+          if (link) {
+            navigateTo(link);
+          }
+        });
+      });
+    }
+
+    function setViewMode(mode) {
+      if (mode === "index") {
+        pageContainer.classList.remove("category-mode");
+        pageContainer.classList.add("index-mode");
+
+        mapViewBtn.classList.remove("active");
+        indexViewBtn.classList.add("active");
+
+        activeTouchId = null;
+        hoverBadge.classList.remove("visible");
+
+        resetHero();
+        return;
+      }
+
+      // mode === "map"
+      closeCategory();
+    }
+
+
+    buildCompass();
+    buildSketchArrows();
+    bindProjectCards();
+    bindWorkRows();
+
+    window.addEventListener("mousemove", (event) => {
+      if (isTouchDevice) return;
+
+      hoverBadge.style.left = `${event.clientX}px`;
+      hoverBadge.style.top = `${event.clientY}px`;
+    });
+
+    brand.addEventListener("click", () => {
+      window.location.reload();
+    });
+
+    mapViewBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      setViewMode("map");
+    });
+
+    indexViewBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      setViewMode("index");
+    });
+
+    if (categoryClose) {
+      categoryClose.addEventListener("click", (e) => {
+        e.stopPropagation();
+        closeCategory();
+      });
+    }
+
+
+    document.addEventListener("click", (e) => {
+      const clickedSector = e.target.closest(".sector-group");
+      const clickedMenu = e.target.closest(".side-menu");
+      const clickedTopbar = e.target.closest(".topbar");
+      const clickedProject = e.target.closest(".project-card");
+      const clickedIndex = e.target.closest(".index-panel");
+      const clickedCategory = e.target.closest(".category-panel");
+      const clickedHeroAction = e.target.closest(".hero-actions");
+
+      const clickedInteractive =
+        clickedSector ||
+        clickedMenu ||
+        clickedTopbar ||
+        clickedProject ||
+        clickedIndex ||
+        clickedCategory ||
+        clickedHeroAction;
+
+      if (!clickedInteractive) {
+        activeTouchId = null;
+
+        if (pageContainer.classList.contains("category-mode")) {
+          closeCategory();
+          return;
+        }
+
+        if (isTouchDevice) {
+          resetHero();
+        }
+      }
+    });
+
+    window.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") {
+        if (pageContainer.classList.contains("category-mode")) {
+          closeCategory();
+        }
+      }
+    });
+  </script>
+</body>
+</html>
