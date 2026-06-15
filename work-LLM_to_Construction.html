@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <title>Text-to-3D Robotic Construction｜周子恒</title>
+  <title>Text-to-3D｜周子恒</title>
+  <link rel="icon" href="images/icon.png" type="image/png">
 
   <style>
     :root {
@@ -386,7 +386,7 @@
 
     .logic-cell {
       position: relative;
-      min-height: 160px;
+      min-height: 120px;
       padding: 14px;
 
       border: 2px solid rgba(244, 239, 231, 0.82);
@@ -937,12 +937,7 @@
 
       <p class="section-text">
         本项目来自同济大学建筑与城市规划学院的研究助理工作，研究目标是将生成式 AI、Text-to-3D、模块化木构系统与机械臂制造流程整合为一套 Prompt-to-Production 工作流。
-        相比传统设计流程中从概念、建模到施工图的线性推进，项目尝试让自然语言需求直接参与早期空间生成，并进一步转化为可优化、可离散、可制造的实体建造序列。
-      </p>
-
-      <p class="section-text">
         我参与了从工作流梳理、算法逻辑表达、模块选型与排列优化，到研究图像整理和实体模型展示的过程。
-        项目核心并不只是生成一个 3D 形体，而是将复杂的空间需求拆解为标准化模块、结构约束和机械臂可执行动作。
       </p>
 
       <div class="logic-matrix">
@@ -1028,19 +1023,35 @@
       </div>
     </section>
 
-    <!-- =========================
-         02 / Discretization Algorithm
+       <!-- =========================
+         02 / LLM-to-3D
     ========================== -->
-    <section class="section dark">
+    <section class="section soft">
       <div class="section-head">
-        <div class="section-no">02 / Algorithm</div>
-        <h2 class="section-title">以装配为导向的结构离散化算法。</h2>
+        <div class="section-no">02 / LLM-to-3D</div>
+        <h2 class="section-title">从 文本 到 3D</h2>
       </div>
 
       <p class="section-text">
-        模块化建造的关键问题在于：如何把复杂连续形体转化为有限种类、有限数量的标准构件，同时保持结构表达、制造可行性和几何近似精度。
-        项目中的离散化算法将构件类型、构件数量、连接关系、机械臂可达性和结构承载能力共同纳入约束条件。
+        利用大语言模型将自然语言需求转化为可编辑几何结构的过程是整个工作流的核心环节。通过设计有效的 Prompt，模型能够生成符合空间需求的 3D 模型，并且这些模型可以被后续的 Mesh 处理和离散化算法所利用。
       </p>
+
+      <div class="media-grid">
+        <div class="media-item full contain">
+          <img src="images/llmToConstruction/MeshAI.png" alt="Assembly-oriented discretization algorithm and optimization results">
+        </div>
+      </div>
+    </section>
+
+    
+    <!-- =========================
+         03 / Discretization Algorithm
+    ========================== -->
+    <section class="section dark">
+      <div class="section-head">
+        <div class="section-no">03 / Algorithm</div>
+        <h2 class="section-title">以装配为导向的结构离散化算法。</h2>
+      </div>
 
       <p class="section-text">
         我参与使用 OR-Tools 进行模块选型与排列优化，在建造约束下提升几何填充效率。
@@ -1054,11 +1065,6 @@
           <p class="logic-desc">
             在构件数量、建造成本和几何近似精度之间寻找平衡，避免过度复杂或失真。
           </p>
-          <div class="logic-tags">
-            <span>Cost</span>
-            <span>Accuracy</span>
-            <span>Optimization</span>
-          </div>
         </article>
 
         <article class="logic-cell logic-solution">
@@ -1067,10 +1073,6 @@
           <p class="logic-desc">
             使用有限类型的木构模块进行组合，保证系统具有标准化和可重复生产能力。
           </p>
-          <div class="logic-tags">
-            <span>Block Type</span>
-            <span>Standardization</span>
-          </div>
         </article>
 
         <article class="logic-cell logic-solution">
@@ -1079,10 +1081,6 @@
           <p class="logic-desc">
             离散结果需要满足机械臂抓取、放置、连接和重构的物理操作条件。
           </p>
-          <div class="logic-tags">
-            <span>Fabricability</span>
-            <span>Assembly</span>
-          </div>
         </article>
 
         <article class="logic-cell logic-solution">
@@ -1091,10 +1089,6 @@
           <p class="logic-desc">
             在模块组合过程中考虑支撑关系、承载能力和结构稳定性。
           </p>
-          <div class="logic-tags">
-            <span>Structure</span>
-            <span>Capacity</span>
-          </div>
         </article>
       </div>
 
@@ -1104,38 +1098,8 @@
         </div>
       </div>
 
-      <p class="image-caption">
+      <p class="section-text" style="margin-top: 14px;">
         Assembly-Oriented Discretization Algorithm：在 block type、block amount、fabricability 与 structural capacity 等约束下进行构件分配与排列优化。
-      </p>
-    </section>
-
-    <!-- =========================
-         03/ Structural Reconfiguration
-    ========================== -->
-    <section class="section">
-      <div class="section-head">
-        <div class="section-no">03 / Structural Reconfiguration</div>
-        <h2 class="section-title">在相同模块数量下实现结构重构。</h2>
-      </div>
-
-      <p class="section-text">
-        项目进一步研究了模块系统的循环使用能力。不同结构形态可以共享相同数量和类型的木构模块，通过重新排列和重组形成新的空间构型。
-        这意味着建筑构件不再是一次性消耗品，而可以成为可回收、可重组、可持续使用的结构资源。
-      </p>
-
-      <p class="section-text">
-        在结构重构流程中，第一轮离散化结果会被读取为构件类型和数量信息。随后系统在“相同构件数量”的约束下生成第二轮离散化方案，并根据设计是否满足要求进行批准或重新生成。
-        这个流程为后续机械臂的自动拆装和重组提供了清晰的数据基础。
-      </p>
-
-      <div class="media-grid">
-        <div class="media-item full contain">
-          <img src="images/llmToConstruction/reconfiguration.jpg" alt="Structural configuration and reconfiguration with same block system">
-        </div>
-      </div>
-
-      <p class="image-caption">
-        Structural Configuration / Reconfiguration：通过相同类型与数量的构件集合，实现不同结构形态之间的重组。
       </p>
     </section>
 
@@ -1144,7 +1108,7 @@
     ========================== -->
     <section class="section soft">
       <div class="section-head">
-        <div class="section-no">04 / Fabrication Test</div>
+        <div class="section-no">04 / Robotic Fabrication Test</div>
         <h2 class="section-title">通过机械臂验证模块抓取、放置与重构流程。</h2>
       </div>
 
@@ -1166,22 +1130,21 @@
     </section>
 
     <!-- =========================
-         06 / Collaboration & Outcome
+         05 / Collaboration & Outcome
     ========================== -->
     <section class="section dark">
       <div class="section-head">
-        <div class="section-no">06 / Collaboration & Outcome</div>
+        <div class="section-no">05 / Collaboration & Outcome</div>
         <h2 class="section-title">成果</h2>
       </div>
 
       <p class="section-text">
-        项目过程中，我与斯图加特大学研究团队及建筑设计团队协作，参与完成 1:50 实体模型搭建，并将算法流程、空间逻辑与建造约束整理为可展示、可讨论的研究成果。
-        这个过程要求在研究语言、建筑表达和制造逻辑之间建立清晰的沟通方式。
+        项目过程中，我与斯图加特大学研究团队及建筑设计团队协作，参与完成 1:50 实体模型搭建，并将算法流程、空间逻辑与建造约束整理为可展示的成果。
       </p>
 
       <p class="section-text">
-        对我而言，这个项目的价值在于它把 AI 生成从“图像或模型输出”推进到“可建造系统”的层面。
-        自然语言需求、三维几何、模块化构件、优化算法和机械臂动作被整合为一条连续链路，形成了面向实际制造的生成式设计方法。
+        它不仅是一个建筑机器人研究项目，也是一套面向未来智能建造的产品化流程原型：
+        将模糊的自然语言需求，逐步转化为可编辑、可优化、可交付、可物理执行的建造系统。
       </p>
 
       <div class="media-grid">
@@ -1190,79 +1153,6 @@
         </div>
       </div>
 
-      <p class="section-text" style="margin-top: 14px;">
-        Fabrication Outcome：研究成果展示、实体模型与机器人建造验证过程。
-      </p>
-    </section>
-
-    <!-- =========================
-         07 / Project Summary
-    ========================== -->
-    <section class="section">
-      <div class="section-head">
-        <div class="section-no">07 / Project Summary</div>
-        <h2 class="section-title">从需求理解到机械臂执行的完整设计转译能力。</h2>
-      </div>
-
-      <p class="section-text">
-        这个项目训练的是一种跨尺度转译能力：从用户需求到空间方案，从连续几何到离散模块，从算法约束到机械臂动作。
-        在设计层面，它要求理解空间形态如何被拆解为标准构件；在计算层面，它要求将构件数量、连接关系和建造约束转化为优化问题；在制造层面，它要求确保结果可以被机器人抓取、放置和重组。
-      </p>
-
-      <p class="section-text">
-        因此，它不仅是一个建筑机器人研究项目，也是一套面向未来智能建造的产品化流程原型：
-        将模糊的自然语言需求，逐步转化为可编辑、可优化、可交付、可物理执行的建造系统。
-      </p>
-
-      <div class="logic-matrix">
-        <article class="logic-cell logic-solution">
-          <div class="logic-label">Capability 01</div>
-          <h3 class="logic-title">需求拆解</h3>
-          <p class="logic-desc">
-            将自然语言中的空间意图拆解为几何、结构、模块和制造约束。
-          </p>
-          <div class="logic-tags">
-            <span>Requirement</span>
-            <span>Translation</span>
-          </div>
-        </article>
-
-        <article class="logic-cell logic-solution">
-          <div class="logic-label">Capability 02</div>
-          <h3 class="logic-title">系统建模</h3>
-          <p class="logic-desc">
-            将设计问题整理为可计算、可优化和可重复执行的模块化系统。
-          </p>
-          <div class="logic-tags">
-            <span>System</span>
-            <span>Modeling</span>
-          </div>
-        </article>
-
-        <article class="logic-cell logic-solution">
-          <div class="logic-label">Capability 03</div>
-          <h3 class="logic-title">算法协作</h3>
-          <p class="logic-desc">
-            使用 OR-Tools 等工具参与构件选择、数量控制和排列优化。
-          </p>
-          <div class="logic-tags">
-            <span>OR-Tools</span>
-            <span>Optimization</span>
-          </div>
-        </article>
-
-        <article class="logic-cell logic-solution">
-          <div class="logic-label">Capability 04</div>
-          <h3 class="logic-title">制造表达</h3>
-          <p class="logic-desc">
-            将算法流程、结构逻辑和机器人制造过程整理为清晰的研究展示成果。
-          </p>
-          <div class="logic-tags">
-            <span>Fabrication</span>
-            <span>Communication</span>
-          </div>
-        </article>
-      </div>
     </section>
 
     <!-- =========================

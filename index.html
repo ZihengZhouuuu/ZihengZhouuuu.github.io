@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>周子恒｜AI Product / Spatial Intelligence Portfolio</title>
+  <title>周子恒｜设计智能</title>
+  <link rel="icon" href="images/icon.png" type="image/png">
 
   <style>
     :root {
@@ -378,7 +379,7 @@
     }
 
     .ring-label {
-      font-size: 24px;
+      font-size: 30px;
       font-weight: 950;
       letter-spacing: 0.14em;
       text-transform: uppercase;
@@ -822,9 +823,9 @@
     .category-title {
       margin-bottom: 18px;
 
-      font-size: clamp(36px, 3.4vw, 64px);
-      line-height: 0.92;
-      font-weight: 950;
+      font-size: clamp(48px, 3.4vw, 72px);
+      line-height: 1;
+      font-weight: 990;
       letter-spacing: -0.08em;
       text-transform: uppercase;
     }
@@ -964,7 +965,7 @@
       }
 
       .category-title {
-        font-size: clamp(34px, 11vw, 52px);
+        font-size: clamp(34px, 11vw, 64px);
       }
 
       .category-desc {
@@ -1298,7 +1299,7 @@
       }
 
       .ring-label {
-        font-size: 21px;
+        font-size: 30px;
         letter-spacing: 0.1em;
       }
 
@@ -1399,7 +1400,7 @@
       }
 
       .ring-label {
-        font-size: 19px;
+        font-size: 30px;
       }
 
 
@@ -1434,6 +1435,213 @@
         transform: none;
       }
     }
+
+    /* ---------- Nest Hub / 1024 × 600 / 矮屏横向 ---------- */
+    @media screen and (min-width: 769px) and (max-width: 1100px) and (max-height: 760px) {
+      :root {
+        --card-scale: 0.78 !important;
+      }
+
+      .compass-stage {
+        position: absolute !important;
+        left: 63% !important;
+        top: 47% !important;
+
+        width: 560px !important;
+        height: 560px !important;
+
+        transform: translate(-50%, -50%) scale(0.86) !important;
+      }
+
+      .compass-wrap {
+        width: 480px !important;
+        height: 480px !important;
+      }
+
+      .project-card {
+        width: 185px   !important;
+        min-height: 138px !important;
+        transform:
+          translate(-50%, -50%)
+          translate(var(--x), var(--y))
+          rotate(var(--rot))
+          scale(0.78) !important;
+      }
+
+      .project-thumb {
+        height: 52px !important;
+        margin: 7px 7px 0 !important;
+      }
+
+      .project-meta {
+        padding: 8px 9px 10px !important;
+      }
+
+      .project-kicker {
+        font-size: 7px !important;
+        margin-bottom: 5px !important;
+      }
+
+      .project-title {
+        font-size: 13px !important;
+        line-height: 0.95 !important;
+      }
+
+      .project-desc {
+        display: none !important;
+      }
+
+      .slogan {
+        left: 38px !important;
+        bottom: 34px !important;
+        max-width: 390px !important;
+      }
+
+      .slogan-kicker {
+        font-size: 13px !important;
+        margin-bottom: 10px !important;
+      }
+
+      .slogan-title {
+        font-size: 52px !important;
+        line-height: 0.88 !important;
+        max-width: 390px !important;
+      }
+
+      .slogan-desc {
+        max-width: 360px !important;
+        margin-top: 14px !important;
+        font-size: 13px !important;
+        line-height: 1.42 !important;
+      }
+
+      .hero-actions {
+        margin-top: 16px !important;
+      }
+
+      .hero-btn {
+        min-height: 34px !important;
+        padding: 8px 12px !important;
+        font-size: 11px !important;
+      }
+
+      .ring-label {
+        font-size: 18px !important;
+        letter-spacing: 0.1em !important;
+      }
+    }
+
+    /* ---------- iPad Pro / 1024 × 1366 / 竖屏平板 ---------- */
+    @media screen and (min-width: 769px) and (max-width: 1100px) and (min-height: 900px) and (orientation: portrait) {
+      :root {
+        --card-scale: 1 !important;
+      }
+
+      .compass-stage {
+        position: absolute !important;
+        left: 50% !important;
+        top: 34% !important;
+
+        width: 760px !important;
+        height: 760px !important;
+
+        transform: translate(-50%, -50%) scale(0.92) !important;
+      }
+
+      .compass-wrap {
+        width: 620px !important;
+        height: 620px !important;
+      }
+
+      .project-card {
+        width: 185px   !important;
+        min-height: 138px !important;
+
+        transform:
+          translate(-50%, -50%)
+          translate(var(--x), var(--y))
+          rotate(var(--rot))
+          scale(1) !important;
+      }
+
+      .project-thumb {
+        height: 78px !important;
+        margin: 10px 10px 0 !important;
+      }
+
+      .project-meta {
+        padding: 10px 12px 13px !important;
+      }
+
+      .project-kicker {
+        font-size: 8px !important;
+        margin-bottom: 7px !important;
+      }
+
+      .project-title {
+        font-size: 17px !important;
+        line-height: 0.95 !important;
+      }
+
+      .project-desc {
+        display: none !important;
+      }
+
+      .project-card:nth-of-type(1) {
+        --x: -330px !important;
+        --y: -205px !important;
+      }
+
+      .project-card:nth-of-type(2) {
+        --x: 330px !important;
+        --y: -205px !important;
+      }
+
+      .project-card:nth-of-type(3) {
+        --x: 360px !important;
+        --y: 30px !important;
+      }
+
+      .project-card:nth-of-type(4) {
+        --x: 170px !important;
+        --y: 305px !important;
+      }
+
+      .project-card:nth-of-type(5) {
+        --x: -170px !important;
+        --y: 305px !important;
+      }
+
+      .project-card:nth-of-type(6) {
+        --x: -360px !important;
+        --y: 30px !important;
+      }
+
+      .slogan {
+        left: 56px !important;
+        bottom: 70px !important;
+        max-width: 580px !important;
+      }
+
+      .slogan-title {
+        font-size: 70px !important;
+        line-height: 0.9 !important;
+        max-width: 580px !important;
+      }
+
+      .slogan-desc {
+        max-width: 560px !important;
+        font-size: 15px !important;
+        line-height: 1.5 !important;
+      }
+
+      .ring-label {
+        font-size: 17px !important;
+        letter-spacing: 0.08em !important;
+      }
+    }
+
+
   </style>
 </head>
 
@@ -1465,7 +1673,7 @@
         </p>
 
         <div class="hero-actions" aria-label="主要操作">
-          <a class="hero-btn hero-btn-primary" href="doc/简历.docx" target="_blank" rel="noopener">
+          <a class="hero-btn hero-btn-primary" href="doc/简历.pdf" target="_blank" rel="noopener">
             查看简历
           </a>
 
@@ -1482,46 +1690,6 @@
 
           <article
             class="project-card"
-            data-project="aigc-product"
-            data-tags="product"
-            data-link="work-aigc-product-system.html"
-            style="--x: -43vmin; --y: -21vmin; --rot: -7deg; --accent: var(--blue);"
-          >
-            <div class="project-thumb">
-              <img src="images/EC/0.jpg" alt="AI 电商素材生成平台">
-            </div>
-            <div class="project-meta">
-              <div class="project-kicker">
-                <span>01 / Product</span>
-                <span class="project-dot"></span>
-              </div>
-              <h2 class="project-title">AI 电商素材生成平台</h2>
-              <p class="project-desc">模型 Benchmark、任务路由与数据埋点驱动的素材生产系统。</p>
-            </div>
-          </article>
-
-          <article
-            class="project-card"
-            data-project="NEOCLAW LOOP"
-            data-tags="product"
-            data-link="work-neoclaw.html"
-            style="--x: 41vmin; --y: -20vmin; --rot: 8deg; --accent: var(--blue);"
-          >
-            <div class="project-thumb">
-              <img src="images/EC/1.jpg" alt="NEOCLAW LOOP">
-            </div>
-            <div class="project-meta">
-              <div class="project-kicker">
-                <span>02 / Product</span>
-                <span class="project-dot"></span>
-              </div>
-              <h2 class="project-title">NEOCLAW LOOP</h2>
-              <p class="project-desc">对不同生成模型进行质量、成本、速度与场景适配评估。</p>
-            </div>
-          </article>
-
-          <article
-            class="project-card"
             data-project="spatial-workflow"
             data-tags="spatial"
             data-link="work-global-relay-conference.html"
@@ -1532,7 +1700,7 @@
             </div>
             <div class="project-meta">
               <div class="project-kicker">
-                <span>03 / Spatial</span>
+                <span>01 / Spatial</span>
                 <span class="project-dot"></span>
               </div>
               <h2 class="project-title">AI GLOBAL RELAY会议</h2>
@@ -1552,7 +1720,7 @@
             </div>
             <div class="project-meta">
               <div class="project-kicker">
-                <span>04 / Spatial</span>
+                <span>02 / Spatial</span>
                 <span class="project-dot"></span>
               </div>
               <h2 class="project-title">商业空间视觉设计</h2>
@@ -1568,11 +1736,11 @@
             style="--x: -21vmin; --y: 43vmin; --rot: -8deg; --accent: var(--green);"
           >
             <div class="project-thumb">
-              <image src="images/llmToConstruction/BRIDGE_00.jpg" autoplay loop muted playsinline></video>
+              <img src="images/llmToConstruction/BRIDGE_00.jpg" alt="自然语言需求转化">
             </div>
             <div class="project-meta">
               <div class="project-kicker">
-                <span>05 / Robotics</span>
+                <span>03 / Robotics</span>
                 <span class="project-dot"></span>
               </div>
               <h2 class="project-title">自然语言需求转化</h2>
@@ -1588,15 +1756,55 @@
             style="--x: -49vmin; --y: 9vmin; --rot: 6deg; --accent: var(--green);"
           >
             <div class="project-thumb">
-              <image src="images/UCL/STIG_00.jpg" alt="极端环境下的无人建造">
+              <img src="images/UCL/STIG_00.jpg" alt="极端环境下的无人建造">
             </div>
             <div class="project-meta">
               <div class="project-kicker">
-                <span>06 / Systems</span>
+                <span>04 / Systems</span>
                 <span class="project-dot"></span>
               </div>
               <h2 class="project-title">极端环境下的无人建造</h2>
               <p class="project-desc">基于 A* 与空间约束的路径规划和建造逻辑实验。</p>
+            </div>
+          </article>
+
+          <article
+            class="project-card"
+            data-project="aigc-product"
+            data-tags="product"
+            data-link="comingSoon.html"
+            style="--x: -43vmin; --y: -21vmin; --rot: -7deg; --accent: var(--blue);"
+          >
+            <div class="project-thumb">
+              <img src="images/EC/0.jpg" alt="AI 电商素材生成平台">
+            </div>
+            <div class="project-meta">
+              <div class="project-kicker">
+                <span>05 / Product</span>
+                <span class="project-dot"></span>
+              </div>
+              <h2 class="project-title">AI 电商素材生成平台</h2>
+              <p class="project-desc">模型 Benchmark、任务路由与数据埋点驱动的素材生产系统。</p>
+            </div>
+          </article>
+
+          <article
+            class="project-card"
+            data-project="NEOCLAW LOOP"
+            data-tags="product"
+            data-link="comingSoon.html"
+            style="--x: 41vmin; --y: -20vmin; --rot: 8deg; --accent: var(--blue);"
+          >
+            <div class="project-thumb">
+              <img src="images/neoclaw/Capability (5).jpg" alt="NEOCLAW LOOP">
+            </div>
+            <div class="project-meta">
+              <div class="project-kicker">
+                <span>06 / Product</span>
+                <span class="project-dot"></span>
+              </div>
+              <h2 class="project-title">NEOCLAW LOOP</h2>
+              <p class="project-desc">Coming Soon.</p>
             </div>
           </article>
         </div>
@@ -1641,49 +1849,48 @@
             6 个项目对应 3 种能力维度：空间意图生成、空间智能仿真、生成能力产品化。
           </p>
         </div>
-
-        <div class="work-list">
-          <article class="work-row" data-link="Project Detail Page Template.html">
+          <article class="work-row" data-link="work-global-relay-conference.html">
             <div class="work-no">01</div>
-            <h3 class="work-name">AI 电商素材生成平台</h3>
-            <div class="work-tags">PRD文档 · 竞品分析报告 · 多模型Benchmark评测报告</div>
-            <div class="work-cta">View</div>
-          </article>
-
-          <article class="work-row" data-link="Project Detail Page Template.html">
-            <div class="work-no">02</div>
-            <h3 class="work-name">NEOCLAW LOOP</h3>
-            <div class="work-tags">Model Evaluation / Cost / Quality Control</div>
-            <div class="work-cta">View</div>
-          </article>
-
-          <article class="work-row" data-link="Project Detail Page Template.html">
-            <div class="work-no">03</div>
             <h3 class="work-name">AI GLOBAL RELAY会议</h3>
             <div class="work-tags">Spatial AIGC / Sketch / Reference / Prompt</div>
             <div class="work-cta">View</div>
           </article>
 
-          <article class="work-row" data-link="Project Detail Page Template.html">
-            <div class="work-no">04</div>
+          <article class="work-row" data-link="work-interior-ai.html">
+            <div class="work-no">02</div>
             <h3 class="work-name">商业空间视觉设计</h3>
             <div class="work-tags">AIGC工作流落地 · Prompt体系沉淀 · 流程标准化</div>
             <div class="work-cta">View</div>
           </article>
 
-          <article class="work-row" data-link="Project Detail Page Template.html">
-            <div class="work-no">05</div>
+          <article class="work-row" data-link="work-LLM_to_Construction.html">
+            <div class="work-no">03</div>
             <h3 class="work-name">自然语言需求转化</h3>
             <div class="work-tags">TEXT-TO-3D × 模块化建造 × 跨团队协作</div>
             <div class="work-cta">View</div>
           </article>
 
-          <article class="work-row" data-link="Project Detail Page Template.html">
-            <div class="work-no">06</div>
+          <article class="work-row" data-link="work-ucl.html">
+            <div class="work-no">04</div>
             <h3 class="work-name">极端环境下的无人建造</h3>
             <div class="work-tags">"空间设计 × 机器人控制 × 交互仿真 × 智能建造</div>
             <div class="work-cta">View</div>
           </article>
+          
+          <div class="work-list">
+            <article class="work-row" data-link="comingSoon.html">
+              <div class="work-no">05</div>
+              <h3 class="work-name">AI 电商素材生成平台</h3>
+              <div class="work-tags">PRD文档 · 竞品分析报告 · 多模型Benchmark评测报告</div>
+              <div class="work-cta">View</div>
+            </article>
+
+            <article class="work-row" data-link="comingSoon.html">
+              <div class="work-no">06</div>
+              <h3 class="work-name">NEOCLAW LOOP</h3>
+              <div class="work-tags">Model Evaluation / Cost / Quality Control</div>
+              <div class="work-cta">View</div>
+            </article>
         </div>
       </section>
       
@@ -1704,20 +1911,27 @@
   </div>
 
   <script>
-    const INNER_RING_START = 205;
-    const INNER_RING_WIDTH = 85;
-
-    const OUTER_RING_START = 315;
-    const OUTER_RING_WIDTH = 130;
-
+    /* =========================
+      Basic Constants
+    ========================= */
     const CX = 500;
     const CY = 500;
 
+    const INNER_RING_START = 205;
+    const INNER_RING_WIDTH = 85;
+    const OUTER_RING_START = 315;
+    const OUTER_RING_WIDTH = 130;
+
+    const isTouchDevice = window.matchMedia("(hover: none), (pointer: coarse)").matches;
+
+    /* =========================
+      DOM
+    ========================= */
     const defs = document.getElementById("defs");
     const rings = document.getElementById("rings");
     const sketchArrows = document.getElementById("sketch-arrows");
+
     const pageContainer = document.getElementById("pageContainer");
-    const mainContent = document.getElementById("mainContent");
     const brand = document.getElementById("brand");
 
     const sloganKicker = document.getElementById("sloganKicker");
@@ -1737,9 +1951,9 @@
     const categoryDesc = document.getElementById("categoryDesc");
     const categoryWorks = document.getElementById("categoryWorks");
 
-    const isTouchDevice = window.matchMedia("(hover: none), (pointer: coarse)").matches;
-    let activeTouchId = null;
-
+    /* =========================
+      Data
+    ========================= */
     const defaultCopy = {
       kicker: "设计智能 / DESIGN INTELLIGENCE",
       title: "空间智能与 <br>人机协同工作流设计者",
@@ -1754,7 +1968,7 @@
         end: 90,
         inner: OUTER_RING_START,
         outer: OUTER_RING_START + OUTER_RING_WIDTH,
-        textRadius: OUTER_RING_START + (OUTER_RING_WIDTH / 2),
+        textRadius: OUTER_RING_START + OUTER_RING_WIDTH / 2,
         reverseText: false,
         color: "var(--pink)",
         kicker: "01 / SPATIAL GENERATION",
@@ -1762,13 +1976,13 @@
         desc: "从自然语言、草图、模型与空间参考出发，构建可控的 AIGC 工作流，将模糊设计意图转化为可讨论、可迭代的空间视觉方案。",
         works: [
           {
-            no: "03",
+            no: "01",
             title: "AI GLOBAL RELAY会议",
             meta: "Spatial AIGC / Sketch / Reference / Prompt",
             link: "work-global-relay-conference.html"
           },
           {
-            no: "04",
+            no: "02",
             title: "商业空间视觉设计",
             meta: "AIGC工作流落地 · Prompt体系沉淀 · 流程标准化",
             link: "work-interior-ai.html"
@@ -1782,7 +1996,7 @@
         end: 210,
         inner: OUTER_RING_START,
         outer: OUTER_RING_START + OUTER_RING_WIDTH,
-        textRadius: OUTER_RING_START + (OUTER_RING_WIDTH / 2),
+        textRadius: OUTER_RING_START + OUTER_RING_WIDTH / 2,
         reverseText: true,
         color: "var(--green)",
         kicker: "02 / SPATIAL INTELLIGENCE",
@@ -1790,13 +2004,13 @@
         desc: "基于 Unity3D、ML-Agents 强化学习与 A* 算法，在虚拟仿真环境中训练智能体与机器人，探索空间中的自主路径规划与建造逻辑。",
         works: [
           {
-            no: "05",
+            no: "03",
             title: "自然语言需求转化",
             meta: "TEXT-TO-3D × 模块化建造 × 跨团队协作",
             link: "work-LLM_to_Construction.html"
           },
           {
-            no: "06",
+            no: "04",
             title: "极端环境下的无人建造",
             meta: "空间设计 × 机器人控制 × 交互仿真 × 智能建造",
             link: "work-ucl.html"
@@ -1809,7 +2023,7 @@
         isFullRing: true,
         inner: INNER_RING_START,
         outer: INNER_RING_START + INNER_RING_WIDTH,
-        textRadius: INNER_RING_START + (INNER_RING_WIDTH / 2),
+        textRadius: INNER_RING_START + INNER_RING_WIDTH / 2,
         color: "var(--yellow)",
         kicker: "根目录 / THE ROOT QUESTION",
         title: "设计智能",
@@ -1830,7 +2044,7 @@
         end: -30,
         inner: OUTER_RING_START,
         outer: OUTER_RING_START + OUTER_RING_WIDTH,
-        textRadius: OUTER_RING_START + (OUTER_RING_WIDTH / 2),
+        textRadius: OUTER_RING_START + OUTER_RING_WIDTH / 2,
         reverseText: false,
         color: "var(--blue)",
         kicker: "03 / PRODUCTIZED AIGC",
@@ -1838,24 +2052,32 @@
         desc: "将 AIGC 图像、视频生成能力封装为可控的商业生产系统：模型 Benchmark、任务路由、质量评估、成本控制与数据反馈。",
         works: [
           {
-            no: "01",
+            no: "05",
             title: "AI 电商素材生成平台",
             meta: "PRD文档 · 竞品分析报告 · 多模型Benchmark评测报告",
-            link: "work-aigc-product-system.html"
+            link: "comingSoon.html"
           },
           {
-            no: "02",
+            no: "06",
             title: "NEOCLAW LOOP",
             meta: "Model Evaluation / Cost / Quality Control",
-            link: "work-benchmark-router.html"
+            link: "comingSoon.html"
           }
         ]
-      },
+      }
     ];
+
+    /* =========================
+      SVG Helpers
+    ========================= */
+    function createSvg(tag, attrs = {}) {
+      const el = document.createElementNS("http://www.w3.org/2000/svg", tag);
+      Object.entries(attrs).forEach(([key, value]) => el.setAttribute(key, value));
+      return el;
+    }
 
     function polarToCartesian(cx, cy, r, angleDeg) {
       const angleRad = (angleDeg - 90) * Math.PI / 180;
-
       return {
         x: cx + r * Math.cos(angleRad),
         y: cy + r * Math.sin(angleRad)
@@ -1864,6 +2086,7 @@
 
     function ringSectorPath(cx, cy, innerR, outerR, startAngle, endAngle) {
       const largeArcFlag = Math.abs(endAngle - startAngle) > 180 ? 1 : 0;
+
       const outerStart = polarToCartesian(cx, cy, outerR, startAngle);
       const outerEnd = polarToCartesian(cx, cy, outerR, endAngle);
       const innerEnd = polarToCartesian(cx, cy, innerR, endAngle);
@@ -1880,19 +2103,16 @@
 
     function textArcPath(cx, cy, r, startAngle, endAngle, reverse = false) {
       const largeArcFlag = Math.abs(endAngle - startAngle) > 180 ? 1 : 0;
-      let start;
-      let end;
-      let sweep;
 
-      if (!reverse) {
-        start = polarToCartesian(cx, cy, r, startAngle);
-        end = polarToCartesian(cx, cy, r, endAngle);
-        sweep = 1;
-      } else {
-        start = polarToCartesian(cx, cy, r, endAngle);
-        end = polarToCartesian(cx, cy, r, startAngle);
-        sweep = 0;
-      }
+      const start = reverse
+        ? polarToCartesian(cx, cy, r, endAngle)
+        : polarToCartesian(cx, cy, r, startAngle);
+
+      const end = reverse
+        ? polarToCartesian(cx, cy, r, startAngle)
+        : polarToCartesian(cx, cy, r, endAngle);
+
+      const sweep = reverse ? 0 : 1;
 
       return [
         "M", start.x, start.y,
@@ -1900,52 +2120,58 @@
       ].join(" ");
     }
 
-    function createSvgElement(tag, attrs = {}) {
-      const el = document.createElementNS("http://www.w3.org/2000/svg", tag);
+    function fullRingPath(item) {
+      const outerStart = polarToCartesian(CX, CY, item.outer, -180);
+      const outerMid = polarToCartesian(CX, CY, item.outer, 0);
+      const innerStart = polarToCartesian(CX, CY, item.inner, -180);
+      const innerMid = polarToCartesian(CX, CY, item.inner, 0);
 
-      Object.entries(attrs).forEach(([key, value]) => {
-        el.setAttribute(key, value);
-      });
-
-      return el;
+      return [
+        "M", outerStart.x, outerStart.y,
+        "A", item.outer, item.outer, 0, 1, 1, outerMid.x, outerMid.y,
+        "A", item.outer, item.outer, 0, 1, 1, outerStart.x, outerStart.y,
+        "M", innerStart.x, innerStart.y,
+        "A", item.inner, item.inner, 0, 1, 0, innerMid.x, innerMid.y,
+        "A", item.inner, item.inner, 0, 1, 0, innerStart.x, innerStart.y,
+        "Z"
+      ].join(" ");
     }
 
-    function setCenterImage(id) {
+    /* =========================
+      UI State
+    ========================= */
+    function navigateTo(link) {
+      document.body.style.background = "#111111";
+      setTimeout(() => {
+        window.location.href = link;
+      }, 220);
+    }
+
+    function setCenterImage(id = "default") {
       document.querySelectorAll(".center-media img").forEach(img => {
         img.classList.remove("active");
       });
 
-      const target = document.getElementById(`center-${id}`);
-
-      if (target) {
-        target.classList.add("active");
-      } else {
-        document.getElementById("center-default").classList.add("active");
-      }
+      const target = document.getElementById(`center-${id}`) || document.getElementById("center-default");
+      target.classList.add("active");
     }
 
-    function setCopy(item) {
-      sloganKicker.textContent = item.kicker;
-      sloganTitle.innerHTML = item.title;
-      sloganDesc.textContent = item.desc;
+    function setCopy(copy = defaultCopy) {
+      sloganKicker.textContent = copy.kicker;
+      sloganTitle.innerHTML = copy.title;
+      sloganDesc.textContent = copy.desc;
     }
 
-    function focusProjectsByTag(tag) {
-      if (!projectOrbit) return;
-
+    function focusProjects(tag) {
       projectOrbit.classList.add("has-focus");
 
       document.querySelectorAll(".project-card").forEach(card => {
-        const tags = card.getAttribute("data-tags") || "";
-        const related = tags.split(/\s+/).includes(tag);
-
-        card.classList.toggle("is-related", related);
+        const tags = card.dataset.tags || "";
+        card.classList.toggle("is-related", tags.split(/\s+/).includes(tag));
       });
     }
 
     function clearProjectFocus() {
-      if (!projectOrbit) return;
-
       projectOrbit.classList.remove("has-focus");
 
       document.querySelectorAll(".project-card").forEach(card => {
@@ -1954,72 +2180,69 @@
     }
 
     function resetHero() {
-      sloganKicker.textContent = defaultCopy.kicker;
-      sloganTitle.innerHTML = defaultCopy.title;
-      sloganDesc.textContent = defaultCopy.desc;
-
-      document.querySelectorAll(".center-media img").forEach(img => {
-        img.classList.remove("active");
-      });
-
-      document.getElementById("center-default").classList.add("active");
+      setCopy(defaultCopy);
+      setCenterImage("default");
+      clearProjectFocus();
 
       document.querySelectorAll(".sector-group").forEach(group => {
         group.classList.remove("touch-active");
       });
-
-      clearProjectFocus();
     }
 
+    function previewItem(item) {
+      setCenterImage(item.id);
+      setCopy(item);
+
+      if (item.id === "about") {
+        clearProjectFocus();
+      } else {
+        focusProjects(item.id);
+      }
+    }
+
+    /* =========================
+      Category Panel
+    ========================= */
     function openCategory(item) {
-      if (!item) return;
+      if (item.id === "about") {
+        navigateTo("about.html");
+        return;
+      }
 
       pageContainer.classList.remove("index-mode");
       pageContainer.classList.add("category-mode");
-      hoverBadge.classList.remove("visible");
 
       mapViewBtn.classList.add("active");
       indexViewBtn.classList.remove("active");
 
-      setCenterImage(item.id);
-      setCopy(item);
+      hoverBadge.classList.remove("visible");
 
-      if (item.id !== "about") {
-        focusProjectsByTag(item.id);
-      } else {
-        clearProjectFocus();
-      }
+      previewItem(item);
 
-      categoryPanel.style.setProperty("--category-color", item.color || "var(--yellow)");
-
+      categoryPanel.style.setProperty("--category-color", item.color);
       categoryKicker.textContent = item.kicker;
       categoryTitle.innerHTML = item.title;
       categoryDesc.textContent = item.desc;
 
       categoryWorks.innerHTML = "";
 
-      if (item.works && item.works.length) {
-        item.works.forEach(work => {
-          const row = document.createElement("article");
-          row.className = "category-work";
-          row.setAttribute("data-link", work.link);
+      item.works.forEach(work => {
+        const row = document.createElement("article");
+        row.className = "category-work";
+        row.dataset.link = work.link;
 
-          row.innerHTML = `
-            <div class="category-work-no">${work.no}</div>
-            <div class="category-work-main">
-              <div class="category-work-title">${work.title}</div>
-              <div class="category-work-meta">${work.meta}</div>
-            </div>
-            <div class="category-work-view">View</div>
-          `;
+        row.innerHTML = `
+          <div class="category-work-no">${work.no}</div>
+          <div class="category-work-main">
+            <div class="category-work-title">${work.title}</div>
+            <div class="category-work-meta">${work.meta}</div>
+          </div>
+          <div class="category-work-view">View</div>
+        `;
 
-          row.addEventListener("click", () => {
-            navigateTo(work.link);
-          });
-
-          categoryWorks.appendChild(row);
-        });
-      }
+        row.addEventListener("click", () => navigateTo(work.link));
+        categoryWorks.appendChild(row);
+      });
     }
 
     function closeCategory() {
@@ -2029,224 +2252,139 @@
       mapViewBtn.classList.add("active");
       indexViewBtn.classList.remove("active");
 
-      activeTouchId = null;
-
       hoverBadge.classList.remove("visible");
-
       resetHero();
     }
 
-    function navigateTo(link) {
-      document.body.style.transition = "background 0.35s ease";
-      document.body.style.background = "#111111";
+    function setViewMode(mode) {
+      if (mode === "index") {
+        pageContainer.classList.remove("category-mode");
+        pageContainer.classList.add("index-mode");
 
-      setTimeout(() => {
-        window.location.href = link;
-      }, 220);
-    }
+        mapViewBtn.classList.remove("active");
+        indexViewBtn.classList.add("active");
 
-    function previewSector(item) {
-      setCenterImage(item.id);
-      setCopy(item);
-      activeTouchId = item.id;
-
-      if (item.id !== "about") {
-        focusProjectsByTag(item.id);
-      } else {
-        clearProjectFocus();
+        hoverBadge.classList.remove("visible");
+        resetHero();
+        return;
       }
 
-      document.querySelectorAll(".sector-group").forEach(group => {
-        group.classList.toggle("touch-active", group.getAttribute("data-id") === item.id);
-      });
+      closeCategory();
     }
 
-    function bindSectorEvents(group, item) {
+    /* =========================
+      Build Compass
+    ========================= */
+    function addLabelToGroup(group, pathId, label, dy = "-6") {
+      const text = createSvg("text", {
+        class: "ring-label",
+        dy
+      });
+
+      const textPath = createSvg("textPath", {
+        href: `#${pathId}`,
+        startOffset: "50%",
+        "text-anchor": "middle"
+      });
+
+      textPath.textContent = label.toUpperCase();
+      text.appendChild(textPath);
+      group.appendChild(text);
+    }
+
+    function bindSector(group, item) {
       group.addEventListener("mouseenter", () => {
-        if (isTouchDevice) return;
+        if (isTouchDevice || pageContainer.classList.contains("category-mode")) return;
 
-        if (pageContainer.classList.contains("category-mode")) return;
-
-        setCenterImage(item.id);
-        setCopy(item);
-
-        if (item.id !== "about") {
-          focusProjectsByTag(item.id);
-        } else {
-          clearProjectFocus();
-        }
-
+        previewItem(item);
         hoverBadge.classList.add("visible");
       });
 
       group.addEventListener("mouseleave", () => {
-        if (isTouchDevice) return;
-
-        if (pageContainer.classList.contains("category-mode")) return;
+        if (isTouchDevice || pageContainer.classList.contains("category-mode")) return;
 
         resetHero();
         hoverBadge.classList.remove("visible");
       });
 
-      group.addEventListener("click", (e) => {
-        e.stopPropagation();
-
-        if (item.id === "about") {
-          navigateTo("about.html");
-          return;
-        }
-
-        activeTouchId = item.id;
+      group.addEventListener("click", event => {
+        event.stopPropagation();
         openCategory(item);
       });
 
-      group.addEventListener("keydown", (e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
+      group.addEventListener("keydown", event => {
+        if (event.key !== "Enter" && event.key !== " ") return;
 
-          if (item.id === "about") {
-            navigateTo("about.html");
-            return;
-          }
-
-          activeTouchId = item.id;
-          openCategory(item);
-        }
+        event.preventDefault();
+        openCategory(item);
       });
     }
 
     function buildCompass() {
-      sectors.forEach((item) => {
+      sectors.forEach(item => {
+        const group = createSvg("g", {
+          class: "sector-group",
+          "data-id": item.id,
+          role: "link",
+          tabindex: "0",
+          "aria-label": item.label
+        });
+
+        const sectorPath = createSvg("path", {
+          class: "ring-sector",
+          d: item.isFullRing
+            ? fullRingPath(item)
+            : ringSectorPath(CX, CY, item.inner, item.outer, item.start, item.end)
+        });
+
+        group.appendChild(sectorPath);
+
         if (item.isFullRing) {
-          const group = createSvgElement("g", {
-            class: "sector-group",
-            "data-id": item.id,
-            role: "link",
-            tabindex: "0",
-            "aria-label": item.label
-          });
-
-          const outerStart = polarToCartesian(CX, CY, item.outer, -180);
-          const outerMid = polarToCartesian(CX, CY, item.outer, 0);
-          const innerStart = polarToCartesian(CX, CY, item.inner, -180);
-          const innerMid = polarToCartesian(CX, CY, item.inner, 0);
-
-          const fullRingD = [
-            "M", outerStart.x, outerStart.y,
-            "A", item.outer, item.outer, 0, 1, 1, outerMid.x, outerMid.y,
-            "A", item.outer, item.outer, 0, 1, 1, outerStart.x, outerStart.y,
-            "M", innerStart.x, innerStart.y,
-            "A", item.inner, item.inner, 0, 1, 0, innerMid.x, innerMid.y,
-            "A", item.inner, item.inner, 0, 1, 0, innerStart.x, innerStart.y,
-            "Z"
-          ].join(" ");
-
-          const sectorPath = createSvgElement("path", {
-            class: "ring-sector",
-            d: fullRingD
-          });
-
-          group.appendChild(sectorPath);
-
           const topPathId = `text-path-${item.id}-top`;
-          const topTextPathShape = createSvgElement("path", {
+          const bottomPathId = `text-path-${item.id}-bottom`;
+
+          defs.appendChild(createSvg("path", {
             id: topPathId,
             class: "guide-path",
             d: textArcPath(CX, CY, item.textRadius, -90, 90, false)
-          });
+          }));
 
-          defs.appendChild(topTextPathShape);
-
-          const topText = createSvgElement("text", {
-            class: "ring-label",
-            dy: "-6"
-          });
-
-          const topTextPath = createSvgElement("textPath", {
-            href: `#${topPathId}`,
-            startOffset: "50%",
-            "text-anchor": "middle"
-          });
-
-          topTextPath.textContent = item.label.toUpperCase();
-          topText.appendChild(topTextPath);
-          group.appendChild(topText);
-
-          const bottomPathId = `text-path-${item.id}-bottom`;
-          const bottomTextPathShape = createSvgElement("path", {
+          defs.appendChild(createSvg("path", {
             id: bottomPathId,
             class: "guide-path",
             d: textArcPath(CX, CY, item.textRadius, 90, 270, true)
-          });
+          }));
 
-          defs.appendChild(bottomTextPathShape);
-
-          const bottomText = createSvgElement("text", {
-            class: "ring-label",
-            dy: "16"
-          });
-
-          const bottomTextPath = createSvgElement("textPath", {
-            href: `#${bottomPathId}`,
-            startOffset: "50%",
-            "text-anchor": "middle"
-          });
-
-          bottomTextPath.textContent = item.label.toUpperCase();
-          bottomText.appendChild(bottomTextPath);
-          group.appendChild(bottomText);
-
-          rings.appendChild(group);
-          bindSectorEvents(group, item);
-
+          addLabelToGroup(group, topPathId, item.label, "-6");
+          addLabelToGroup(group, bottomPathId, item.label, "16");
         } else {
           const pathId = `text-path-${item.id}`;
 
-          const textPathShape = createSvgElement("path", {
+          defs.appendChild(createSvg("path", {
             id: pathId,
             class: "guide-path",
-            d: textArcPath(CX, CY, item.textRadius, item.start + 8, item.end - 8, item.reverseText)
-          });
+            d: textArcPath(
+              CX,
+              CY,
+              item.textRadius,
+              item.start + 8,
+              item.end - 8,
+              item.reverseText
+            )
+          }));
 
-          defs.appendChild(textPathShape);
-
-          const group = createSvgElement("g", {
-            class: "sector-group",
-            "data-id": item.id,
-            role: "link",
-            tabindex: "0",
-            "aria-label": item.label
-          });
-
-          const sectorPath = createSvgElement("path", {
-            class: "ring-sector",
-            d: ringSectorPath(CX, CY, item.inner, item.outer, item.start, item.end)
-          });
-
-          const text = createSvgElement("text", {
-            class: "ring-label",
-            dy: item.reverseText ? "16" : "-6"
-          });
-
-          const textPath = createSvgElement("textPath", {
-            href: `#${pathId}`,
-            startOffset: "50%",
-            "text-anchor": "middle"
-          });
-
-          textPath.textContent = item.label.toUpperCase();
-
-          text.appendChild(textPath);
-          group.appendChild(sectorPath);
-          group.appendChild(text);
-          rings.appendChild(group);
-
-          bindSectorEvents(group, item);
+          addLabelToGroup(group, pathId, item.label, item.reverseText ? "16" : "-6");
         }
+
+        rings.appendChild(group);
+        bindSector(group, item);
       });
     }
 
-    function arcPathByAngles(cx, cy, r, startAngle, endAngle) {
+    /* =========================
+      Sketch Arrows
+    ========================= */
+    function arcPath(cx, cy, r, startAngle, endAngle) {
       const start = polarToCartesian(cx, cy, r, startAngle);
       const end = polarToCartesian(cx, cy, r, endAngle);
       const largeArcFlag = Math.abs(endAngle - startAngle) > 180 ? 1 : 0;
@@ -2258,19 +2396,15 @@
     }
 
     function addSketchArrow(startAngle, endAngle, r) {
-      const mainPath = createSvgElement("path", {
+      sketchArrows.appendChild(createSvg("path", {
         class: "sketch-arrow-path",
-        d: arcPathByAngles(CX, CY, r, startAngle, endAngle)
-      });
+        d: arcPath(CX, CY, r, startAngle, endAngle)
+      }));
 
-      sketchArrows.appendChild(mainPath);
-
-      const ghostPath = createSvgElement("path", {
+      sketchArrows.appendChild(createSvg("path", {
         class: "sketch-arrow-path ghost",
-        d: arcPathByAngles(CX, CY, r + 2, startAngle + 1.8, endAngle - 1.8)
-      });
-
-      sketchArrows.appendChild(ghostPath);
+        d: arcPath(CX, CY, r + 2, startAngle + 1.8, endAngle - 1.8)
+      }));
 
       const tip = polarToCartesian(CX, CY, r, endAngle);
       const angleRad = (endAngle - 90) * Math.PI / 180;
@@ -2285,69 +2419,55 @@
         y: tangent.x
       };
 
-      const headLength = 24;
-      const headWidth = 12;
-
       const back = {
-        x: tip.x - tangent.x * headLength,
-        y: tip.y - tangent.y * headLength
+        x: tip.x - tangent.x * 24,
+        y: tip.y - tangent.y * 24
       };
 
       const wingA = {
-        x: back.x + normal.x * headWidth,
-        y: back.y + normal.y * headWidth
+        x: back.x + normal.x * 12,
+        y: back.y + normal.y * 12
       };
 
       const wingB = {
-        x: back.x - normal.x * headWidth,
-        y: back.y - normal.y * headWidth
+        x: back.x - normal.x * 12,
+        y: back.y - normal.y * 12
       };
 
-      const arrowHeadA = createSvgElement("path", {
+      sketchArrows.appendChild(createSvg("path", {
         class: "sketch-arrow-path",
         d: `M ${wingA.x} ${wingA.y} L ${tip.x} ${tip.y}`
-      });
+      }));
 
-      const arrowHeadB = createSvgElement("path", {
+      sketchArrows.appendChild(createSvg("path", {
         class: "sketch-arrow-path",
         d: `M ${wingB.x} ${wingB.y} L ${tip.x} ${tip.y}`
-      });
-
-      sketchArrows.appendChild(arrowHeadA);
-      sketchArrows.appendChild(arrowHeadB);
+      }));
     }
 
     function buildSketchArrows() {
       sketchArrows.innerHTML = "";
 
-      const arrowRadius = 395;
-
-      addSketchArrow(-55, -15, arrowRadius);
-      addSketchArrow(65, 110, arrowRadius);
-      addSketchArrow(190, 230, arrowRadius);
+      const r = 395;
+      addSketchArrow(-55, -15, r);
+      addSketchArrow(65, 110, r);
+      addSketchArrow(190, 230, r);
     }
 
+    /* =========================
+      Project / Index Events
+    ========================= */
     function bindProjectCards() {
       document.querySelectorAll(".project-card").forEach(card => {
-        const link = card.getAttribute("data-link");
-        const tags = card.getAttribute("data-tags") || "";
+        const link = card.dataset.link;
+        const tag = (card.dataset.tags || "").split(/\s+/)[0];
 
         card.addEventListener("mouseenter", () => {
           if (isTouchDevice) return;
 
-          // 如果当前已经打开分类面板，不要再重写左侧文案
-          if (pageContainer.classList.contains("category-mode")) {
-            hoverBadge.classList.add("visible");
-            return;
-          }
-
-          const tag = tags.split(/\s+/)[0];
-          const config = sectors.find(s => s.id === tag);
-
-          if (config) {
-            setCenterImage(config.id);
-            setCopy(config);
-            focusProjectsByTag(config.id);
+          if (!pageContainer.classList.contains("category-mode")) {
+            const item = sectors.find(sector => sector.id === tag);
+            if (item) previewItem(item);
           }
 
           hoverBadge.classList.add("visible");
@@ -2356,131 +2476,84 @@
         card.addEventListener("mouseleave", () => {
           if (isTouchDevice) return;
 
-          // 分类状态下，移出卡片不要 resetHero
-          if (pageContainer.classList.contains("category-mode")) {
-            hoverBadge.classList.remove("visible");
-            return;
+          if (!pageContainer.classList.contains("category-mode")) {
+            resetHero();
           }
 
-          resetHero();
           hoverBadge.classList.remove("visible");
         });
 
-        card.addEventListener("click", (e) => {
-          e.stopPropagation();
-
-          if (link) {
-            navigateTo(link);
-          }
+        card.addEventListener("click", event => {
+          event.stopPropagation();
+          if (link) navigateTo(link);
         });
       });
     }
 
     function bindWorkRows() {
       document.querySelectorAll(".work-row").forEach(row => {
-        const link = row.getAttribute("data-link");
-
         row.addEventListener("click", () => {
-          if (link) {
-            navigateTo(link);
-          }
+          if (row.dataset.link) navigateTo(row.dataset.link);
         });
       });
     }
 
-    function setViewMode(mode) {
-      if (mode === "index") {
-        pageContainer.classList.remove("category-mode");
-        pageContainer.classList.add("index-mode");
+    /* =========================
+      Global Events
+    ========================= */
+    function bindGlobalEvents() {
+      brand.addEventListener("click", () => window.location.reload());
 
-        mapViewBtn.classList.remove("active");
-        indexViewBtn.classList.add("active");
+      mapViewBtn.addEventListener("click", event => {
+        event.stopPropagation();
+        setViewMode("map");
+      });
 
-        activeTouchId = null;
-        hoverBadge.classList.remove("visible");
+      indexViewBtn.addEventListener("click", event => {
+        event.stopPropagation();
+        setViewMode("index");
+      });
 
-        resetHero();
-        return;
-      }
-
-      // mode === "map"
-      closeCategory();
-    }
-
-
-    buildCompass();
-    buildSketchArrows();
-    bindProjectCards();
-    bindWorkRows();
-
-    window.addEventListener("mousemove", (event) => {
-      if (isTouchDevice) return;
-
-      hoverBadge.style.left = `${event.clientX}px`;
-      hoverBadge.style.top = `${event.clientY}px`;
-    });
-
-    brand.addEventListener("click", () => {
-      window.location.reload();
-    });
-
-    mapViewBtn.addEventListener("click", (e) => {
-      e.stopPropagation();
-      setViewMode("map");
-    });
-
-    indexViewBtn.addEventListener("click", (e) => {
-      e.stopPropagation();
-      setViewMode("index");
-    });
-
-    if (categoryClose) {
-      categoryClose.addEventListener("click", (e) => {
-        e.stopPropagation();
+      categoryClose.addEventListener("click", event => {
+        event.stopPropagation();
         closeCategory();
+      });
+
+      window.addEventListener("mousemove", event => {
+        if (isTouchDevice) return;
+
+        hoverBadge.style.left = `${event.clientX}px`;
+        hoverBadge.style.top = `${event.clientY}px`;
+      });
+
+      window.addEventListener("keydown", event => {
+        if (event.key === "Escape") closeCategory();
+      });
+
+      document.addEventListener("click", event => {
+        const clickedInteractive = event.target.closest(
+          ".sector-group, .topbar, .project-card, .index-panel, .category-panel, .hero-actions"
+        );
+
+        if (!clickedInteractive && pageContainer.classList.contains("category-mode")) {
+          closeCategory();
+        }
       });
     }
 
+    /* =========================
+      Init
+    ========================= */
+    function init() {
+      buildCompass();
+      buildSketchArrows();
+      bindProjectCards();
+      bindWorkRows();
+      bindGlobalEvents();
+    }
 
-    document.addEventListener("click", (e) => {
-      const clickedSector = e.target.closest(".sector-group");
-      const clickedMenu = e.target.closest(".side-menu");
-      const clickedTopbar = e.target.closest(".topbar");
-      const clickedProject = e.target.closest(".project-card");
-      const clickedIndex = e.target.closest(".index-panel");
-      const clickedCategory = e.target.closest(".category-panel");
-      const clickedHeroAction = e.target.closest(".hero-actions");
-
-      const clickedInteractive =
-        clickedSector ||
-        clickedMenu ||
-        clickedTopbar ||
-        clickedProject ||
-        clickedIndex ||
-        clickedCategory ||
-        clickedHeroAction;
-
-      if (!clickedInteractive) {
-        activeTouchId = null;
-
-        if (pageContainer.classList.contains("category-mode")) {
-          closeCategory();
-          return;
-        }
-
-        if (isTouchDevice) {
-          resetHero();
-        }
-      }
-    });
-
-    window.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") {
-        if (pageContainer.classList.contains("category-mode")) {
-          closeCategory();
-        }
-      }
-    });
+    init();
   </script>
+
 </body>
 </html>

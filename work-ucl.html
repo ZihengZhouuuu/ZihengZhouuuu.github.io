@@ -4,7 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>UCL｜Stigmergic Spaces｜周子恒</title>
+  <title>无人建造-UCL｜周子恒</title>
+  <link rel="icon" href="images/icon.png" type="image/png">
 
   <style>
     :root {
@@ -377,7 +378,7 @@
 
     .logic-cell {
       position: relative;
-      min-height: 190px;
+      min-height: 120px;
       padding: 15px;
 
       border: 2px solid rgba(244, 239, 231, 0.82);
@@ -1067,7 +1068,6 @@
 
     /* 卡片高度和字体降低 */
     .logic-cell {
-      min-height: 160px;
       padding: 14px;
     }
 
@@ -1273,15 +1273,11 @@
     <section class="section dark logic-section">
       <div class="section-head">
         <div class="section-no">System Logic</div>
-        <h2 class="section-title">建立材料、机器人与算法共同反馈的无人建造系统。</h2>
+        <h2 class="section-title">材料、机器人与算法共同反馈的无人建造系统。</h2>
       </div>
 
       <p class="section-text">
-        Stigmergic Spaces 探索空间设计、机器人控制、交互仿真与智能建造之间的关系。项目面向极端环境或无人参与的未来建筑搭建任务，设计了一套基于 Unity3D 的多机器人建造仿真系统，并通过强化学习与力反馈算法，使机器人能够在复杂环境中完成自主路径规划、构件搬运、姿态调整与模块搭建。
-      </p>
-
-      <p class="section-text">
-        项目借鉴蚂蚁、白蚁、黏菌等自然群体的自组织行为，将建筑空间理解为由多个智能体共同协商、反馈和重构的动态系统。建筑不再是一次性完成的静态对象，而是可以被机器人持续装配、拆卸、优化和再配置的 living architecture。
+        项目面向极端环境或无人参与的未来建筑搭建任务，借鉴蚂蚁、白蚁、黏菌等自然群体的自组织行为，将建筑空间理解为由多个智能体共同协商、反馈和重构的动态系统。设计了一套基于 Unity3D 的多机器人建造仿真系统，并通过强化学习与力反馈算法，使机器人能够在复杂环境中完成自主路径规划、构件搬运、姿态调整与模块搭建。
       </p>
 
       <div class="logic-matrix">
@@ -1321,21 +1317,6 @@
           </p>
         </article>
       </div>
-    </section>
-
-    <!-- =========================
-         01 / System Research
-    ========================== -->
-    <section class="section">
-      <div class="section-head">
-        <div class="section-no">01 / System Research</div>
-        <h2 class="section-title">系统由材料、机器人与计算逻辑共同构成。</h2>
-      </div>
-
-      <p class="section-text">
-        项目将无人建造系统拆解为三个互相反馈的子系统：材料系统、机器人系统与计算系统。材料系统提供可重复连接、可拆卸与可重构的模块化构件；机器人系统负责在空间中移动、抓取、旋转和放置构件；计算系统则通过仿真、机器学习和力反馈算法，持续引导机器人行为并评估结构稳定性。通过将节点连接逻辑简化为可被机器人识别和操作的几何关系，系统能够支持更灵活的聚合、拆卸和再配置过程。
-      </p>
-
       <div class="media-grid">
         <div class="media-item full contain">
           <img src="images/UCL/system.jpg" alt="Stigmergic Spaces system and material research">
@@ -1344,17 +1325,16 @@
     </section>
 
     <!-- =========================
-         02 / Robotic Prototype
+         01 / Robotic Prototype
     ========================== -->
     <section class="section soft">
       <div class="section-head">
-        <div class="section-no">02 / Robotic Prototype</div>
+        <div class="section-no">01 / Robotic Prototype</div>
         <h2 class="section-title">通过 Unity 仿真与物理原型验证机器人动作</h2>
       </div>
 
       <p class="section-text">
-        机器人系统围绕模块化构件的搬运、旋转、传递和放置进行设计。项目在 Unity 中建立虚拟控制环境，并通过 Raspberry Pi、舵机与电源模块连接实体机器人，实现仿真动作与物理原型之间的对应测试。
-        机器人原型经历多轮迭代，逐步整合滑轨移动、旋转关节、夹持机构与双机器人协作能力。测试内容包括 Y 轴旋转、Z 轴旋转、X 轴滑动、构件传递、双机器人协同放置以及辅助汇合等动作。
+        机器人系统围绕模块化构件的搬运、旋转、传递和放置进行设计。原型经历多轮迭代，逐步整合滑轨移动、旋转关节、夹持机构与双机器人协作能力。测试内容包括 Y 轴旋转、Z 轴旋转、X 轴滑动、构件传递、双机器人协同放置以及辅助汇合等动作。
       </p>
 
       <div class="media-grid">
@@ -1370,21 +1350,21 @@
       </div>
 
       <p class="section-text" style="margin-top: 14px;">
-        机器人原型及控制设计
+        项目在 Unity 中建立虚拟控制环境，并通过 Raspberry Pi、舵机与电源模块连接实体机器人，实现仿真动作与物理原型之间的对应测试。
       </p>
     </section>
 
     <!-- =========================
-         03 / Collaboration Simulation
+         02 / Collaboration Simulation
     ========================== -->
     <section class="section">
       <div class="section-head">
-        <div class="section-no">03 / Collaboration Simulation</div>
+        <div class="section-no">02 / Collaboration Simulation</div>
         <h2 class="section-title">水平与垂直方向的构件协作</h2>
       </div>
 
       <p class="section-text">
-        在机器人协作仿真中，构件并不是被单个机器人独立放置，而是通过多个机器人共同夹持、旋转、传递与定位。系统测试了水平 Pivot、垂直 Pivot、同层旋转、支点切换与穿越几何等协作动作，用于验证机器人在复杂结构网格中的移动与构件操作能力。理解机器人之间如何共享构件重量、改变支点、交换操作角色，并在有限空间中完成构件的方向转换。
+        在机器人协作仿真中，系统测试了水平 Pivot、垂直 Pivot、同层旋转、支点切换与穿越几何等协作动作。理解机器人之间如何共享构件重量、改变支点、交换操作角色，并在有限空间中完成构件的方向转换。
       </p>
       
       <div class="media-grid">
@@ -1418,11 +1398,11 @@
     </section>
 
     <!-- =========================
-         04 / Reinforcement Learning
+         03 / Reinforcement Learning
     ========================== -->
     <section class="section dark">
       <div class="section-head">
-        <div class="section-no">04 / Reinforcement Learning</div>
+        <div class="section-no">03 / Reinforcement Learning</div>
         <h2 class="section-title">通过RL训练机器人完成目标导向的自主控制</h2>
       </div>
 
@@ -1437,11 +1417,6 @@
           <p class="logic-desc">
             包括机器人位置、目标点、构件方向、关节状态、检测范围与环境约束。
           </p>
-          <div class="logic-tags">
-            <span>Position</span>
-            <span>Rotation</span>
-            <span>Detector</span>
-          </div>
         </article>
 
         <article class="logic-cell logic-solution">
@@ -1450,11 +1425,6 @@
           <p class="logic-desc">
             控制机器人旋转、滑动、抓取、释放以及多个关节的姿态变化。
           </p>
-          <div class="logic-tags">
-            <span>Rotation</span>
-            <span>Sliding</span>
-            <span>Grabbing</span>
-          </div>
         </article>
 
         <article class="logic-cell logic-solution">
@@ -1463,11 +1433,6 @@
           <p class="logic-desc">
             根据接近目标、正确抓取、成功运输、减少碰撞和完成任务给予正负反馈。
           </p>
-          <div class="logic-tags">
-            <span>Positive</span>
-            <span>Negative</span>
-            <span>Success</span>
-          </div>
         </article>
 
         <article class="logic-cell logic-solution">
@@ -1476,11 +1441,6 @@
           <p class="logic-desc">
             使用 ML-Agents PPO 方法，使机器人在大量仿真试错中学习稳定的任务完成策略。
           </p>
-          <div class="logic-tags">
-            <span>ML-Agents</span>
-            <span>PPO</span>
-            <span>Simulation</span>
-          </div>
         </article>
       </div>
 
@@ -1492,11 +1452,11 @@
     </section>
 
     <!-- =========================
-         06 / Spatial Rearrangement
+         04 / Spatial Rearrangement
     ========================== -->
     <section class="section soft">
       <div class="section-head">
-        <div class="section-no">06 / Spatial Rearrangement</div>
+        <div class="section-no">04 / Spatial Rearrangement</div>
         <h2 class="section-title">从机器人建造动作转化为空间装配、拆卸与重构场景。</h2>
       </div>
 
@@ -1518,44 +1478,6 @@
           <img src="images/UCL/Outcome.jpg" alt="Force aggregation and feedback analysis">
         </div>
 
-      </div>
-    </section>
-
-    <!-- =========================
-         07 / Technical Summary
-    ========================== -->
-    <section class="section dark">
-      <div class="section-head">
-        <div class="section-no">07 / Technical Summary</div>
-        <h2 class="section-title">将机器人系统的技术边界转化为可观察、可调试的空间方案。</h2>
-      </div>
-
-      <p class="section-text">
-        这个项目的核心价值不只是完成一个机器人原型，而是把机器人运动控制、路径规划、感知范围、构件连接、结构反馈与建筑空间设计整合为一个可被观察和调试的系统。通过 Unity 仿真环境，复杂的建造行为被转化为可测试的状态、动作、奖励与反馈关系。
-        项目展示了从建筑设计到计算控制的跨尺度转译能力：一方面理解空间系统如何被拆解为模块、路径和连接关系；另一方面也理解机器人在真实操作中受到的运动、力学和感知限制，并将这些限制转化为具体的设计策略。
-      </p>
-
-      <div class="result-panel">
-        <article class="result-item">
-          <div class="result-number">Spatial</div>
-          <p class="result-desc">
-            将建筑空间理解为可装配、可拆卸、可重构的动态系统。
-          </p>
-        </article>
-
-        <article class="result-item">
-          <div class="result-number">Robot</div>
-          <p class="result-desc">
-            在 Unity3D 中搭建机器人行为、交互任务和可视化控制环境。
-          </p>
-        </article>
-
-        <article class="result-item">
-          <div class="result-number">RL</div>
-          <p class="result-desc">
-            通过 ML-Agents、PPO 与力反馈系统训练和评估机器人建造行为。
-          </p>
-        </article>
       </div>
     </section>
 
