@@ -5,6 +5,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>周子恒｜设计智能</title>
   <link rel="icon" href="images/icon.png" type="image/png">
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-1TN7EZQEY6"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+
+    gtag('js', new Date());
+
+    gtag('config', 'G-1TN7EZQEY6');
+  </script>
+
 
   <style>
     :root {
@@ -1673,11 +1687,10 @@
         </p>
 
         <div class="hero-actions" aria-label="主要操作">
-          <a class="hero-btn hero-btn-primary" href="doc/简历.pdf" target="_blank" rel="noopener">
+          <a id="resumeBtn" class="hero-btn hero-btn-primary" href="doc/简历.pdf" target="_blank" rel="noopener">
             查看简历
           </a>
-
-          <a class="hero-btn" href="mailto:zhou_ziheng1@outlook.com">
+          <a id="contactBtn" class="hero-btn" href="mailto:zhou_ziheng1@outlook.com">
             联系我
           </a>
         </div>
@@ -2485,6 +2498,15 @@
 
         card.addEventListener("click", event => {
           event.stopPropagation();
+
+          if (typeof gtag === "function") {
+            gtag("event", "click_project_card", {
+              event_category: "project",
+              event_label: card.dataset.project || "unknown",
+              project_link: link || ""
+            });
+          }
+
           if (link) navigateTo(link);
         });
       });
@@ -2493,6 +2515,16 @@
     function bindWorkRows() {
       document.querySelectorAll(".work-row").forEach(row => {
         row.addEventListener("click", () => {
+          const workName = row.querySelector(".work-name")?.textContent?.trim() || "unknown";
+
+          if (typeof gtag === "function") {
+            gtag("event", "click_work_row", {
+              event_category: "project",
+              event_label: workName,
+              project_link: row.dataset.link || ""
+            });
+          }
+
           if (row.dataset.link) navigateTo(row.dataset.link);
         });
       });
@@ -2541,6 +2573,33 @@
       });
     }
 
+    function bindAnalyticsEvents() {
+      const resumeBtn = document.getElementById("resumeBtn");
+      const contactBtn = document.getElementById("contactBtn");
+
+      if (resumeBtn) {
+        resumeBtn.addEventListener("click", () => {
+          if (typeof gtag === "function") {
+            gtag("event", "click_resume", {
+              event_category: "engagement",
+              event_label: "查看简历"
+            });
+          }
+        });
+      }
+
+      if (contactBtn) {
+        contactBtn.addEventListener("click", () => {
+          if (typeof gtag === "function") {
+            gtag("event", "click_contact", {
+              event_category: "engagement",
+              event_label: "联系我"
+            });
+          }
+        });
+      }
+    }
+
     /* =========================
       Init
     ========================= */
@@ -2550,6 +2609,7 @@
       bindProjectCards();
       bindWorkRows();
       bindGlobalEvents();
+      bindAnalyticsEvents();
     }
 
     init();
