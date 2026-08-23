@@ -1073,6 +1073,7 @@
       display: flex;
       flex-direction: column;
       overflow: hidden;
+      border: 2px solid var(--fg);
       background: var(--paper);
       cursor: pointer;
       transition:
@@ -1090,6 +1091,7 @@
       width: 100%;
       aspect-ratio: 4 / 3;
       object-fit: cover;
+      border-bottom: 2px solid var(--fg);
       background: #ddd;
     }
 
@@ -1240,6 +1242,7 @@
         font-size: 10px;
         gap: 5px;
       }
+
 
       .compass-stage {
         position: absolute;
@@ -1662,25 +1665,7 @@
     }
 
     html.journey-on .compass-stage {
-      position: absolute;
-      left: 50%;
-      top: 50%;
-      width: min(112vmin, 1120px, calc(100vw - 2 * var(--pad)));
-      height: min(112vmin, 1120px, calc(100vw - 2 * var(--pad)));
       transition: none;
-    }
-
-    /* ---------- Tablet (769–1100px): circle top-right, title below-left ---------- */
-    @media (min-width: 769px) and (max-width: 1100px) {
-      html.journey-on .compass-stage {
-        width: min(56vmin, 470px, calc(100vw - 2 * var(--pad)));
-        height: min(56vmin, 470px, calc(100vw - 2 * var(--pad)));
-      }
-
-      .slogan.journey-mid {
-        top: 52%;
-        max-width: 460px;
-      }
     }
 
     .compass {
@@ -1966,51 +1951,6 @@
     .slogan.end-mode #journeyCta {
       display: none;
     }
-  
-    @media (max-width: 768px) {
-      .slogan.journey-mid {
-        left: 50%;
-        top: 64%;
-        right: auto;
-        bottom: auto;
-        transform: translate(-50%, -50%);
-        max-width: calc(100vw - 44px);
-        text-align: center;
-      }
-
-      .slogan.journey-mid .slogan-title {
-        font-size: clamp(24px, 7vw, 34px);
-        white-space: normal;
-      }
-
-      .slogan.end-mode {
-        max-width: calc(100vw - 44px);
-      }
-
-      .slogan.end-mode .slogan-title {
-        white-space: normal;
-        font-size: clamp(22px, 7vw, 30px);
-      }
-
-      .journey-rail {
-        display: none;
-      }
-
-      .journey-cta {
-        font-size: 16px;
-      }
-
-      .journey-next {
-        font-size: 9px;
-        max-width: calc(100vw - 32px);
-        white-space: normal;
-        text-align: center;
-      }
-    }
-  
-    .journey-rail span.on {
-      color: var(--fg);
-    }
   </style>
 </head>
 
@@ -2084,7 +2024,6 @@
             <img id="center-spatial" src="images/AGR/City-NY.jpg" alt="空间智能仿真">
             <img id="center-robotics" src="images/UCL/STIG_01.jpg" alt="极端环境下的无人建造">
             <img id="center-about" src="images/portrait.jpg" alt="">
-            <img id="center-logo" src="images/logo.png" alt="">
             <img id="center-j1" src="images/AGR/City-NY.jpg" alt="">
             <img id="center-j2" src="images/ARC/1.jpg" alt="">
             <img id="center-j3" src="images/llmToConstruction/BRIDGE_00.jpg" alt="">
@@ -2862,16 +2801,8 @@
     }
 
     function initJourney() {
-      const isDesktop = window.matchMedia("(min-width: 1101px) and (hover: hover) and (pointer: fine)").matches;
-      const isPortrait = window.matchMedia("(max-width: 768px) and (orientation: portrait)").matches;
-      const isTablet = window.matchMedia("(min-width: 769px) and (max-width: 1100px)").matches;
-      if (!isDesktop && !isPortrait && !isTablet) return;
-
-      const LAY = isPortrait
-        ? { ix: 0, iy: -7, is: 1.05, rx: 22, ry: -35, rs: 1.35, ex: 0, ey: -12, es: 0.6 }
-        : isTablet
-          ? { ix: 0, iy: -7, is: 1.0, rx: 22, ry: -30, rs: 1.05, ex: 0, ey: -8, es: 0.62 }
-          : { ix: 0, iy: -7, is: 1.16, rx: 32, ry: 2, rs: 1.78, ex: 0, ey: -6, es: 0.78 };
+      const enabled = window.matchMedia("(min-width: 1101px) and (hover: hover) and (pointer: fine)").matches;
+      if (!enabled) return;
 
       document.documentElement.classList.add("journey-on");
       document.body.style.minHeight = "700vh";
@@ -2946,10 +2877,8 @@
         else zoomP = 0;
 
         const endEase = p < ZO[0] ? 0 : p < ZO[1] ? journeyEase((p - ZO[0]) / (ZO[1] - ZO[0])) : 1;
-        const scale = LAY.is + (LAY.rs - LAY.is) * zoomP + (LAY.es - LAY.is) * endEase;
-        const jx = LAY.ix + (LAY.rx - LAY.ix) * zoomP + (LAY.ex - LAY.ix) * endEase;
-        const jy = LAY.iy + (LAY.ry - LAY.iy) * zoomP + (LAY.ey - LAY.iy) * endEase;
-        stage.style.transform = "translate(-50%, -50%) translate(" + jx.toFixed(2) + "vw, " + jy.toFixed(2) + "vh) scale(" + scale.toFixed(4) + ")";
+        const scale = 1.22 + (MAX_SCALE - 1.22) * zoomP - 0.40 * endEase;
+        stage.style.transform = "translate(calc(var(--stage-x) + " + (32 * zoomP).toFixed(3) + "vw), calc(var(--stage-y) + " + (2 * zoomP).toFixed(3) + "vh - " + (11 * endEase).toFixed(3) + "vh)) scale(" + scale.toFixed(4) + ")";
 
         const rotP = Math.min(1, Math.max(0, (p - RO[0]) / (RO[1] - RO[0])));
         let rot;
@@ -3032,18 +2961,6 @@
         centerMedia.style.cursor = p >= ZO[1] ? "pointer" : "";
         slogan.classList.toggle("journey-mid", p >= RO[0] && p < 0.895);
         slogan.classList.toggle("end-mode", p >= 0.90);
-
-        if (isPortrait && p >= RO[0] && p < 0.895) {
-          const rect = stage.getBoundingClientRect();
-          const radiusVh = (rect.width * scale / 2) / window.innerHeight * 100;
-          const centerVh = 50 + jy;
-          slogan.style.top = (centerVh + radiusVh - 4).toFixed(1) + "vh";
-          slogan.style.transform = "translate(-50%, 0)";
-        } else {
-          slogan.style.top = "";
-          slogan.style.transform = "";
-        }
-
         hint.style.opacity = p < 0.02 ? "1" : "0";
         sketchArrows.style.opacity = p > 0.92 ? "0" : "1";        
       }

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="AI 电商素材候选结果选择与反馈原型">
+  <title>选择与反馈 | AI Commerce Studio</title>
+  <link rel="icon" href="images/icon.png" type="image/png">
+  <link rel="stylesheet" href="demo-ai-commerce.css">
+</head>
+<body>
+  <div class="app-shell" data-results-page>
+    <header class="topbar">
+      <div class="topbar-inner">
+        <a class="brand" href="work-ai-commerce.html" aria-label="返回 AI 电商项目 Case Study">
+          <span class="brand-mark">EC</span>
+          <span><strong>AI Commerce Studio</strong><span>素材生成与模型推荐</span></span>
+        </a>
+        <nav class="flow-nav" aria-label="Demo 流程">
+          <a class="flow-link" href="demo-ai-commerce.html"><span class="flow-number">1</span>创建任务</a>
+          <a class="flow-link" href="demo-ai-commerce-results.html" aria-current="step"><span class="flow-number">2</span>选择与反馈</a>
+          <a class="flow-link" href="demo-ai-commerce-benchmark.html"><span class="flow-number">3</span>后台依据</a>
+        </nav>
+        <div class="top-actions"><a class="button quiet" href="demo-ai-commerce.html">修改任务</a></div>
+      </div>
+    </header>
+
+    <main class="page">
+      <header class="page-heading">
+        <h1>选择可用结果</h1>
+        <p>比较实际样例，采纳可用结果或标记具体问题。反馈会进入失败归因与推荐策略复核。</p>
+      </header>
+
+      <div class="results-layout">
+        <section class="result-workspace" aria-label="候选结果">
+          <header class="workspace-header">
+            <div><h2>候选结果</h2><p data-task-context>虚拟模特图 / 淘宝主图 1:1</p></div>
+            <a class="button" href="demo-ai-commerce.html">调整约束</a>
+          </header>
+          <div class="selected-preview">
+            <div class="candidate-thumb selected-media crop-nano" data-selected-media>
+              <img src="images/EC/gas_station_model_image_models.jpg" alt="Nano Banana Pro 生成结果，来自实际 Benchmark 对照图">
+            </div>
+            <div class="selected-info">
+              <div><h3 data-selected-name>Nano Banana Pro</h3><p data-selected-note>风格、人物自然度与商品覆盖最均衡，适合作为本任务首选。</p></div>
+              <div class="score-number"><span data-selected-score>4.62</span> <small>/ 5</small></div>
+            </div>
+          </div>
+          <div class="candidate-strip" data-candidate-strip aria-label="切换候选模型">
+            <button class="candidate is-selected" type="button" data-candidate="nano" aria-pressed="true"><span class="candidate-thumb crop-nano"><img src="images/EC/gas_station_model_image_models.jpg" alt="Nano Banana Pro 候选缩略图"></span><strong>Nano Banana</strong><span>4.62</span></button>
+            <button class="candidate" type="button" data-candidate="flux" aria-pressed="false"><span class="candidate-thumb crop-flux"><img src="images/EC/gas_station_model_image_models.jpg" alt="FLUX-2-max 候选缩略图"></span><strong>FLUX-2-max</strong><span>4.20</span></button>
+            <button class="candidate" type="button" data-candidate="gpt" aria-pressed="false"><span class="candidate-thumb crop-gpt"><img src="images/EC/gas_station_model_image_models.jpg" alt="GPT-Image 1.5 候选缩略图"></span><strong>GPT-Image 1.5</strong><span>4.03</span></button>
+            <button class="candidate" type="button" data-candidate="seedream" aria-pressed="false"><span class="candidate-thumb crop-seedream"><img src="images/EC/gas_station_model_image_models.jpg" alt="Seedream 4.5 候选缩略图"></span><strong>Seedream 4.5</strong><span>3.71</span></button>
+            <button class="candidate" type="button" data-candidate="qwen" aria-pressed="false"><span class="candidate-thumb crop-qwen"><img src="images/EC/gas_station_model_image_models.jpg" alt="Qwen-3-Max 候选缩略图"></span><strong>Qwen-3-Max</strong><span>3.24</span></button>
+          </div>
+        </section>
+
+        <aside class="review-panel" aria-label="结果反馈">
+          <header class="panel-heading"><div><h2>结果反馈</h2><p>只记录影响使用的问题</p></div></header>
+          <div class="review-body">
+            <div class="decision-toggle">
+              <button class="decision-button is-selected" type="button" data-decision="accept" aria-pressed="true">可直接使用</button>
+              <button class="decision-button" type="button" data-decision="revise" aria-pressed="false">需要修改</button>
+            </div>
+            <p class="review-copy" data-decision-copy>采纳结果会记录模型、任务与约束，用于后续推荐效果分析。</p>
+            <div class="failure-box" data-failure-box>
+              <h3>问题类型</h3>
+              <div class="failure-grid">
+                <button class="failure-tag" type="button" data-failure="商品缺失" aria-pressed="false">商品缺失</button>
+                <button class="failure-tag" type="button" data-failure="商品变形" aria-pressed="false">商品变形</button>
+                <button class="failure-tag" type="button" data-failure="颜色不符" aria-pressed="false">颜色不符</button>
+                <button class="failure-tag" type="button" data-failure="Logo 错误" aria-pressed="false">Logo 错误</button>
+                <button class="failure-tag" type="button" data-failure="姿态错误" aria-pressed="false">姿态错误</button>
+                <button class="failure-tag" type="button" data-failure="手部异常" aria-pressed="false">手部异常</button>
+              </div>
+            </div>
+            <div class="review-actions">
+              <button class="button primary" type="button" data-submit-review><span class="default-label">采纳结果并查看后台依据</span><span class="loading-label">正在记录反馈...</span></button>
+              <a class="button quiet" href="demo-ai-commerce.html">返回修改任务</a>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </main>
+  </div>
+  <div class="toast" data-toast role="status" aria-live="polite">状态已更新</div>
+  <script src="demo-ai-commerce.js"></script>
+</body>
+</html>

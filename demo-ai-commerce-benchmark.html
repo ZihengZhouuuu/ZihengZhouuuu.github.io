@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="AI 电商素材模型评测与后台推荐依据原型">
+  <title>后台依据 | AI Commerce Studio</title>
+  <link rel="icon" href="images/icon.png" type="image/png">
+  <link rel="stylesheet" href="demo-ai-commerce.css">
+</head>
+<body>
+  <div class="app-shell" data-benchmark-page>
+    <header class="topbar">
+      <div class="topbar-inner">
+        <a class="brand" href="work-ai-commerce.html" aria-label="返回 AI 电商项目 Case Study">
+          <span class="brand-mark">EC</span>
+          <span><strong>AI Commerce Studio</strong><span>素材生成与模型推荐</span></span>
+        </a>
+        <nav class="flow-nav" aria-label="Demo 流程">
+          <a class="flow-link" href="demo-ai-commerce.html"><span class="flow-number">1</span>创建任务</a>
+          <a class="flow-link" href="demo-ai-commerce-results.html"><span class="flow-number">2</span>选择与反馈</a>
+          <a class="flow-link" href="demo-ai-commerce-benchmark.html" aria-current="step"><span class="flow-number">3</span>后台依据</a>
+        </nav>
+        <div class="top-actions"><a class="button quiet" href="work-ai-commerce.html">返回 Case Study</a></div>
+      </div>
+    </header>
+
+    <main class="page">
+      <header class="page-heading">
+        <h1>用评测结果解释模型推荐</h1>
+        <p>总分用于初筛，真实样例和失败类型用于判断默认模型、备选模型和重试建议。</p>
+      </header>
+
+      <div class="benchmark-layout">
+        <section class="evidence-panel" aria-label="Benchmark 证据">
+          <header class="workspace-header">
+            <div><h2 data-evidence-title>图片模型评测</h2><p data-evidence-subtitle>复古模特图任务，综合分为本次样例评分。</p></div>
+            <div class="benchmark-tabs" aria-label="评测类型">
+              <button class="benchmark-tab is-selected" type="button" data-benchmark-tab="image" aria-pressed="true">图片模型</button>
+              <button class="benchmark-tab" type="button" data-benchmark-tab="video" aria-pressed="false">视频模型</button>
+            </div>
+          </header>
+          <div class="evidence-body">
+            <figure class="evidence-image"><img data-evidence-image src="images/EC/gas_station_model_image_models.jpg" alt="五个图片模型生成复古模特广告图的对照"></figure>
+            <p class="evidence-note" data-evidence-note>Nano Banana Pro 在商品覆盖、人物自然度和风格完成度之间最均衡。FLUX-2-max 适合作为商品保真兜底。</p>
+            <div class="ranking" data-ranking aria-label="模型评分与适用任务"></div>
+          </div>
+        </section>
+
+        <aside class="route-panel" aria-label="后台推荐依据">
+          <header class="panel-heading"><div><h2>当前推荐</h2><p data-route-context>虚拟模特图 / 人物自然上身</p></div></header>
+          <div class="route-result"><span>默认模型</span><strong data-final-route>Nano Banana Pro</strong></div>
+          <div class="route-list" data-route-list>
+            <div class="route-item"><strong>默认推荐</strong><p>Nano Banana Pro 负责商品场景图与虚拟模特图的综合完成度。</p></div>
+            <div class="route-item"><strong>保真兜底</strong><p>商品结构或细节风险较高时切换 FLUX-2-max。</p></div>
+            <div class="route-item"><strong>视频推荐组合</strong><p>Kling 负责稳定与镜头控制，Seedance 负责人像自然动作。</p></div>
+          </div>
+          <div class="route-actions">
+            <a class="button primary" href="demo-ai-commerce.html">创建新任务</a>
+            <a class="button" href="work-ai-commerce.html">查看完整 Case Study</a>
+          </div>
+        </aside>
+      </div>
+    </main>
+  </div>
+  <div class="toast" data-toast role="status" aria-live="polite">状态已更新</div>
+  <script src="demo-ai-commerce.js"></script>
+</body>
+</html>

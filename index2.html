@@ -36,8 +36,8 @@
       --pad: clamp(22px, 4vw, 56px);
       --font: Inter, Arial, "PingFang SC", "Microsoft YaHei", sans-serif;
       
-      --stage-x: 0vw;
-      --stage-y: 0vh;
+      --stage-x: 4vw;
+      --stage-y: -5vh;
       --index-x: 4vw;
       --index-y: 0vh;
 
@@ -344,8 +344,7 @@
       transform-origin: 500px 500px;
       transition:
         transform 0.3s cubic-bezier(.16, 1, .3, 1),
-        filter 0.3s ease,
-        opacity 0.3s ease;
+        filter 0.3s ease;
       outline: none;
     }
 
@@ -400,7 +399,7 @@
       text-transform: uppercase;
       fill: var(--bg);
       pointer-events: none;
-      transition: fill 0.28s cubic-bezier(.16, 1, .3, 1), opacity 0.3s ease;
+      transition: fill 0.28s cubic-bezier(.16, 1, .3, 1);
     }
 
     .sector-group:hover .ring-label,
@@ -450,7 +449,6 @@
       overflow: hidden;
       background: var(--paper);
       z-index: 24;
-      transition: opacity 0.3s ease, width 0.45s cubic-bezier(.16, 1, .3, 1), height 0.45s cubic-bezier(.16, 1, .3, 1);
       pointer-events: none;
       box-shadow:
         inset 0 0 0 1px rgba(34, 34, 34, 0.1),
@@ -1016,8 +1014,7 @@
       top: 50%;
 
       width: min(1080px, 82vw);
-      max-height: min(70vh, 960px);
-      overflow-y: auto;
+      max-height: min(70vh, 760px);
 
       transform: translate(-50%, -45%) scale(0.96);
 
@@ -1063,65 +1060,77 @@
       color: rgba(34, 34, 34, 0.58);
     }
 
-    .work-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
-      gap: 16px;
+    .work-list {
+      display: flex;
+      flex-direction: column;
+      border-top: 2px solid var(--fg);
     }
 
     .work-row {
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-      background: var(--paper);
+      display: grid;
+      grid-template-columns: 64px 1.2fr 1fr 96px;
+      align-items: center;
+      gap: 20px;
+      padding: 20px 0;
+      border-bottom: 2px solid var(--fg);
       cursor: pointer;
       transition:
         transform 0.25s cubic-bezier(.16, 1, .3, 1),
-        box-shadow 0.2s ease;
+        background 0.2s ease;
     }
 
     .work-row:hover {
-      transform: translateY(-4px);
-      box-shadow: 10px 10px 0 rgba(17, 17, 17, 0.18);
-    }
-
-    .work-thumb {
-      display: block;
-      width: 100%;
-      aspect-ratio: 4 / 3;
-      object-fit: cover;
-      background: #ddd;
-    }
-
-    .work-body {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      padding: 14px 14px 16px;
+      transform: translateX(12px);
+      background: rgba(255, 211, 77, 0.18);
     }
 
     .work-no {
-      font-size: 11px;
+      font-size: 12px;
       font-weight: 950;
       letter-spacing: 0.14em;
       opacity: 0.52;
     }
 
     .work-name {
-      font-size: 17px;
-      line-height: 1.05;
+      font-size: clamp(22px, 2.4vw, 42px);
+      line-height: 0.95;
       font-weight: 950;
-      letter-spacing: -0.05em;
+      letter-spacing: -0.07em;
       text-transform: uppercase;
     }
 
     .work-tags {
-      font-size: 10px;
-      line-height: 1.35;
+      font-size: 11px;
+      line-height: 1.4;
       font-weight: 850;
       letter-spacing: 0.04em;
       text-transform: uppercase;
       color: rgba(34, 34, 34, 0.48);
+    }
+
+    .work-cta {
+      justify-self: end;
+      width: 54px;
+      height: 32px;
+      display: grid;
+      place-items: center;
+      border: 2px solid var(--fg);
+      border-radius: 0;
+      font-size: 10px;
+      font-weight: 950;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      box-shadow: 4px 4px 0 rgba(17, 17, 17, 0.18);
+      transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        box-shadow 0.2s ease;
+    }
+
+    .work-row:hover .work-cta {
+      background: var(--fg);
+      color: var(--bg);
+      box-shadow: 6px 6px 0 rgba(17, 17, 17, 0.28);
     }
 
     .hover-badge {
@@ -1348,21 +1357,25 @@
         font-size: 12px;
       }
 
-      .work-grid {
-        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      .work-row {
+        grid-template-columns: 42px 1fr 52px;
         gap: 10px;
-      }
-
-      .work-body {
-        padding: 10px 10px 12px;
-      }
-
-      .work-name {
-        font-size: 15px;
+        padding: 15px 0;
       }
 
       .work-tags {
-        font-size: 9px;
+        grid-column: 2 / 4;
+        font-size: 10px;
+        margin-top: -6px;
+      }
+
+      .work-name {
+        font-size: 24px;
+      }
+
+      .work-cta {
+        width: 48px;
+        height: 28px;
       }
     }
 
@@ -1643,393 +1656,19 @@
     }
 
 
-  
-    /* =========================
-       Scroll Journey (desktop)
-    ========================= */
-    html.journey-on,
-    html.journey-on body {
-      height: auto;
-      overflow: visible;
-    }
-
-    html.journey-on .page {
-      position: fixed;
-      inset: 0;
-      width: 100vw;
-      height: 100vh;
-      height: 100svh;
-    }
-
-    html.journey-on .compass-stage {
-      position: absolute;
-      left: 50%;
-      top: 50%;
-      width: min(112vmin, 1120px, calc(100vw - 2 * var(--pad)));
-      height: min(112vmin, 1120px, calc(100vw - 2 * var(--pad)));
-      transition: none;
-    }
-
-    /* ---------- Tablet (769–1100px): circle top-right, title below-left ---------- */
-    @media (min-width: 769px) and (max-width: 1100px) {
-      html.journey-on .compass-stage {
-        width: min(56vmin, 470px, calc(100vw - 2 * var(--pad)));
-        height: min(56vmin, 470px, calc(100vw - 2 * var(--pad)));
-      }
-
-      .slogan.journey-mid {
-        top: 52%;
-        max-width: 460px;
-      }
-    }
-
-    .compass {
-      transform-origin: 50% 50%;
-    }
-
-    .sector-group.is-live[data-id="spatial"] .ring-sector {
-      fill: var(--pink);
-    }
-
-    .sector-group.is-live[data-id="robotics"] .ring-sector {
-      fill: var(--green);
-    }
-
-    .sector-group.is-live[data-id="product"] .ring-sector {
-      fill: var(--blue);
-    }
-
-    .sector-group.is-live[data-id="about"] .ring-sector {
-      fill: var(--yellow);
-    }
-
-    .sector-group.is-live .ring-label {
-      fill: #ffffff;
-    }
-
-    .sector-group.is-live[data-id="about"] .ring-label {
-      fill: var(--fg);
-    }
-
-    .scroll-hint {
-      position: absolute;
-      left: 50%;
-      bottom: 26px;
-      z-index: 45;
-      transform: translateX(-50%);
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      gap: 8px;
-      font-size: 20px;
-      font-weight: 950;
-      letter-spacing: 0.28em;
-      text-transform: uppercase;
-      color: #ffffff;
-      mix-blend-mode: difference;
-      pointer-events: none;
-      transition: opacity 0.3s ease;
-    }
-
-    html.journey-on .scroll-hint {
-      display: flex;
-    }
-
-    .scroll-hint i {
-      display: block;
-      width: 1px;
-      height: 30px;
-      background: rgba(255, 255, 255, 0.35);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .scroll-hint i::after {
-      content: "";
-      position: absolute;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 40%;
-      background: #ffffff;
-      animation: hintDrop 1.5s ease-in-out infinite;
-    }
-
-    @keyframes hintDrop {
-      0% { transform: translateY(-110%); }
-      100% { transform: translateY(260%); }
-    }
-
-    .journey-cta {
-      display: inline-flex;
-      align-items: center;
-      padding: 2px 0;
-      border: 0;
-      border-bottom: 2px solid var(--fg);
-      background: none;
-      color: var(--fg);
-      font-size: 24px;
-      font-weight: 950;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      opacity: 0;
-      pointer-events: none;
-      transform: translateY(4px);
-      transition: opacity 0.3s ease, transform 0.3s ease, background 0.2s ease, color 0.2s ease;
-    }
-
-    .journey-cta.show {
-      opacity: 1;
-      pointer-events: auto;
-      transform: none;
-    }
-
-    .journey-cta:hover {
-      background: var(--fg);
-      color: var(--bg);
-    }
-  
-    .journeying .sector-group:hover,
-    .journeying .sector-group:hover .ring-sector {
-      transform: none;
-      filter: none;
-    }
-  
-    .sector-group.is-dim .ring-sector {
-      fill: #b0aa9f;
-    }
-
-    .slogan.journey-mid {
-      top: 46%;
-      bottom: auto;
-      transform: translateY(-50%);
-      max-width: 640px;
-    }
-
-    .slogan.journey-mid .slogan-title {
-      max-width: 900px;
-      font-size: clamp(30px, 3.2vw, 52px);
-      letter-spacing: -0.06em;
-    }
-
-
-    .bg-tint {
-      position: absolute;
-      inset: 0;
-      z-index: 0;
-      pointer-events: none;
-      transition: background 0.6s ease;
-    }
-  
-    .journey-rail {
-      position: absolute;
-      left: 16px;
-      top: 50%;
-      z-index: 46;
-      transform: translateY(-50%);
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-      font-size: 9px;
-      font-weight: 950;
-      letter-spacing: 0.12em;
-      color: rgba(34, 34, 34, 0.4);
-      opacity: 0;
-      transition: opacity 0.3s ease;
-      pointer-events: none;
-    }
-
-    .journey-rail span {
-      display: flex;
-      align-items: center;
-      gap: 7px;
-      transition: color 0.25s ease;
-    }
-
-    .journey-rail span::before {
-      content: "";
-      width: 5px;
-      height: 5px;
-      background: currentColor;
-      transition: transform 0.25s ease;
-    }
-
-    .journey-rail span.on {
-      color: var(--fg);
-    }
-
-    .journey-rail span.on::before {
-      transform: scale(1.6) rotate(45deg);
-    }
-
-    .journey-next {
-      position: absolute;
-      left: 50%;
-      bottom: 24px;
-      z-index: 46;
-      transform: translateX(-50%);
-      font-size: 10px;
-      font-weight: 950;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      color: rgba(34, 34, 34, 0.55);
-      opacity: 0;
-      transition: opacity 0.3s ease;
-      pointer-events: none;
-      white-space: nowrap;
-    }
-  
-    .topbar-cta {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .topbar-btn {
-      padding: 6px 0;
-      color: var(--fg);
-      font-size: inherit;
-      font-weight: 950;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      white-space: nowrap;
-      opacity: 0.88;
-      transition: opacity 0.2s ease, transform 0.2s ease;
-    }
-
-    .topbar-btn:hover {
-      opacity: 1;
-      transform: translateY(-1px);
-    }
-
-
-
-    .sector-group.is-dim .ring-label {
-      fill: rgba(34, 34, 34, 0.55);
-    }
-  
-    .hero-actions .end-link {
-      display: none;
-    }
-
-    .slogan.end-mode {
-      left: 50%;
-      right: auto;
-      top: auto;
-      bottom: 150px;
-      transform: translateX(-50%);
-      max-width: 560px;
-      text-align: center;
-      display: grid;
-      justify-items: center;
-      gap: 8px;
-    }
-
-    .slogan.end-mode .slogan-kicker {
-      margin-bottom: 0;
-      font-size: 18px;
-      opacity: 0.6;
-    }
-
-    .slogan.end-mode .slogan-title {
-      max-width: none;
-      font-size: clamp(32px, 2.6vw, 40px);
-      letter-spacing: -0.04em;
-      white-space: nowrap;
-    }
-
-    .slogan.end-mode .slogan-title br {
-      display: none;
-    }
-
-    .slogan.end-mode .slogan-desc {
-      margin-top: 0;
-      max-width: 480px;
-      font-size: 14px;
-      line-height: 1.5;
-      opacity: 0.68;
-    }
-
-    .slogan.end-mode .hero-actions {
-      margin-top: 6px;
-      justify-content: center;
-      gap: 22px;
-    }
-
-    .slogan.end-mode .hero-actions .end-link {
-      display: inline-flex;
-      opacity: 1;
-      pointer-events: auto;
-      transform: none;
-    }
-
-    .slogan.end-mode #journeyCta {
-      display: none;
-    }
-  
-    @media (max-width: 768px) {
-      .slogan.journey-mid {
-        left: 50%;
-        top: 64%;
-        right: auto;
-        bottom: auto;
-        transform: translate(-50%, -50%);
-        max-width: calc(100vw - 44px);
-        text-align: center;
-      }
-
-      .slogan.journey-mid .slogan-title {
-        font-size: clamp(24px, 7vw, 34px);
-        white-space: normal;
-      }
-
-      .slogan.end-mode {
-        max-width: calc(100vw - 44px);
-      }
-
-      .slogan.end-mode .slogan-title {
-        white-space: normal;
-        font-size: clamp(22px, 7vw, 30px);
-      }
-
-      .journey-rail {
-        display: none;
-      }
-
-      .journey-cta {
-        font-size: 16px;
-      }
-
-      .journey-next {
-        font-size: 9px;
-        max-width: calc(100vw - 32px);
-        white-space: normal;
-        text-align: center;
-      }
-    }
-  
-    .journey-rail span.on {
-      color: var(--fg);
-    }
   </style>
 </head>
 
 <body>
   <div class="page" id="pageContainer">
-    <div class="bg-tint" id="bgTint"></div>
     <div class="grid-lines"></div>
     <div class="noise"></div>
 
     <div class="main-content" id="mainContent">
       <header class="topbar">
-        <div class="brand" id="brand">周子恒 · 设计智能</div>
+        <div class="brand" id="brand">周子恒</div>
 
         <div class="topbar-actions">
-          <div class="topbar-cta">
-            <a id="resumeBtnTop" class="topbar-btn" href="doc/简历.pdf" target="_blank" rel="noopener">查看简历</a>
-            <span class="view-dot"></span>
-            <a id="contactBtnTop" class="topbar-btn" href="mailto:zhou_ziheng1@outlook.com">联系我</a>
-          </div>
           <div class="view-toggle" aria-label="视图切换">
             <button id="mapViewBtn" class="active" type="button">Map</button>
             <span class="view-dot"></span>
@@ -2041,20 +1680,148 @@
       <section class="slogan">
         <div class="slogan-kicker" id="sloganKicker">设计智能 / DESIGN INTELLIGENCE</div>
 
-        <h1 class="slogan-title" id="sloganTitle">空间智能与<br>人机协同工作流设计者</h1>
+        <h1 class="slogan-title" id="sloganTitle">空间智能与 <br>人机协同工作流设计者</h1>
 
         <p class="slogan-desc" id="sloganDesc">
           我设计 AI 驱动的产品系统、空间生成工作流与智能体仿真工具。将专业判断转化为可计算、可评估、可落地的设计智能系统。
         </p>
 
         <div class="hero-actions" aria-label="主要操作">
-          <a id="resumeBtn" class="journey-cta end-link" href="doc/简历.pdf" target="_blank" rel="noopener">查看简历 ↗</a>
-          <a id="contactBtn" class="journey-cta end-link" href="mailto:zhou_ziheng1@outlook.com">联系我 ↗</a>
-          <a id="journeyCta" class="journey-cta" href="#">查看项目 ↗</a>
+          <a id="resumeBtn" class="hero-btn hero-btn-primary" href="doc/简历.pdf" target="_blank" rel="noopener">
+            查看简历
+          </a>
+          <a id="contactBtn" class="hero-btn" href="mailto:zhou_ziheng1@outlook.com">
+            联系我
+          </a>
         </div>
       </section>
 
       <section class="compass-stage" id="compassStage">
+        <div class="project-orbit" id="projectOrbit">
+          <div class="orbit-line"></div>
+          <div class="orbit-line"></div>
+
+          <article
+            class="project-card"
+            data-project="spatial-workflow"
+            data-tags="spatial"
+            data-link="work-global-relay-conference.html"
+            style="--x: 48vmin; --y: 13vmin; --rot: -5deg; --accent: var(--pink);"
+          >
+            <div class="project-thumb">
+              <img src="images/AGR/City-NY.jpg" alt="AI GLOBAL RELAY会议">
+            </div>
+            <div class="project-meta">
+              <div class="project-kicker">
+                <span>01 / Spatial</span>
+                <span class="project-dot"></span>
+              </div>
+              <h2 class="project-title">AI GLOBAL RELAY会议</h2>
+              <p class="project-desc">从语言、草图、参考图到可迭代空间视觉方案。</p>
+            </div>
+          </article>
+
+          <article
+            class="project-card"
+            data-project="interior-ai"
+            data-tags="spatial"
+            data-link="work-interior-ai.html"
+            style="--x: 18vmin; --y: 43vmin; --rot: 7deg; --accent: var(--pink);"
+          >
+            <div class="project-thumb">
+              <img src="images/ARC/1.jpg" alt="商业空间视觉设计">
+            </div>
+            <div class="project-meta">
+              <div class="project-kicker">
+                <span>02 / Spatial</span>
+                <span class="project-dot"></span>
+              </div>
+              <h2 class="project-title">商业空间视觉设计</h2>
+              <p class="project-desc">室内场景的风格控制、参考约束与视觉生成流程。</p>
+            </div>
+          </article>
+
+          <article
+            class="project-card"
+            data-project="robotic-simulation"
+            data-tags="robotics"
+            data-link="work-LLM_to_Construction.html"
+            style="--x: -21vmin; --y: 43vmin; --rot: -8deg; --accent: var(--green);"
+          >
+            <div class="project-thumb">
+              <img src="images/llmToConstruction/BRIDGE_00.jpg" alt="自然语言需求转化">
+            </div>
+            <div class="project-meta">
+              <div class="project-kicker">
+                <span>03 / Robotics</span>
+                <span class="project-dot"></span>
+              </div>
+              <h2 class="project-title">自然语言需求转化</h2>
+              <p class="project-desc">Unity3D、ML-Agents 与智能体空间行为模拟。</p>
+            </div>
+          </article>
+
+          <article
+            class="project-card"
+            data-project="pathfinding"
+            data-tags="robotics"
+            data-link="work-ucl.html"
+            style="--x: -49vmin; --y: 9vmin; --rot: 6deg; --accent: var(--green);"
+          >
+            <div class="project-thumb">
+              <img src="images/UCL/STIG_00.jpg" alt="极端环境下的无人建造">
+            </div>
+            <div class="project-meta">
+              <div class="project-kicker">
+                <span>04 / Systems</span>
+                <span class="project-dot"></span>
+              </div>
+              <h2 class="project-title">极端环境下的无人建造</h2>
+              <p class="project-desc">基于 A* 与空间约束的路径规划和建造逻辑实验。</p>
+            </div>
+          </article>
+
+          <article
+            class="project-card"
+            data-project="aigc-product"
+            data-tags="product"
+            data-link="work-ai-commerce.html"
+            style="--x: -43vmin; --y: -21vmin; --rot: -7deg; --accent: var(--blue);"
+          >
+            <div class="project-thumb">
+              <img src="images/EC/0.jpg" alt="AI 电商素材生成平台">
+            </div>
+            <div class="project-meta">
+              <div class="project-kicker">
+                <span>05 / Product</span>
+                <span class="project-dot"></span>
+              </div>
+              <h2 class="project-title">AI 电商素材生成平台</h2>
+              <p class="project-desc">模型 Benchmark、任务路由与数据埋点驱动的素材生产系统。</p>
+            </div>
+          </article>
+
+          <article
+            class="project-card"
+            data-project="NEOCLAW LOOP"
+            data-tags="product"
+            data-link="comingSoon.html"
+            style="--x: 41vmin; --y: -20vmin; --rot: 8deg; --accent: var(--blue);"
+          >
+            <div class="project-thumb">
+              <img src="images/neoclaw/Capability (5).jpg" alt="NEOCLAW LOOP">
+            </div>
+            <div class="project-meta">
+              <div class="project-kicker">
+                <span>06 / Product</span>
+                <span class="project-dot"></span>
+              </div>
+              <h2 class="project-title">NEOCLAW LOOP</h2>
+              <p class="project-desc">Coming Soon.</p>
+            </div>
+          </article>
+        </div>
+
         <section class="compass-wrap">
           <svg class="compass" viewBox="0 0 1000 1000">
             <defs id="defs">
@@ -2084,12 +1851,6 @@
             <img id="center-spatial" src="images/AGR/City-NY.jpg" alt="空间智能仿真">
             <img id="center-robotics" src="images/UCL/STIG_01.jpg" alt="极端环境下的无人建造">
             <img id="center-about" src="images/portrait.jpg" alt="">
-            <img id="center-logo" src="images/logo.png" alt="">
-            <img id="center-j1" src="images/AGR/City-NY.jpg" alt="">
-            <img id="center-j2" src="images/ARC/1.jpg" alt="">
-            <img id="center-j3" src="images/llmToConstruction/BRIDGE_00.jpg" alt="">
-            <img id="center-j4" src="images/UCL/STIG_00.jpg" alt="">
-            <img id="center-j5" src="images/EC/0.jpg" alt="">
           </div>
         </section>
       </section>
@@ -2098,55 +1859,52 @@
         <div class="index-head">
           <h2 class="index-title">项目经历</h2>
           <p class="index-desc">
-            5 个项目对应 3 种能力维度：空间意图生成、空间智能仿真、生成能力产品化。
+            6 个项目对应 3 种能力维度：空间意图生成、空间智能仿真、生成能力产品化。
           </p>
         </div>
-          <div class="work-grid">
-            <article class="work-row" data-link="work-global-relay-conference.html">
-              <img class="work-thumb" src="images/AGR/City-NY.jpg" alt="AI GLOBAL RELAY会议" loading="lazy" />
-              <div class="work-body">
-                <div class="work-no">01</div>
-                <h3 class="work-name">AI GLOBAL RELAY会议</h3>
-                <div class="work-tags">Spatial AIGC / Sketch / Reference / Prompt</div>
-              </div>
-            </article>
+          <article class="work-row" data-link="work-global-relay-conference.html">
+            <div class="work-no">01</div>
+            <h3 class="work-name">AI GLOBAL RELAY会议</h3>
+            <div class="work-tags">Spatial AIGC / Sketch / Reference / Prompt</div>
+            <div class="work-cta">View</div>
+          </article>
 
-            <article class="work-row" data-link="work-interior-ai.html">
-              <img class="work-thumb" src="images/ARC/1.jpg" alt="商业空间视觉设计" loading="lazy" />
-              <div class="work-body">
-                <div class="work-no">02</div>
-                <h3 class="work-name">商业空间视觉设计</h3>
-                <div class="work-tags">AIGC工作流落地 · Prompt体系沉淀 · 流程标准化</div>
-              </div>
-            </article>
+          <article class="work-row" data-link="work-interior-ai.html">
+            <div class="work-no">02</div>
+            <h3 class="work-name">商业空间视觉设计</h3>
+            <div class="work-tags">AIGC工作流落地 · Prompt体系沉淀 · 流程标准化</div>
+            <div class="work-cta">View</div>
+          </article>
 
-            <article class="work-row" data-link="work-LLM_to_Construction.html">
-              <img class="work-thumb" src="images/llmToConstruction/BRIDGE_00.jpg" alt="自然语言需求转化" loading="lazy" />
-              <div class="work-body">
-                <div class="work-no">03</div>
-                <h3 class="work-name">自然语言需求转化</h3>
-                <div class="work-tags">TEXT-TO-3D × 模块化建造 × 跨团队协作</div>
-              </div>
-            </article>
+          <article class="work-row" data-link="work-LLM_to_Construction.html">
+            <div class="work-no">03</div>
+            <h3 class="work-name">自然语言需求转化</h3>
+            <div class="work-tags">TEXT-TO-3D × 模块化建造 × 跨团队协作</div>
+            <div class="work-cta">View</div>
+          </article>
 
-            <article class="work-row" data-link="work-ucl.html">
-              <img class="work-thumb" src="images/UCL/STIG_00.jpg" alt="极端环境下的无人建造" loading="lazy" />
-              <div class="work-body">
-                <div class="work-no">04</div>
-                <h3 class="work-name">极端环境下的无人建造</h3>
-                <div class="work-tags">空间设计 × 机器人控制 × 交互仿真 × 智能建造</div>
-              </div>
-            </article>
-
+          <article class="work-row" data-link="work-ucl.html">
+            <div class="work-no">04</div>
+            <h3 class="work-name">极端环境下的无人建造</h3>
+            <div class="work-tags">"空间设计 × 机器人控制 × 交互仿真 × 智能建造</div>
+            <div class="work-cta">View</div>
+          </article>
+          
+          <div class="work-list">
             <article class="work-row" data-link="work-ai-commerce.html">
-              <img class="work-thumb" src="images/EC/0.jpg" alt="AI 电商素材生成平台" loading="lazy" />
-              <div class="work-body">
-                <div class="work-no">05</div>
-                <h3 class="work-name">AI 电商素材生成平台</h3>
-                <div class="work-tags">PRD文档 · 竞品分析报告 · 多模型Benchmark评测报告</div>
-              </div>
+              <div class="work-no">05</div>
+              <h3 class="work-name">AI 电商素材生成平台</h3>
+              <div class="work-tags">PRD文档 · 竞品分析报告 · 多模型Benchmark评测报告</div>
+              <div class="work-cta">View</div>
             </article>
-          </div>
+
+            <article class="work-row" data-link="comingSoon.html">
+              <div class="work-no">06</div>
+              <h3 class="work-name">NEOCLAW LOOP</h3>
+              <div class="work-tags">Model Evaluation / Cost / Quality Control</div>
+              <div class="work-cta">View</div>
+            </article>
+        </div>
       </section>
       
       <section class="category-panel" id="categoryPanel" aria-label="主题聚焦">
@@ -2162,12 +1920,7 @@
       </section>
     </div>
 
-
-    </div>
-    <div class="hover-badge" id="hoverBadge">点击查看 </div>
-    <div class="scroll-hint" id="scrollHint">向下滑动<i></i></div>
-    <div class="journey-rail" id="journeyRail" aria-hidden="true"><span>01</span><span>02</span><span>03</span><span>04</span><span>05</span></div>
-    <div class="journey-next" id="journeyNext" aria-hidden="true"></div>
+    <div class="hover-badge" id="hoverBadge">View</div>
   </div>
 
   <script>
@@ -2199,6 +1952,7 @@
     const sloganDesc = document.getElementById("sloganDesc");
 
     const hoverBadge = document.getElementById("hoverBadge");
+    const projectOrbit = document.getElementById("projectOrbit");
 
     const mapViewBtn = document.getElementById("mapViewBtn");
     const indexViewBtn = document.getElementById("indexViewBtn");
@@ -2215,7 +1969,7 @@
     ========================= */
     const defaultCopy = {
       kicker: "设计智能 / DESIGN INTELLIGENCE",
-      title: "空间智能与人机协同工作流设计者",
+      title: "空间智能与 <br>人机协同工作流设计者",
       desc: "我设计 AI 驱动的产品系统、空间生成工作流与智能体仿真工具。将专业判断转化为可计算、可评估、可落地的设计智能系统。"
     };
 
@@ -2315,6 +2069,12 @@
             title: "AI 电商素材生成平台",
             meta: "PRD文档 · 竞品分析报告 · 多模型Benchmark评测报告",
             link: "work-ai-commerce.html"
+          },
+          {
+            no: "06",
+            title: "NEOCLAW LOOP",
+            meta: "Model Evaluation / Cost / Quality Control",
+            link: "comingSoon.html"
           }
         ]
       }
@@ -2415,12 +2175,24 @@
       sloganDesc.textContent = copy.desc;
     }
 
-    function focusProjects(tag) {}
+    function focusProjects(tag) {
+      projectOrbit.classList.add("has-focus");
 
-    function clearProjectFocus() {}
+      document.querySelectorAll(".project-card").forEach(card => {
+        const tags = card.dataset.tags || "";
+        card.classList.toggle("is-related", tags.split(/\s+/).includes(tag));
+      });
+    }
+
+    function clearProjectFocus() {
+      projectOrbit.classList.remove("has-focus");
+
+      document.querySelectorAll(".project-card").forEach(card => {
+        card.classList.remove("is-related");
+      });
+    }
 
     function resetHero() {
-      if (journeyLock) return;
       setCopy(defaultCopy);
       setCenterImage("default");
       clearProjectFocus();
@@ -2431,7 +2203,6 @@
     }
 
     function previewItem(item) {
-      if (journeyLock) return;
       setCenterImage(item.id);
       setCopy(item);
 
@@ -2446,7 +2217,6 @@
       Category Panel
     ========================= */
     function openCategory(item) {
-      if (journeyLock) return;
       if (item.id === "about") {
         navigateTo("about.html");
         return;
@@ -2537,7 +2307,7 @@
 
     function bindSector(group, item) {
       group.addEventListener("mouseenter", () => {
-        if (isTouchDevice || journeyLock || pageContainer.classList.contains("category-mode")) return;
+        if (isTouchDevice || pageContainer.classList.contains("category-mode")) return;
 
         previewItem(item);
         hoverBadge.classList.add("visible");
@@ -2804,21 +2574,8 @@
     }
 
     function bindAnalyticsEvents() {
-      const resumeBtn = document.getElementById("resumeBtnTop");
-      const contactBtn = document.getElementById("contactBtnTop");
-      const resumeBtnEnd = document.getElementById("resumeBtn");
-      const contactBtnEnd = document.getElementById("contactBtn");
-
-      [[resumeBtnEnd, "click_resume", "查看简历"], [contactBtnEnd, "click_contact", "联系我"]].forEach(pair => {
-        const el = pair[0];
-        if (el) {
-          el.addEventListener("click", () => {
-            if (typeof gtag === "function") {
-              gtag("event", pair[1], { event_category: "engagement", event_label: pair[2] });
-            }
-          });
-        }
-      });
+      const resumeBtn = document.getElementById("resumeBtn");
+      const contactBtn = document.getElementById("contactBtn");
 
       if (resumeBtn) {
         resumeBtn.addEventListener("click", () => {
@@ -2844,267 +2601,6 @@
     }
 
     /* =========================
-    /* =========================
-      Scroll Journey (desktop)
-    ========================= */
-    let journeyLock = false;
-
-    const journeyProjects = [
-      { sector: "spatial", tint: "rgba(255, 92, 154, 0.15)", kicker: "01 / SPATIAL", title: "AI GLOBAL RELAY会议", desc: "从语言、草图、参考图到可迭代空间视觉方案。", link: "work-global-relay-conference.html" },
-      { sector: "spatial", tint: "rgba(255, 92, 154, 0.15)", kicker: "02 / SPATIAL", title: "商业空间视觉设计", desc: "室内场景的风格控制、参考约束与视觉生成流程。", link: "work-interior-ai.html" },
-      { sector: "robotics", tint: "rgba(18, 168, 137, 0.15)", kicker: "03 / ROBOTICS", title: "自然语言需求转化", desc: "Unity3D、ML-Agents 与智能体空间行为模拟。", link: "work-LLM_to_Construction.html" },
-      { sector: "robotics", tint: "rgba(18, 168, 137, 0.15)", kicker: "04 / SYSTEMS", title: "极端环境下的无人建造", desc: "基于 A* 与空间约束的路径规划和建造逻辑实验。", link: "work-ucl.html" },
-      { sector: "product", tint: "rgba(47, 107, 255, 0.15)", kicker: "05 / PRODUCT", title: "AI 电商素材生成平台", desc: "模型 Benchmark、任务路由与数据埋点驱动的素材生产系统。", link: "work-ai-commerce.html" }
-    ];
-
-    function journeyEase(t) {
-      return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
-    }
-
-    function initJourney() {
-      const isDesktop = window.matchMedia("(min-width: 1101px) and (hover: hover) and (pointer: fine)").matches;
-      const isPortrait = window.matchMedia("(max-width: 768px) and (orientation: portrait)").matches;
-      const isTablet = window.matchMedia("(min-width: 769px) and (max-width: 1100px)").matches;
-      if (!isDesktop && !isPortrait && !isTablet) return;
-
-      const LAY = isPortrait
-        ? { ix: 0, iy: -7, is: 1.05, rx: 22, ry: -35, rs: 1.35, ex: 0, ey: -12, es: 0.6 }
-        : isTablet
-          ? { ix: 0, iy: -7, is: 1.0, rx: 22, ry: -30, rs: 1.05, ex: 0, ey: -8, es: 0.62 }
-          : { ix: 0, iy: -7, is: 1.16, rx: 32, ry: 2, rs: 1.78, ex: 0, ey: -6, es: 0.78 };
-
-      document.documentElement.classList.add("journey-on");
-      document.body.style.minHeight = "700vh";
-
-      const stage = document.getElementById("compassStage");
-      const compassSvg = document.querySelector(".compass");
-      const slogan = document.querySelector(".slogan");
-      const hint = document.getElementById("scrollHint");
-      const cta = document.getElementById("journeyCta");
-      const aboutGroup = document.querySelector('.sector-group[data-id="about"]');
-      const outerGroups = document.querySelectorAll('.sector-group[data-id="spatial"], .sector-group[data-id="robotics"], .sector-group[data-id="product"]');
-      const centerMedia = document.querySelector(".center-media");
-
-      const bgTint = document.getElementById("bgTint");
-      const rail = document.getElementById("journeyRail");
-      const nextEl = document.getElementById("journeyNext");
-      const sectorGroups = document.querySelectorAll(".sector-group");
-
-      const ZI = [0.05, 0.17];
-      const RO = [0.17, 0.86];
-      const ZO = [0.86, 0.96];
-      const MAX_SCALE = 1.78;
-
-      let smoothP = -1;
-      let prevTarget = -1;
-      let currentIdx = -1;
-      let mode = "hero";
-      let aboutCopySet = false;
-
-      function setSectorLive(id) {
-        sectorGroups.forEach(group => {
-          group.classList.toggle("is-live", group.dataset.id === id);
-        });
-      }
-
-      function applyProject(idx) {
-        if (idx === currentIdx) return;
-        currentIdx = idx;
-        const pj = journeyProjects[idx];
-        setCopy({ kicker: pj.kicker, title: pj.title, desc: pj.desc });
-        setCenterImage("j" + (idx + 1));
-        setSectorLive(pj.sector);
-        cta.dataset.link = pj.link;
-        bgTint.style.background = pj.tint;
-        rail.querySelectorAll("span").forEach((s, i) => s.classList.toggle("on", i === idx));
-        sectorGroups.forEach(g => {
-          const isActive = g.dataset.id === pj.sector;
-          g.style.pointerEvents = isActive ? "auto" : "none";
-          g.style.cursor = isActive ? "pointer" : "";
-        });
-        nextEl.textContent = idx < 4 ? "NEXT · " + journeyProjects[idx + 1].kicker + " · " + journeyProjects[idx + 1].title + " ↓" : "END · 回到关于我 ↓";
-
-      }
-
-      function applyJourney(p) {
-        if (pageContainer.classList.contains("index-mode") || pageContainer.classList.contains("category-mode")) {
-          if (stage.style.transform) {
-            stage.style.transform = "";
-            compassSvg.style.transform = "";
-          }
-          return;
-        }
-
-        journeyLock = p > 0.035;
-        pageContainer.classList.toggle("journeying", p > 0.035 && p < ZO[1]);
-
-        let zoomP;
-        if (p < ZI[0]) zoomP = 0;
-        else if (p < ZI[1]) zoomP = journeyEase((p - ZI[0]) / (ZI[1] - ZI[0]));
-        else if (p < ZO[0]) zoomP = 1;
-        else if (p < ZO[1]) zoomP = 1 - journeyEase((p - ZO[0]) / (ZO[1] - ZO[0]));
-        else zoomP = 0;
-
-        const endEase = p < ZO[0] ? 0 : p < ZO[1] ? journeyEase((p - ZO[0]) / (ZO[1] - ZO[0])) : 1;
-        const scale = LAY.is + (LAY.rs - LAY.is) * zoomP + (LAY.es - LAY.is) * endEase;
-        const jx = LAY.ix + (LAY.rx - LAY.ix) * zoomP + (LAY.ex - LAY.ix) * endEase;
-        const jy = LAY.iy + (LAY.ry - LAY.iy) * zoomP + (LAY.ey - LAY.iy) * endEase;
-        stage.style.transform = "translate(-50%, -50%) translate(" + jx.toFixed(2) + "vw, " + jy.toFixed(2) + "vh) scale(" + scale.toFixed(4) + ")";
-
-        const rotP = Math.min(1, Math.max(0, (p - RO[0]) / (RO[1] - RO[0])));
-        let rot;
-        if (p < 0.17) rot = -102 * journeyEase(p / 0.17);
-        else if (p < ZO[0]) rot = -102 - 350 * (p - 0.17);
-        else if (p < ZO[1]) rot = -343.5 - 16.5 * journeyEase((p - ZO[0]) / (ZO[1] - ZO[0]));
-        else rot = -360;
-        compassSvg.style.transform = "rotate(" + rot.toFixed(3) + "deg)";
-
-        const innerO = p < 0.08 ? 1 : p < RO[0] ? 1 - (p - 0.08) / (RO[0] - 0.08) : p < ZO[0] ? 0 : p < 0.92 ? (p - ZO[0]) / (0.92 - ZO[0]) : 1;
-        aboutGroup.style.opacity = innerO.toFixed(3);
-        aboutGroup.classList.toggle("is-dim", p >= 0.08 && p < ZO[0]);
-        aboutGroup.querySelectorAll(".ring-label").forEach(lab => {
-          lab.style.opacity = p < 0.08 || p >= ZO[0] ? "1" : "0";
-        });
-
-        const projectPhase = p >= RO[0] && p < ZO[0];
-        centerMedia.style.width = projectPhase ? "60.5%" : "";
-        centerMedia.style.height = projectPhase ? "60.5%" : "";
-
-        const outerO = p < ZO[0] ? 1 : p < 0.92 ? 1 - (p - ZO[0]) / 0.06 : 0;
-        outerGroups.forEach(group => {
-          group.style.opacity = outerO.toFixed(3);
-          group.classList.toggle("is-dim", p >= ZO[0]);
-        });
-
-
-
-        if (p >= RO[0] && p < ZO[0]) {
-          const idx = Math.min(4, Math.floor(rotP * 5));
-          applyProject(idx);
-          mode = "projects";
-          aboutCopySet = false;
-        } else if (p >= ZO[0]) {
-          if (mode !== "about") {
-            mode = "about";
-            currentIdx = -1;
-            setCenterImage("default");
-            setSectorLive("about");
-            bgTint.style.background = "transparent";
-            sectorGroups.forEach(g => {
-              const isAbout = g.dataset.id === "about";
-              g.style.pointerEvents = isAbout ? "auto" : "none";
-              g.style.cursor = isAbout ? "pointer" : "";
-            });
-          }
-          if (!aboutCopySet && p >= 0.90) {
-            aboutCopySet = true;
-            setCopy(defaultCopy);
-          }
-        } else if (p < RO[0] && mode !== "hero") {
-          mode = "hero";
-          aboutCopySet = false;
-          currentIdx = -1;
-          setCopy(defaultCopy);
-          setCenterImage("default");
-          setSectorLive(null);
-          bgTint.style.background = "transparent";
-          sectorGroups.forEach(g => {
-            g.style.pointerEvents = "";
-            g.style.cursor = "";
-          });
-        }
-
-        let so;
-        if (p < RO[0]) so = 0;
-        else if (p < 0.21) so = (p - RO[0]) / 0.04;
-        else if (p < ZO[0]) so = 1;
-        else if (p < 0.895) so = 1 - (p - ZO[0]) / 0.035;
-        else if (p < 0.925) so = 0;
-        else if (p < 0.965) so = (p - 0.925) / 0.04;
-        else so = 1;
-        slogan.style.opacity = so.toFixed(3);
-        slogan.style.pointerEvents = so < 0.5 ? "none" : "";
-
-        cta.classList.toggle("show", p >= RO[0] && p < ZO[0]);
-        rail.style.opacity = p >= RO[0] && p < ZO[0] ? "1" : "0";
-        nextEl.style.opacity = p >= RO[0] && p < ZO[0] ? "1" : "0";
-        centerMedia.style.pointerEvents = p >= ZO[1] ? "auto" : "none";
-        centerMedia.style.cursor = p >= ZO[1] ? "pointer" : "";
-        slogan.classList.toggle("journey-mid", p >= RO[0] && p < 0.895);
-        slogan.classList.toggle("end-mode", p >= 0.90);
-
-        if (isPortrait && p >= RO[0] && p < 0.895) {
-          const rect = stage.getBoundingClientRect();
-          const radiusVh = (rect.width * scale / 2) / window.innerHeight * 100;
-          const centerVh = 50 + jy;
-          slogan.style.top = (centerVh + radiusVh - 4).toFixed(1) + "vh";
-          slogan.style.transform = "translate(-50%, 0)";
-        } else {
-          slogan.style.top = "";
-          slogan.style.transform = "";
-        }
-
-        hint.style.opacity = p < 0.02 ? "1" : "0";
-        sketchArrows.style.opacity = p > 0.92 ? "0" : "1";        
-      }
-      function frame() {
-        const max = document.documentElement.scrollHeight - window.innerHeight;
-        let target = max > 0 ? window.scrollY / max : 0;
-        target = Math.min(1, Math.max(0, target));
-        if (typeof window.__forceP === "number") target = window.__forceP;
-
-        if (
-          prevTarget >= 0 &&
-          target - prevTarget > 0.001 &&
-          (pageContainer.classList.contains("category-mode") || pageContainer.classList.contains("index-mode"))
-        ) {
-          closeCategory();
-        }
-        prevTarget = target;
-
-        const next = smoothP < 0 ? target : smoothP + (target - smoothP) * 0.14;
-        if (smoothP < 0 || Math.abs(next - smoothP) > 0.00015) {
-          smoothP = next;
-          applyJourney(next);
-        }
-        requestAnimationFrame(frame);
-      }
-      requestAnimationFrame(frame);
-
-      sectorGroups.forEach(group => {
-        group.addEventListener("click", () => {
-          if (!journeyLock) return;
-          if (smoothP >= ZO[1] && group.dataset.id === "about") {
-            navigateTo("about.html");
-            return;
-          }
-          if (currentIdx >= 0 && group.dataset.id === journeyProjects[currentIdx].sector) {
-            navigateTo(journeyProjects[currentIdx].link);
-          }
-        });
-      });
-
-      centerMedia.addEventListener("click", () => {
-        if (smoothP >= ZO[1]) navigateTo("about.html");
-      });
-
-      cta.addEventListener("click", event => {
-        event.preventDefault();
-        const link = cta.dataset.link;
-        if (!link) return;
-        if (typeof gtag === "function") {
-          const pj = journeyProjects[Math.max(0, currentIdx)];
-          gtag("event", "click_journey_cta", {
-            event_category: "project",
-            event_label: pj ? pj.title : "unknown",
-            project_link: link
-          });
-        }
-        navigateTo(link);
-      });
-    }
-
-    /* =========================
       Init
     ========================= */
     function init() {
@@ -3114,7 +2610,6 @@
       bindWorkRows();
       bindGlobalEvents();
       bindAnalyticsEvents();
-      initJourney();
     }
 
     init();

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="AI 电商素材生成平台高保真交互原型">
+  <title>创建素材任务 | AI Commerce Studio</title>
+  <link rel="icon" href="images/icon.png" type="image/png">
+  <link rel="stylesheet" href="demo-ai-commerce.css">
+</head>
+<body>
+  <div class="app-shell" data-setup-page>
+    <header class="topbar">
+      <div class="topbar-inner">
+        <a class="brand" href="work-ai-commerce.html" aria-label="返回 AI 电商项目 Case Study">
+          <span class="brand-mark">EC</span>
+          <span><strong>AI Commerce Studio</strong><span>素材生成与模型推荐</span></span>
+        </a>
+        <nav class="flow-nav" aria-label="Demo 流程">
+          <a class="flow-link" href="demo-ai-commerce.html" aria-current="step"><span class="flow-number">1</span>创建任务</a>
+          <a class="flow-link" href="demo-ai-commerce-results.html"><span class="flow-number">2</span>选择与反馈</a>
+          <a class="flow-link" href="demo-ai-commerce-benchmark.html"><span class="flow-number">3</span>后台依据</a>
+        </nav>
+        <div class="top-actions"><a class="button quiet" href="work-ai-commerce.html">返回 Case Study</a></div>
+      </div>
+    </header>
+
+    <main class="page">
+      <header class="page-heading">
+        <h1>创建素材任务</h1>
+        <p>先说明要生成什么、在哪里使用。系统把业务目标转换成素材约束，并默认推荐合适模型。</p>
+      </header>
+
+      <div class="layout-setup">
+        <form aria-label="素材任务配置" onsubmit="return false;">
+          <section class="section-block">
+            <div class="section-title"><h2>素材类型</h2><span>选择一个主要交付物</span></div>
+            <div class="segmented" aria-label="素材类型">
+              <button class="segment" type="button" data-task="product" aria-pressed="false">白底产品图</button>
+              <button class="segment is-selected" type="button" data-task="model" aria-pressed="true">虚拟模特图</button>
+              <button class="segment" type="button" data-task="scene" aria-pressed="false">商品场景图</button>
+              <button class="segment" type="button" data-task="video" aria-pressed="false">商品短视频</button>
+            </div>
+          </section>
+
+          <section class="section-block">
+            <div class="section-title"><h2>商品素材</h2><span>Demo 使用已完成的 Benchmark 样例</span></div>
+            <div class="upload-row">
+              <div class="upload-preview"><img src="images/EC/0.png" alt="复古运动服饰商品参考图"></div>
+              <div class="upload-copy">
+                <strong>已载入 1 组商品参考图</strong>
+                <p>系统将识别商品品类、颜色、材质、图案和必须保留的主体区域。</p>
+                <button class="button" type="button" data-sample-upload>更换素材</button>
+              </div>
+            </div>
+          </section>
+
+          <section class="section-block">
+            <div class="section-title"><h2>生成约束</h2><span>使用业务语言配置，无需理解模型参数</span></div>
+            <div class="field-grid">
+              <div class="field full">
+                <label for="productInput">商品信息</label>
+                <input class="input" id="productInput" data-product-input value="复古运动服饰组合，帽子、球衣、裤装、鞋履">
+                <span class="field-error">请填写商品信息</span>
+              </div>
+              <div class="field full">
+                <label for="promptInput">生成目标</label>
+                <textarea class="textarea" id="promptInput" data-prompt-input>保持全部商品上身效果与图案一致，人物姿态自然，生成复古加油站广告图。</textarea>
+                <span class="field-error">请填写生成目标</span>
+              </div>
+              <div class="field">
+                <span class="field-label">投放规格</span>
+                <div class="choice-row" data-choice-group="platform">
+                  <button class="choice is-selected" type="button" data-choice="淘宝主图 1:1" aria-pressed="true">淘宝 1:1</button>
+                  <button class="choice" type="button" data-choice="小红书 3:4" aria-pressed="false">小红书 3:4</button>
+                  <button class="choice" type="button" data-choice="抖音 9:16" aria-pressed="false">抖音 9:16</button>
+                </div>
+              </div>
+              <div class="field">
+                <span class="field-label">生成偏好</span>
+                <div class="choice-row" data-choice-group="mode">
+                  <button class="choice is-selected" type="button" data-choice="人物自然上身" aria-pressed="true">人物自然</button>
+                  <button class="choice" type="button" data-choice="商品保真优先" aria-pressed="false">保真优先</button>
+                  <button class="choice" type="button" data-choice="高级广告质感" aria-pressed="false">广告质感</button>
+                </div>
+              </div>
+            </div>
+          </section>
+        </form>
+
+        <aside class="summary-panel" aria-label="任务摘要">
+          <div class="summary-header"><h2>生成方案</h2><p>推荐会随素材类型和生成偏好更新。</p></div>
+          <div class="summary-body">
+            <div class="route-name" data-route-name>Nano Banana Pro</div>
+            <p class="route-reason" data-route-reason>人物自然度、商品覆盖和广告完成度更均衡。</p>
+            <div class="summary-list">
+              <div class="summary-row"><span>任务</span><strong data-summary-task>虚拟模特图</strong></div>
+              <div class="summary-row"><span>规格</span><strong data-summary-platform>淘宝主图 1:1</strong></div>
+              <div class="summary-row"><span>偏好</span><strong data-summary-mode>人物自然上身</strong></div>
+              <div class="summary-row"><span>候选</span><strong>4 个结果</strong></div>
+            </div>
+          </div>
+          <div class="summary-footer">
+            <button class="button primary" type="button" data-generate><span class="default-label">生成候选结果</span><span class="loading-label">正在创建任务...</span></button>
+            <p class="helper">本原型使用现有测评结果模拟生成流程。</p>
+          </div>
+        </aside>
+      </div>
+    </main>
+  </div>
+  <div class="toast" data-toast role="status" aria-live="polite">状态已更新</div>
+  <script src="demo-ai-commerce.js"></script>
+</body>
+</html>
