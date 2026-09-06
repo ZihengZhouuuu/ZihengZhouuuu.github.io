@@ -3,27 +3,24 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Text-to-3D｜周子恒</title>
+  <title>离散建造｜Prompt to Production｜周子恒</title>
   <link rel="icon" href="images/icon.png" type="image/png">
 
   <style>
     :root {
-      --bg: #f4efe7;
-      --fg: #222222;
-      --paper: #fffdf6;
-      --grey: #8a8377;
-
-      --blue: #2f6bff;
-      --pink: #ff5c9a;
-      --green: #12a889;
-      --yellow: #ffd34d;
-
-      --accent: var(--yellow);
-
-      --pad: clamp(20px, 4vw, 48px);
-      --content-max: 1440px;
-      --text-max: 1280px;
-      --image-max: 1440px;
+      --bg: #eceef2;
+      --paper: #ffffff;
+      --ink: #15161a;
+      --muted: #62666f;
+      --soft: #dfe3eb;
+      --line: rgba(21, 22, 26, 0.16);
+      --green: #255B53;
+      --green-mid: #539B89;
+      --green-light: #eef4ff;
+      --hero-gradient: linear-gradient(135deg, #012169 0%, #06347c 54%, #0b55ba 100%);
+      --radius: 28px;
+      --pad: clamp(22px, 4vw, 56px);
+      --max: 1540px;
       --font: Inter, Arial, "PingFang SC", "Microsoft YaHei", sans-serif;
     }
 
@@ -33,21 +30,16 @@
       padding: 0;
     }
 
-    html,
-    body {
-      width: 100%;
-      min-height: 100%;
-      font-family: var(--font);
-      background:
-        radial-gradient(circle at 75% 18%, rgba(47, 107, 255, 0.11), transparent 34%),
-        radial-gradient(circle at 18% 82%, rgba(255, 211, 77, 0.16), transparent 30%),
-        radial-gradient(circle at 86% 78%, rgba(255, 92, 154, 0.1), transparent 30%),
-        var(--bg);
-      color: var(--fg);
-      letter-spacing: -0.04em;
+    html {
+      scroll-behavior: smooth;
     }
 
     body {
+      min-height: 100%;
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--ink);
+      letter-spacing: -0.03em;
       overflow-x: hidden;
     }
 
@@ -62,1115 +54,1322 @@
       width: 100%;
     }
 
+    button {
+      font: inherit;
+    }
+
     ::selection {
-      background: var(--fg);
-      color: var(--bg);
+      background: var(--ink);
+      color: var(--paper);
     }
 
-    .page {
-      position: relative;
-      width: 100%;
-      min-height: 100vh;
-      overflow: hidden;
-    }
-
-    .noise {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      opacity: 0.045;
-      background-image:
-        linear-gradient(45deg, #000 25%, transparent 25%),
-        linear-gradient(-45deg, #000 25%, transparent 25%),
-        linear-gradient(45deg, transparent 75%, #000 75%),
-        linear-gradient(-45deg, transparent 75%, #000 75%);
-      background-size: 6px 6px;
-      z-index: 100;
-    }
-
-    .grid-lines {
-      position: fixed;
-      inset: 0;
-      z-index: 0;
-      pointer-events: none;
-      opacity: 0.16;
-      background-image:
-        linear-gradient(to right, rgba(34, 34, 34, 0.08) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(34, 34, 34, 0.08) 1px, transparent 1px);
-      background-size: 56px 56px;
-      mask-image: radial-gradient(circle at 55% 30%, #000 0%, transparent 78%);
-    }
-
-    /* =========================
-       Topbar
-    ========================= */
     .topbar {
       position: fixed;
-      top: 28px;
+      top: 24px;
       left: var(--pad);
       right: var(--pad);
-      z-index: 90;
-
+      z-index: 999;
       display: flex;
       align-items: center;
       justify-content: space-between;
-
-      font-size: 18px;
+      gap: 24px;
+      padding: 0 0 14px;
+      color: var(--ink);
+      background: linear-gradient(to bottom, rgba(236, 238, 242, 0.82), rgba(236, 238, 242, 0));
+      font-size: clamp(14px, 1.15vw, 18px);
       font-weight: 950;
       letter-spacing: 0.08em;
       text-transform: uppercase;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
 
-      color: #ffffff;
-      mix-blend-mode: difference;
+    .topbar-primary,
+    .topbar-actions,
+    .topbar-cta,
+    .view-toggle {
+      display: flex;
+      align-items: center;
+    }
+
+    .topbar-primary {
+      gap: 24px;
+      min-width: 0;
+    }
+
+    .topbar-actions,
+    .topbar-cta,
+    .view-toggle {
+      gap: 12px;
     }
 
     .brand {
-      cursor: pointer;
+      display: inline-block;
+      white-space: nowrap;
     }
 
-    .top-actions {
-      display: flex;
-      align-items: center;
-      gap: 18px;
+    .topbar-link,
+    .topbar-btn {
+      display: inline-block;
+      padding: 6px 0;
+      color: inherit;
+      white-space: nowrap;
+      opacity: 0.78;
+      transition: opacity 180ms ease, transform 180ms ease;
     }
 
-    .top-link {
-      cursor: pointer;
-      opacity: 0.72;
-    }
-
-    .top-link:hover {
+    .topbar-link:hover,
+    .topbar-link:focus-visible,
+    .topbar-btn:hover,
+    .topbar-btn:focus-visible,
+    .brand:hover {
       opacity: 1;
+      transform: translateY(-1px);
     }
 
-    /* =========================
-       Hero
-    ========================= */
+    .topbar-link:focus-visible,
+    .topbar-btn:focus-visible,
+    .brand:focus-visible {
+      outline: 2px solid currentColor;
+      outline-offset: 4px;
+    }
+
+    .view-dot {
+      width: 4px;
+      height: 4px;
+      border-radius: 999px;
+      background: currentColor;
+      opacity: 0.42;
+    }
+
+    .page {
+      width: 100%;
+      padding: 0 0 52px;
+    }
+
+    .content {
+      width: min(100%, var(--max));
+      margin: 0 auto;
+      padding: 0 var(--pad);
+    }
+
     .hero {
       position: relative;
-      z-index: 5;
-
-      width: 100%;
-      min-height: 100vh;
-      padding: 108px var(--pad) 64px;
-
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
+      width: 100vw;
+      margin-left: calc(50% - 50vw);
       overflow: hidden;
-      background: var(--fg);
-      text-align: center;
+      background: var(--bg);
     }
 
-    .hero-bg-image {
-      position: absolute;
-      inset: 0;
-      z-index: 1;
-
+    .hero-statement {
       width: 100%;
-      height: 100%;
-      overflow: hidden;
-    }
-
-    .hero-bg-image img,
-    .hero-bg-image video {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-
-      filter:
-        saturate(1.04)
-        contrast(1.08)
-        brightness(0.66);
-      transform: scale(1.02);
-    }
-
-    .hero-overlay {
-      position: absolute;
-      inset: 0;
-      z-index: 2;
-
-      background:
-        linear-gradient(
-          90deg,
-          rgba(0, 0, 0, 0.48) 0%,
-          rgba(0, 0, 0, 0.26) 32%,
-          rgba(0, 0, 0, 0.22) 68%,
-          rgba(0, 0, 0, 0.52) 100%
-        ),
-        linear-gradient(
-          180deg,
-          rgba(0, 0, 0, 0.64) 0%,
-          rgba(0, 0, 0, 0.22) 42%,
-          rgba(0, 0, 0, 0.74) 100%
-        );
-      pointer-events: none;
-    }
-
-    .hero-content {
-      position: relative;
-      z-index: 4;
-
-      width: min(100%, 1180px);
-      margin-top: 0;
-
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
+      margin: 0 auto;
+      padding: clamp(62px, 8vw, 110px) var(--pad) clamp(72px, 8vw, 118px);
       text-align: center;
     }
 
-    .project-kicker {
-      margin-bottom: 18px;
-
-      font-size: clamp(12px, 1vw, 18px);
-      font-weight: 950;
-      line-height: 1;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      text-align: center;
-
-      color: rgba(244, 239, 231, 0.72);
-    }
-
-    .project-title {
-      font-size: clamp(54px, 8.6vw, 148px);
-      line-height: 0.98;
-      font-weight: 950;
-      letter-spacing: -0.06em;
-      text-transform: uppercase;
-      text-align: center;
-
-      color: var(--bg);
-      text-shadow: 0 8px 30px rgba(0, 0, 0, 0.34);
-    }
-
-    .project-title .accent {
-      color: var(--yellow);
-    }
-
-    .project-desc {
+    .hero-statement h1,
+    .hero-statement p {
+      width: min(100%, 760px);
       max-width: 760px;
-      margin-top: 24px;
       margin-left: auto;
       margin-right: auto;
-
-      font-size: clamp(15px, 1.15vw, 20px);
-      line-height: 1.58;
-      font-weight: 650;
-      letter-spacing: -0.035em;
-      text-align: center;
-
-      color: rgba(244, 239, 231, 0.84);
-      text-shadow: 0 4px 18px rgba(0, 0, 0, 0.36);
     }
 
-    .hero-tags {
+    .hero-statement h1 {
+      font-size: clamp(28px, 3.2vw, 54px);
+      line-height: 0.98;
+      letter-spacing: -0.055em;
+      text-transform: none;
+    }
+
+    .hero-statement p {
+      color: var(--muted);
+      font-size: clamp(15px, 1.1vw, 18px);
+      line-height: 1.45;
+      font-weight: 680;
+      margin-top: 18px;
+    }
+
+    .hero-quicknav {
       display: flex;
-      flex-wrap: wrap;
       justify-content: center;
-      gap: 7px;
-      margin-top: 24px;
-      max-width: 760px;
+      gap: clamp(14px, 2.4vw, 22px);
+      margin: 30px auto 0;
+      flex-wrap: wrap;
+      width: min(100%, 760px);
     }
 
-    .hero-tags span {
-      padding: 7px 10px;
-      border: 1.5px solid rgba(244, 239, 231, 0.48);
+    .hero-quicknav a {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 10px;
+      padding: 10px 18px;
       border-radius: 999px;
-      background: rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(8px);
-
-      font-size: 9px;
+      background: var(--paper);
+      color: var(--ink);
+      font-size: clamp(14px, 1.05vw, 17px);
+      font-weight: 800;
+      letter-spacing: -0.025em;
       line-height: 1;
-      font-weight: 950;
-      letter-spacing: 0.08em;
+      box-shadow: 0 10px 26px rgba(45, 55, 80, 0.1);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .hero-quicknav a:hover,
+    .hero-quicknav a:focus-visible {
+      transform: translateY(-2px);
+      box-shadow: 0 16px 34px rgba(45, 55, 80, 0.16);
+      outline: none;
+    }
+
+    .hero-quicknav a span {
+      color: var(--green-mid);
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: 0.12em;
       text-transform: uppercase;
-      color: rgba(244, 239, 231, 0.78);
     }
 
-    /* =========================
-       Section General
-    ========================= */
+    .hero-quicknav a::after {
+      content: "↗";
+      font-size: 14px;
+      color: var(--green-mid);
+      line-height: 1;
+    }
+
+    .template-slot {
+      width: min(960px, 88vw);
+      margin: 36px auto 0;
+      padding: 10px;
+      border-radius: 18px;
+      background: var(--paper);
+      box-shadow: 0 20px 54px rgba(45, 55, 80, 0.1);
+    }
+
+    .template-slot img,
+    .template-slot video {
+      width: 100%;
+      height: auto;
+      margin: 0;
+      border-radius: 12px;
+      object-fit: contain;
+    }
+
     .section {
-      position: relative;
-      z-index: 5;
-      padding: 72px var(--pad);
-    }
-
-    .section.soft {
-      background: rgba(255, 253, 246, 0.55);
-    }
-
-    .section.dark {
-      background: var(--fg);
-      color: var(--bg);
+      padding: clamp(76px, 9vw, 132px) 0 0;
     }
 
     .section-head {
-      width: min(100%, var(--content-max));
-      margin-left: auto;
-      margin-right: auto;
-
-      display: grid;
-      grid-template-columns: 170px minmax(0, 1fr);
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
       gap: 28px;
-
-      margin-bottom: 28px;
-      padding-bottom: 16px;
-      border-bottom: 2px solid currentColor;
-    }
-
-    .logic-section .section-head {
-      border-bottom: none;
-      padding-bottom: 0;
-      margin-bottom: 24px;
-    }
-
-    .section-no {
-      font-size: 11px;
-      font-weight: 950;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      color: rgba(34, 34, 34, 0.5);
-    }
-
-    .dark .section-no {
-      color: rgba(244, 239, 231, 0.5);
+      margin-bottom: 26px;
+      padding-bottom: 18px;
+      border-bottom: 1px solid var(--line);
     }
 
     .section-title {
-      font-size: clamp(30px, 4.2vw, 62px);
+      font-size: clamp(32px, 4.4vw, 74px);
       line-height: 0.96;
-      font-weight: 950;
-      letter-spacing: -0.07em;
+      font-weight: 930;
+      letter-spacing: -0.065em;
       text-transform: uppercase;
     }
 
-    .section-text {
-      width: min(100%, var(--text-max));
-      max-width: var(--text-max);
-      margin-left: calc((100% - min(100%, var(--content-max))) / 2 + 170px + 28px);
-
-      font-size: clamp(15px, 1vw, 18px);
-      line-height: 1.72;
-      font-weight: 560;
-      letter-spacing: -0.025em;
-
-      color: rgba(34, 34, 34, 0.68);
+    .section-note {
+      max-width: 520px;
+      color: var(--muted);
+      font-size: clamp(15px, 1.1vw, 18px);
+      line-height: 1.45;
+      font-weight: 620;
+      text-align: right;
     }
 
-    .section-text + .section-text {
-      margin-top: 14px;
+    .direction-section {
+      width: 100vw;
+      margin-left: calc(50% - 50vw);
+      padding: 0;
     }
 
-    .dark .section-text {
-      color: rgba(244, 239, 231, 0.72);
+    .case-frame,
+    .relay-section {
+      width: 100vw;
+      margin-left: calc(50% - 50vw);
     }
 
-    /* =========================
-       Logic Matrix
-    ========================= */
-    .logic-matrix {
-      width: min(100%, var(--content-max));
-      margin-left: auto;
-      margin-right: auto;
-      margin-top: 34px;
-
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 12px;
+    .case-frame {
+      padding: clamp(74px, 9vw, 132px) var(--pad);
+      color: var(--paper);
+      background: var(--green);
     }
 
-    .logic-cell {
-      position: relative;
-      min-height: 120px;
-      padding: 14px;
-
-      border: 2px solid rgba(244, 239, 231, 0.82);
-      color: var(--bg);
-
-      clip-path: polygon(
-        0 0,
-        calc(100% - 16px) 0,
-        100% 16px,
-        100% 100%,
-        16px 100%,
-        0 calc(100% - 16px)
-      );
+    .case-frame-inner {
+      width: min(100%, var(--max));
+      margin: 0 auto;
     }
 
-    .logic-problem {
-      background: rgba(244, 239, 231, 0.06);
-    }
-
-    .logic-solution {
-      background: var(--paper);
-      color: var(--fg);
-      border-color: var(--fg);
-      box-shadow: 5px 5px 0 rgba(17, 17, 17, 0.16);
-    }
-
-    .dark .logic-solution {
-      border-color: rgba(244, 239, 231, 0.82);
-      box-shadow: 5px 5px 0 rgba(244, 239, 231, 0.16);
-    }
-
-    .logic-solution::before {
-      content: "";
-      position: absolute;
-      left: 14px;
-      right: 14px;
-      top: -2px;
-      height: 6px;
-      background: var(--accent);
-    }
-
-    .logic-label {
-      margin-bottom: 12px;
-      padding-right: 28px;
-
-      font-size: 8px;
-      font-weight: 950;
-      line-height: 1.1;
+    .case-kicker {
+      font-size: 12px;
+      font-weight: 850;
       letter-spacing: 0.12em;
       text-transform: uppercase;
-
-      opacity: 0.58;
+      color: rgba(255, 255, 255, 0.68);
     }
 
-    .logic-title {
-      max-width: 100%;
-
-      font-size: clamp(17px, 1.25vw, 23px);
-      line-height: 1;
+    .case-frame h2 {
+      max-width: 14ch;
+      margin-top: 18px;
+      color: var(--paper);
+      font-size: clamp(46px, 6.2vw, 104px);
+      line-height: 0.9;
       font-weight: 950;
       letter-spacing: -0.07em;
-      text-transform: uppercase;
     }
 
-    .logic-desc {
-      max-width: 100%;
-      margin-top: 12px;
-
-      font-size: 14px;
-      line-height: 1.45;
-      font-weight: 680;
-      letter-spacing: -0.03em;
-      opacity: 0.72;
+    .case-frame-lead {
+      max-width: 710px;
+      margin-top: 28px;
+      color: rgba(255, 255, 255, 0.82);
+      font-size: clamp(17px, 1.35vw, 24px);
+      line-height: 1.42;
+      font-weight: 660;
     }
 
-    .logic-solution .logic-desc {
-      color: rgba(34, 34, 34, 0.64);
-      opacity: 1;
+    .case-principles {
+      display: grid;
+      grid-template-columns: 1.1fr 1fr 1fr;
+      gap: clamp(26px, 4vw, 68px);
+      margin-top: clamp(48px, 7vw, 96px);
     }
 
-    .logic-tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 4px;
-      margin-top: 13px;
+    .case-principles p {
+      max-width: 22ch;
+      color: rgba(255, 255, 255, 0.72);
+      font-size: clamp(15px, 1.08vw, 18px);
+      line-height: 1.42;
+      font-weight: 620;
     }
 
-    .logic-tags span {
-      padding: 5px 6px;
-
-      border: 1.5px solid currentColor;
-      border-radius: 999px;
-
-      font-size: 7px;
-      font-weight: 950;
+    .case-principles strong {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--paper);
+      font-size: clamp(21px, 1.8vw, 32px);
       line-height: 1;
-      letter-spacing: 0.05em;
+      font-weight: 900;
+      letter-spacing: -0.045em;
+    }
+
+    .campaign-assets {
+      width: 100vw;
+      margin-left: calc(50% - 50vw);
+      padding: 0 var(--pad);
+      display: grid;
+      gap: clamp(58px, 8vw, 122px);
+    }
+
+    .campaign-block {
+      display: grid;
+      gap: clamp(18px, 2.4vw, 34px);
+    }
+
+    .campaign-copy {
+      width: min(100%, var(--max));
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: minmax(0, 0.78fr) minmax(260px, 0.42fr);
+      align-items: end;
+      gap: 28px;
+      padding-bottom: 18px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .campaign-copy h3 {
+      font-size: clamp(30px, 4.2vw, 74px);
+      line-height: 0.96;
+      font-weight: 930;
+      letter-spacing: -0.065em;
       text-transform: uppercase;
     }
 
-    .logic-arrow {
-      position: absolute;
-      right: 10px;
-      top: 10px;
-
-      min-width: 24px;
-      height: 24px;
-      padding: 0 6px;
-
-      display: grid;
-      place-items: center;
-
-      border: 2px solid currentColor;
-      border-radius: 999px;
-
-      font-size: 11px;
-      font-weight: 950;
-      letter-spacing: -0.02em;
+    .campaign-copy p {
+      color: var(--muted);
+      font-size: clamp(14px, 1vw, 17px);
+      line-height: 1.45;
+      font-weight: 650;
     }
 
-    /* =========================
-       Media Grid
-    ========================= */
-    .media-grid {
-      width: min(100%, var(--image-max));
-      margin: 34px auto 0;
-
-      display: grid;
-      grid-template-columns: repeat(12, 1fr);
-      gap: 18px;
-    }
-
-    .media-item {
-      min-height: auto;
-      background: var(--fg);
+    .campaign-feature,
+    .campaign-card {
+      position: relative;
+      aspect-ratio: 16 / 9;
       overflow: hidden;
-      box-shadow: 9px 9px 0 rgba(17, 17, 17, 0.18);
+      border-radius: var(--radius);
+      background: var(--paper);
+      box-shadow: 0 20px 54px rgba(45, 55, 80, 0.12);
     }
 
-    .dark .media-item {
-      box-shadow: 9px 9px 0 rgba(244, 239, 231, 0.12);
-      background: rgba(244, 239, 231, 0.08);
+    .campaign-feature {
+      width: min(100%, calc(var(--max) + (var(--pad) * 2)));
+      margin: 0 auto;
     }
 
-    .media-item.full {
-      grid-column: 1 / -1;
+    .campaign-card img,
+    .campaign-feature img,
+    .campaign-feature video {
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.7s cubic-bezier(.16, 1, .3, 1);
     }
 
-    .media-item.half {
-      grid-column: span 6;
+    .campaign-card:hover img,
+    .campaign-feature:hover img {
+      transform: scale(1.03);
+    }
+
+    .campaign-row {
+      width: min(100%, calc(var(--max) + (var(--pad) * 2)));
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: clamp(12px, 1.4vw, 22px);
+    }
+
+    .gallery-mosaic {
+      width: min(100%, calc(var(--max) + (var(--pad) * 2)));
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      gap: clamp(14px, 1.8vw, 26px);
+      align-items: start;
+    }
+
+    .gallery-mosaic figure {
+      margin: 0;
+      overflow: hidden;
+      border-radius: 8px;
+      background: var(--paper);
+      box-shadow: 0 20px 54px rgba(45, 55, 80, 0.12);
+    }
+
+    .gallery-mosaic img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.7s cubic-bezier(.16, 1, .3, 1);
+    }
+
+    .gallery-mosaic figure:hover img {
+      transform: scale(1.03);
+    }
+
+    .m-a {
+      grid-column: 1 / 9;
+      aspect-ratio: 16 / 10;
+    }
+
+    .m-b {
+      grid-column: 9 / 13;
+      aspect-ratio: 3 / 4;
+      margin-top: clamp(36px, 7vw, 110px);
+    }
+
+    .constraints-grid {
+      width: min(100%, calc(var(--max) + (var(--pad) * 2)));
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: clamp(14px, 1.6vw, 22px);
+    }
+
+    .constraints-grid > div {
+      padding: clamp(20px, 2.2vw, 28px);
+      border-radius: 8px;
+      background: var(--paper);
+      box-shadow: 0 14px 36px rgba(45, 55, 80, 0.08);
+      display: grid;
+      align-content: start;
+      gap: 10px;
+    }
+
+    .constraints-grid strong {
+      color: var(--green-mid);
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .constraints-grid span {
+      color: var(--ink);
+      font-size: clamp(14px, 1.02vw, 17px);
+      line-height: 1.4;
+      font-weight: 680;
+      letter-spacing: -0.025em;
+    }
+
+    .campaign-conclusion {
+      max-width: 760px;
+      margin: 6px auto 0;
+      color: var(--muted);
+      font-size: clamp(15px, 1.1vw, 18px);
+      line-height: 1.45;
+      font-weight: 660;
+      letter-spacing: -0.025em;
+    }
+
+    .mesh-block-feature {
+      position: relative;
       aspect-ratio: 16 / 9;
     }
 
-    .media-item.contain img,
-    .media-item.contain video {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      background: #f4efe7;
+    .mesh-label {
+      position: absolute;
+      z-index: 3;
+      display: inline-flex;
+      flex-direction: column;
+      gap: 4px;
+      padding: 10px 14px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.94);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      pointer-events: none;
     }
 
-    .dark .media-item.contain img,
-    .dark .media-item.contain video {
-      background: #222222;
+    .mesh-label-left {
+      left: clamp(14px, 2vw, 28px);
+      top: clamp(14px, 2vw, 28px);
     }
 
-    .media-item img,
-    .media-item video {
-      width: 100%;
-      height: 100%;
-      display: block;
+    .mesh-label-right {
+      right: clamp(14px, 2vw, 28px);
+      bottom: clamp(14px, 2vw, 28px);
     }
 
-    .image-caption {
-      width: min(100%, var(--image-max));
-      margin: 12px auto 0;
-
-      font-size: 12px;
-      line-height: 1.5;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-      color: rgba(34, 34, 34, 0.48);
-    }
-
-    .dark .image-caption {
-      color: rgba(244, 239, 231, 0.48);
-    }
-
-    /* =========================
-       Result Panel
-    ========================= */
-    .result-panel {
-      width: min(100%, var(--content-max));
-      margin: 34px auto 0;
-
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
-    }
-
-    .result-item {
-      min-height: 190px;
-      padding: 18px;
-
-      border: 2px solid var(--fg);
-      background: var(--paper);
-      color: var(--fg);
-
-      box-shadow: 6px 6px 0 rgba(17, 17, 17, 0.16);
-    }
-
-    .dark .result-item {
-      border-color: var(--bg);
-      background: rgba(244, 239, 231, 0.06);
-      color: var(--bg);
-      box-shadow: none;
-    }
-
-    .result-number {
-      font-size: clamp(34px, 4vw, 68px);
-      line-height: 0.86;
-      font-weight: 950;
-      letter-spacing: -0.1em;
-      word-break: break-word;
-    }
-
-    .result-desc {
-      margin-top: 20px;
-      font-size: 13.5px;
-      line-height: 1.5;
-      font-weight: 680;
-      letter-spacing: -0.035em;
-      color: rgba(34, 34, 34, 0.68);
-    }
-
-    .dark .result-desc {
-      color: rgba(244, 239, 231, 0.68);
-    }
-
-    /* =========================
-       Footer Nav
-    ========================= */
-    .project-footer {
-      position: relative;
-      z-index: 5;
-
-      width: min(100%, calc(var(--content-max) + var(--pad) * 2));
-      margin-left: auto;
-      margin-right: auto;
-
-      padding: 72px var(--pad) 48px;
-
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 18px;
-    }
-
-    .nav-card {
-      position: relative;
-      min-height: 150px;
-      padding: 20px;
-
-      border: 2px solid var(--fg);
-      background: var(--paper);
-      box-shadow: 9px 9px 0 rgba(17, 17, 17, 0.18);
-
-      clip-path: polygon(
-        0 0,
-        calc(100% - 26px) 0,
-        100% 26px,
-        100% 100%,
-        26px 100%,
-        0 calc(100% - 26px)
-      );
-
-      transition:
-        transform 0.24s cubic-bezier(.16, 1, .3, 1),
-        background 0.2s ease,
-        color 0.2s ease;
-    }
-
-    .nav-card:hover {
-      transform: translateY(-5px);
-      background: var(--accent);
-      color: #ffffff;
-      box-shadow: 12px 12px 0 rgba(17, 17, 17, 0.28);
-    }
-
-    .nav-kicker {
-      margin-bottom: 18px;
-
+    .mesh-label .label-en {
+      color: var(--green-mid);
       font-size: 11px;
-      font-weight: 950;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      opacity: 0.62;
-    }
-
-    .nav-title {
-      max-width: 620px;
-
-      font-size: clamp(26px, 3.4vw, 52px);
-      line-height: 0.9;
-      font-weight: 950;
-      letter-spacing: -0.08em;
+      font-weight: 900;
+      letter-spacing: 0.12em;
       text-transform: uppercase;
     }
 
-    .back-home {
-      position: fixed;
-      right: var(--pad);
-      bottom: 28px;
-      z-index: 80;
+    .mesh-label .label-zh {
+      color: var(--ink);
+      font-size: clamp(14px, 1.05vw, 17px);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+    }
 
-      width: 74px;
-      height: 38px;
+    .campaign-feature--video video {
+      background: #0f1117;
+    }
 
-      display: grid;
-      place-items: center;
-
-      border: 2px solid var(--fg);
+    .campaign-feature--flow {
+      aspect-ratio: auto;
       background: var(--paper);
-      color: var(--fg);
+    }
 
-      font-size: 10px;
-      font-weight: 950;
-      letter-spacing: 0.08em;
+    .campaign-feature--flow img {
+      height: auto;
+      max-height: none;
+      object-fit: contain;
+    }
+
+    .input-evidence {
+      width: min(100%, calc(var(--max) + (var(--pad) * 2)));
+      margin: 6px auto 0;
+      display: grid;
+      grid-template-columns: 0.66fr 0.34fr;
+      gap: clamp(14px, 1.6vw, 22px);
+      align-items: stretch;
+    }
+
+    .input-evidence .campaign-card {
+      aspect-ratio: auto;
+      height: 100%;
+      min-height: clamp(220px, 22vw, 320px);
+    }
+
+    .input-evidence .campaign-card--tool {
+      aspect-ratio: auto;
+    }
+
+    .page-footer {
+      width: 100vw;
+      margin-left: calc(50% - 50vw);
+      margin-top: clamp(82px, 10vw, 142px);
+      padding: clamp(70px, 8vw, 112px) var(--pad) 44px;
+      color: var(--paper);
+      background: var(--ink);
+    }
+
+    .footer-inner {
+      width: min(100%, var(--max));
+      margin: 0 auto;
+    }
+
+    .footer-title {
+      max-width: 980px;
+      margin: 0 0 clamp(42px, 6vw, 72px);
+      font-size: clamp(38px, 6.4vw, 104px);
+      line-height: 0.94;
+      font-weight: 930;
+      letter-spacing: -0.07em;
+    }
+
+    .footer-links {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 18px 34px;
+      padding-top: 18px;
+      border-top: 1px solid rgba(255, 255, 255, 0.24);
+    }
+
+    .minimal-link {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 10px;
+      color: rgba(255, 255, 255, 0.86);
+      font-size: clamp(16px, 1.4vw, 22px);
+      font-weight: 850;
+      line-height: 1.1;
+      transition: opacity 180ms ease, transform 180ms ease;
+    }
+
+    .minimal-link span {
+      color: rgba(255, 255, 255, 0.56);
+      font-size: 12px;
+      letter-spacing: 0.12em;
       text-transform: uppercase;
-
-      box-shadow: 5px 5px 0 rgba(17, 17, 17, 0.18);
     }
 
-    .back-home:hover {
-      background: var(--accent);
-      color: #ffffff;
+    .minimal-link:hover,
+    .minimal-link:focus-visible {
+      opacity: 1;
+      transform: translateY(-1px);
     }
 
-    /* =========================
-       Responsive
-    ========================= */
-    @media (max-width: 1200px) {
-      .logic-matrix {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-
-      .result-panel {
-        grid-template-columns: 1fr;
-      }
+    .minimal-link:focus-visible {
+      outline: 2px solid currentColor;
+      outline-offset: 4px;
     }
 
-    @media (max-width: 980px) {
+    .reveal {
+      opacity: 0;
+      transform: translateY(22px);
+      transition: opacity 0.7s ease, transform 0.7s cubic-bezier(.16, 1, .3, 1);
+    }
+
+    .reveal.in {
+      opacity: 1;
+      transform: none;
+    }
+
+    @media (max-width: 1000px) {
       .topbar {
-        mix-blend-mode: normal;
-        color: #ffffff;
+        flex-wrap: wrap;
+      }
+
+      .topbar-primary {
+        width: 100%;
+        justify-content: space-between;
+      }
+
+      .topbar-actions {
+        width: 100%;
+        justify-content: flex-end;
       }
 
       .section-head {
-        width: 100%;
+        display: block;
+      }
+
+      .section-note {
+        margin-top: 12px;
+        text-align: left;
+      }
+
+      .case-principles {
         grid-template-columns: 1fr;
-        gap: 10px;
+        gap: 26px;
+        margin-top: 44px;
       }
 
-      .section-text {
-        margin-left: 0;
-        width: 100%;
-        max-width: 100%;
+      .case-principles p {
+        max-width: 30ch;
       }
 
-      .section-title {
-        max-width: 100%;
+      .case-frame h2 {
+        max-width: 14ch;
+        font-size: clamp(44px, 14vw, 72px);
       }
 
-      .media-grid,
-      .logic-matrix,
-      .result-panel {
-        width: 100%;
+      .campaign-copy {
+        grid-template-columns: 1fr;
       }
 
-      .media-item.half,
-      .media-item.full {
-        grid-column: 1 / -1;
+      .campaign-row {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .constraints-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .input-evidence {
+        grid-template-columns: 1fr;
       }
     }
 
-    @media (max-width: 720px) {
+    @media (max-width: 680px) {
       :root {
-        --pad: 20px;
+        --pad: 18px;
+        --radius: 22px;
       }
 
       .topbar {
-        top: 18px;
+        top: 14px;
+        font-size: 12px;
+      }
+
+      .hero-statement {
+        padding-top: 54px;
+        padding-bottom: 68px;
+      }
+
+      .hero-quicknav {
+        gap: 10px;
+        margin-top: 22px;
+      }
+
+      .hero-quicknav a {
+        padding: 8px 14px;
         font-size: 13px;
+        gap: 8px;
       }
 
-      .top-actions {
+      .template-slot {
+        width: min(100%, 420px);
+        padding: 8px;
+        border-radius: 16px;
+      }
+
+      .campaign-assets {
+        padding: 0 14px;
+        gap: 58px;
+      }
+
+      .campaign-copy {
+        padding: 0 4px 16px;
+        gap: 10px;
+      }
+
+      .campaign-copy h3 {
+        font-size: clamp(34px, 12vw, 58px);
+      }
+
+      .campaign-row {
+        grid-template-columns: 1fr;
+        gap: 14px;
+      }
+
+      .gallery-mosaic {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .gallery-mosaic figure {
+        margin-top: 0 !important;
+        border-radius: 8px;
+      }
+
+      .m-a,
+      .m-d,
+      .m-e {
+        grid-column: 1 / -1;
+      }
+
+      .m-b {
+        grid-column: 1 / 2;
+      }
+
+      .m-c {
+        grid-column: 2 / 3;
+        margin-top: clamp(24px, 8vw, 50px) !important;
+      }
+
+      .constraints-grid {
+        grid-template-columns: 1fr;
         gap: 12px;
       }
 
-      .hero {
-        min-height: 86svh;
-        padding-top: 86px;
-        padding-bottom: 48px;
+      .mesh-label {
+        padding: 8px 10px;
+        gap: 2px;
       }
 
-      .hero-content {
-        width: 100%;
-        margin-top: 0;
+      .mesh-label .label-en {
+        font-size: 10px;
       }
 
-      .project-title {
-        font-size: clamp(40px, 13vw, 68px);
+      .mesh-label .label-zh {
+        font-size: 12px;
       }
 
-      .project-desc {
+      .mesh-block-feature {
+        aspect-ratio: 4 / 3;
+      }
+
+      .input-evidence {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+
+      *,
+      *::before,
+      *::after {
+        transition: none !important;
+        animation: none !important;
+      }
+    }
+
+      /* =========================
+       Index Overlay（全局索引弹层）
+    ========================= */
+    .index-open {
+      appearance: none;
+      background: none;
+      border: 0;
+      color: inherit;
+      font: inherit;
+      letter-spacing: inherit;
+      text-transform: inherit;
+      cursor: pointer;
+    }
+
+    .index-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 2000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: rgba(21, 22, 26, 0.55);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .index-overlay.is-open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .index-overlay-panel {
+      position: relative;
+      width: min(1080px, 94vw);
+      max-height: min(82vh, 900px);
+      overflow-y: auto;
+      padding: clamp(24px, 4vw, 48px);
+      border-radius: 28px;
+      background: #ffffff;
+      color: #15161a;
+      box-shadow: 0 32px 80px rgba(0, 0, 0, 0.3);
+      transform: translateY(18px) scale(0.98);
+      transition: transform 0.35s cubic-bezier(.16, 1, .3, 1);
+    }
+
+    .index-overlay.is-open .index-overlay-panel {
+      transform: none;
+    }
+
+    .index-overlay-close {
+      position: absolute;
+      top: 14px;
+      right: 18px;
+      z-index: 2;
+      width: 40px;
+      height: 40px;
+      display: grid;
+      place-items: center;
+      border: 0;
+      border-radius: 999px;
+      background: rgba(21, 22, 26, 0.08);
+      color: #15161a;
+      font-size: 22px;
+      line-height: 1;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    .index-overlay-close:hover {
+      background: rgba(21, 22, 26, 0.16);
+    }
+
+    .index-overlay-head {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 2px solid #15161a;
+    }
+
+    .index-overlay-head h2 {
+      font-size: clamp(28px, 4vw, 56px);
+      line-height: 0.92;
+      font-weight: 950;
+      letter-spacing: -0.07em;
+      text-transform: uppercase;
+    }
+
+    .index-overlay-head p {
+      max-width: 320px;
+      font-size: 13px;
+      line-height: 1.45;
+      font-weight: 700;
+      color: rgba(21, 22, 26, 0.58);
+    }
+
+    .index-overlay-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+    }
+
+    .io-card {
+      display: block;
+      overflow: hidden;
+      border-radius: 18px;
+      background: #ffffff;
+      box-shadow: 0 16px 36px rgba(17, 17, 17, 0.1);
+      transition: transform 0.25s cubic-bezier(.16, 1, .3, 1), box-shadow 0.2s ease;
+    }
+
+    .io-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 24px 52px rgba(17, 17, 17, 0.14);
+    }
+
+    .io-card.is-current {
+      outline: 3px solid #15161a;
+      outline-offset: 2px;
+    }
+
+    .io-card img {
+      display: block;
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      object-fit: cover;
+      background: #ddd;
+    }
+
+    .io-card-body {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      padding: 12px 14px 16px;
+    }
+
+    .io-no {
+      font-size: 11px;
+      font-weight: 950;
+      letter-spacing: 0.14em;
+      opacity: 0.5;
+    }
+
+    .io-name {
+      font-size: 16px;
+      line-height: 1.05;
+      font-weight: 950;
+      letter-spacing: -0.04em;
+      text-transform: uppercase;
+    }
+
+    .io-tags {
+      font-size: 10px;
+      font-weight: 850;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: rgba(21, 22, 26, 0.55);
+    }
+  </style>
+  <link rel="stylesheet" href="project-hero-system.css">
+  <link rel="stylesheet" href="about-overlay.css">
+  <style id="mobile-topbar-title-fix">
+    /* =========================
+       移动端全局修复：顶栏单行 + 标题缩放
+    ========================= */
+    @media (max-width: 680px) {
+      .topbar.case-nav {
+        flex-wrap: nowrap;
+        row-gap: 0;
+        gap: 14px;
+        font-size: 12px;
+      }
+
+      .topbar.case-nav .topbar-primary {
+        width: auto;
+        flex: 1 1 auto;
+        justify-content: flex-start;
+        gap: 12px;
+      }
+
+      .topbar.case-nav #indexOpen {
+        margin-left: auto;
+      }
+
+      .topbar.case-nav .topbar-actions,
+      .topbar.case-nav .topbar-cta {
+        width: auto;
+        justify-content: flex-end;
+        gap: 10px;
+      }
+
+      .case-landing .case-title {
+        font-size: clamp(34px, 10.5vw, 64px);
+      }
+
+      .case-landing .case-summary {
         max-width: 100%;
-        font-size: 14.5px;
-        line-height: 1.62;
       }
+    }
+  </style>
+  <style>
+    .view-toggle {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 18px; font-weight: 950; letter-spacing: 0.08em;
+      text-transform: uppercase; color: #4a4a52;
+    }
+    .view-toggle a, .view-toggle button {
+      appearance: none; border: 0; background: transparent;
+      font-family: inherit; font-size: inherit; font-weight: inherit;
+      letter-spacing: inherit; color: inherit; text-transform: uppercase;
+      text-decoration: none; cursor: pointer; padding: 6px 0;
+      transition: color 0.2s ease;
+    }
+    .view-toggle a:hover, .view-toggle a:focus-visible,
+    .view-toggle button:hover, .view-toggle button.active { color: var(--ink, #15161a); }
+    .view-toggle a:focus-visible, .view-toggle button:focus-visible {
+      outline: 2px solid currentColor; outline-offset: 4px;
+    }
+    .view-toggle .view-dot {
+      width: 4px; height: 4px; flex-shrink: 0; border-radius: 50%;
+      background: currentColor; opacity: 0.8;
+    }
 
-      .hero-overlay {
-        background:
-          linear-gradient(
-            180deg,
-            rgba(0, 0, 0, 0.76) 0%,
-            rgba(0, 0, 0, 0.42) 45%,
-            rgba(0, 0, 0, 0.76) 100%
-          );
-      }
-
-      .section {
-        padding-top: 56px;
-        padding-bottom: 56px;
-      }
-
-      .section-title {
-        font-size: clamp(30px, 11vw, 48px);
-      }
-
-      .section-text {
-        font-size: 14.5px;
-        line-height: 1.68;
-      }
-
-      .logic-matrix {
-        grid-template-columns: 1fr;
-        gap: 12px;
-      }
-
-      .logic-cell {
-        min-height: auto;
-        padding: 18px;
-      }
-
-      .logic-title {
-        font-size: clamp(24px, 8vw, 36px);
-      }
-
-      .logic-desc {
-        font-size: 14px;
-      }
-
-      .media-item.half {
-        aspect-ratio: auto;
-      }
-
-      .media-item img,
-      .media-item video {
-        max-height: none;
-      }
-
-      .result-item {
-        min-height: auto;
-      }
-
-      .project-footer {
-        grid-template-columns: 1fr;
-        padding-top: 56px;
-      }
-
-      .back-home {
-        right: 20px;
-        bottom: 20px;
-      }
+    @media (max-width: 680px) {
+      .view-toggle { font-size: 12px; gap: 6px; }
+      .topbar.case-nav #indexOpen { margin-left: 0; }
+    }
+    .case-symbol--construction::before,
+    .case-symbol--construction::after {
+      content: none;
     }
   </style>
 </head>
 
 <body>
-  <div class="page">
-    <div class="grid-lines"></div>
-    <div class="noise"></div>
-
-    <!-- =========================
-         Topbar
-    ========================== -->
-    <header class="topbar">
+  <header class="topbar case-nav" aria-label="项目导航">
+    <div class="topbar-primary">
       <a class="brand" href="index.html">周子恒</a>
+    </div>
 
-      <nav class="top-actions">
-        <a class="top-link" href="index.html">Map</a>
-        <a class="top-link" href="index.html#works">Index</a>
-        <a class="top-link" href="mailto:zhou_ziheng1@outlook.com">Contact</a>
-      </nav>
-    </header>
+    <div class="topbar-actions">
+      <div class="view-toggle" aria-label="视图切换">
+        <a class="view-link" href="index.html">Projects</a>
+        <span class="view-dot" aria-hidden="true"></span>
+        <button id="indexOpen" type="button" aria-haspopup="dialog" aria-controls="indexOverlay">Index</button>
+        <span class="view-dot" aria-hidden="true"></span>
+        <button class="view-link" type="button" data-about-open aria-haspopup="dialog" aria-controls="aboutOverlay">关于我</button>
+      </div>
+    </div>
+  </header>
 
-    <!-- =========================
-         Hero
-    ========================== -->
-    <main class="hero">
-      <div class="hero-bg-image">
-        <img src="images/llmToConstruction/BRIDGE_00.jpg" alt="Text-to-3D robotic construction fabrication process">
+  <main class="hero case-landing case-landing--construction" aria-labelledby="hero-title">
+    <div class="case-meta">
+      <span>Tongji CAUP · Stuttgart</span>
+    </div>
+
+     <div class="case-symbol case-symbol--construction" aria-hidden="true">
+        <svg viewBox="0 0 200 200" fill="none" role="presentation">
+          <defs>
+            <mask id="llmSymbolHole" maskUnits="userSpaceOnUse" x="0" y="0" width="200" height="200">
+              <rect x="0" y="0" width="200" height="200" fill="#ffffff" />
+              <rect x="75" y="75" width="25" height="25" fill="#000000" />
+              <rect x="110" y="110" width="15" height="15" fill="#000000" />
+            </mask>
+          </defs>
+          <rect x="50" y="50" width="100" height="100" rx="8" fill="#ffffff" mask="url(#llmSymbolHole)" />
+        </svg>
       </div>
 
-      <div class="hero-overlay"></div>
+    <section class="case-footer">
+      <h1 class="case-title" id="hero-title">
+        离散建造<br>
+        <span>Prompt to Production</span>
+      </h1>
+      <p class="case-summary">把自然语言生成的连续 Mesh，转译为可约束、可导出、可重构的离散构件系统。</p>
+    </section>
+  </main>
 
-      <section class="hero-content">
-        <div class="project-kicker">TONGJI CAUP / RESEARCH ASSISTANT / 2024.04–2025.05</div>
+  <div class="page">
+    <div class="content">
 
-        <h1 class="project-title">
-          Text-to-3D<br>
-          <span class="accent">机械臂快速搭建</span>
-        </h1>
+      <section class="hero-statement reveal" id="statement">
+        <h1>生成的形态，怎样成为可建造的构件系统？</h1>
+        <p>从自然语言与图像生成的桥梁 Mesh，转译为可约束、可导出、可重构的离散构件系统。</p>
+        <div class="hero-quicknav" aria-label="快速跳转">
+          <a href="#discretization"><span>01</span>查看离散化方法</a>
+          <a href="#physical"><span>02</span>查看实体结果</a>
+        </div>
+        <figure class="template-slot">
+          <img src="images/llmToConstruction/BRIDGE_MESH&amp;BLOCK.jpg" alt="同一座桥：连续 Mesh（空间意图）与离散 Block 系统（可生产输出）对照。">
+        </figure>
+      </section>
 
-        <p class="project-desc">
-          参与基于 LLM 的 Text-to-3D 工作流研究，探索将自然语言需求转化为可编辑 3D 几何、模块化构件系统与机械臂自主搭建流程的完整链路。
-          项目聚焦于“需求理解 → 方案生成 → 结构离散化 → 模块优化 → 实体搭建”的产品化转译过程。
-        </p>
-
-        <div class="hero-tags">
-          <span>Text-to-3D</span>
-          <span>LLM Workflow</span>
-          <span>Modular Construction</span>
-          <span>OR-Tools</span>
-          <span>Robotic Fabrication</span>
-          <span>Cross-team Research</span>
+      <section class="case-frame reveal" id="problem" aria-label="项目命题">
+        <div class="case-frame-inner">
+          <p class="case-kicker">Design problem</p>
+          <h2>Mesh不能直接作为生产结果。</h2>
+          <p class="case-frame-lead">连续网格可以表达桥梁形态，却不能直接回答：构件用什么、需要多少、如何连接、怎样搭建。</p>
+          <div class="case-principles">
+            <p><strong>保留</strong>空间形态与设计意图。</p>
+            <p><strong>约束</strong>构件库、数量、可制造性与结构要求。</p>
+            <p><strong>输出</strong>可导出的构件关系与可执行的搭建过程。</p>
+          </div>
         </div>
       </section>
-    </main>
 
-    <!-- =========================
-         00 / Project Overview
-    ========================== -->
-    <section class="section dark logic-section">
-      <div class="section-head">
-        <div class="section-no">Project Overview</div>
-        <h2 class="section-title">将自然语言需求转化为可建造的模块化结构系统。</h2>
-      </div>
-
-      <p class="section-text">
-        本项目来自同济大学建筑与城市规划学院的研究助理工作，研究目标是将生成式 AI、Text-to-3D、模块化木构系统与机械臂制造流程整合为一套 Prompt-to-Production 工作流。
-        我参与了从工作流梳理、算法逻辑表达、模块选型与排列优化，到研究图像整理和实体模型展示的过程。
-      </p>
-
-      <div class="logic-matrix">
-        <article class="logic-cell logic-problem">
-          <div class="logic-arrow">01</div>
-          <div class="logic-label">Demand Translation</div>
-          <h3 class="logic-title">自然语言需求转化</h3>
-          <p class="logic-desc">
-            将用户输入的文本需求转译为可被 AI 生成、编辑和后续处理的空间几何。
-          </p>
-        </article>
-
-        <article class="logic-cell logic-problem">
-          <div class="logic-arrow">02</div>
-          <div class="logic-label">Geometry Generation</div>
-          <h3 class="logic-title">Text-to-3D 生成链路</h3>
-          <p class="logic-desc">
-            通过 Text-to-Mesh 与 Image-to-Mesh 方法，将概念输入转化为模型与 Mesh 结构。
-          </p>
-        </article>
-
-        <article class="logic-cell logic-problem">
-          <div class="logic-arrow">03</div>
-          <div class="logic-label">Discrete System</div>
-          <h3 class="logic-title">模块化结构离散</h3>
-          <p class="logic-desc">
-            将连续几何转化为标准木构模块组合，并满足数量、连接、制造和结构约束。
-          </p>
-        </article>
-
-        <article class="logic-cell logic-problem">
-          <div class="logic-arrow">04</div>
-          <div class="logic-label">Robotic Assembly</div>
-          <h3 class="logic-title">机械臂自主搭建</h3>
-          <p class="logic-desc">
-            生成构件抓取、移动、放置和重构序列，验证模块系统的循环使用潜力。
-          </p>
-        </article>
-      </div>
-    </section>
-
-    <!-- =========================
-         01 / Workflow
-    ========================== -->
-    <section class="section soft">
-      <div class="section-head">
-        <div class="section-no">01 / Workflow</div>
-        <h2 class="section-title">从 文本 到 3D模型 的 Prompt-to-Production 流程。</h2>
-      </div>
-
-      <p class="section-text">
-        工作流从文本输入开始，通过 AI 将自然语言需求转化为几何模型。模型经过 Mesh 处理后进入结构离散化阶段，再通过优化算法选择合适的模块类型、数量与排列方式。
-        最终，系统导出可用于机械臂搭建的模块信息和制造序列，实现从数字方案到物理构件的连续转译。
-      </p>
-
-      <div class="media-grid">
-        <div class="media-item full contain">
-          <img src="images/llmToConstruction/workflow.png" alt="Text-to-mesh workflow and discretization pipeline">
+      <section class="section reveal" id="workflow" aria-label="整体流程">
+        <div class="campaign-assets">
+          <article class="campaign-block">
+            <div class="campaign-copy">
+              <h3>从意图到构件，不是一次生成。</h3>
+              <p>文本或图像意图先生成 Mesh；离散化与优化再将连续几何改写为构件系统；最终导出构件并进入实体搭建。</p>
+            </div>
+            <figure class="campaign-feature campaign-feature--flow">
+              <img src="images/llmToConstruction/workflow.png" alt="系统流程图：Text Input → AI → Text/Image to Mesh → Model → Mesh → Discretization → Optimization → Blocks Export → Fabrication。">
+            </figure>
+            <div class="input-evidence" aria-label="输入工具证据">
+              <figure class="campaign-card campaign-card--tool">
+                <img src="images/llmToConstruction/MeshAI.png" alt="Meshy 工作区界面：自然语言提示词与生成的桥型 Mesh 预览，作为意图进入 Mesh 生成链路的工具证据。">
+              </figure>
+              <figure class="campaign-card campaign-card--tool">
+                <img src="images/llmToConstruction/BRIDGE_MESH&amp;BLOCK.jpg" alt="Meshy 输出的桥梁 Mesh 预览，与离散化后的 Block 系统在同一画面中对照。">
+              </figure>
+            </div>
+          </article>
         </div>
-      </div>
+      </section>
 
-      <div class="result-panel">
-        <article class="result-item">
-          <div class="result-number">Input</div>
-          <p class="result-desc">
-            通过自然语言描述空间需求，形成生成式设计的初始约束。
-          </p>
-        </article>
-
-        <article class="result-item">
-          <div class="result-number">Mesh</div>
-          <p class="result-desc">
-            将生成结果转化为可分析、可重构的 Mesh 几何结构。
-          </p>
-        </article>
-
-        <article class="result-item">
-          <div class="result-number">Blocks</div>
-          <p class="result-desc">
-            将几何结构离散为可制造、可重复使用的标准化木构模块。
-          </p>
-        </article>
-      </div>
-    </section>
-
-       <!-- =========================
-         02 / LLM-to-3D
-    ========================== -->
-    <section class="section soft">
-      <div class="section-head">
-        <div class="section-no">02 / LLM-to-3D</div>
-        <h2 class="section-title">从 文本 到 3D</h2>
-      </div>
-
-      <p class="section-text">
-        利用大语言模型将自然语言需求转化为可编辑几何结构的过程是整个工作流的核心环节。通过设计有效的 Prompt，模型能够生成符合空间需求的 3D 模型，并且这些模型可以被后续的 Mesh 处理和离散化算法所利用。
-      </p>
-
-      <div class="media-grid">
-        <div class="media-item full contain">
-          <img src="images/llmToConstruction/MeshAI.png" alt="Assembly-oriented discretization algorithm and optimization results">
+      <section class="section reveal" id="discretization" aria-label="核心决策：离散化">
+        <div class="campaign-assets">
+          <article class="campaign-block">
+            <div class="campaign-copy">
+              <h3>离散化：受约束的构件分配。</h3>
+              <p>下图为离散化方法论与决策约束；三组 Opt 候选比较的是不同构件预算与方向构件分配，不构成单一最优解。</p>
+            </div>
+            <figure class="campaign-feature">
+              <img src="images/llmToConstruction/methodology.jpg" alt="离散化方法论：min(Cconstruction_cost(x) + Pappoximation_accuracy(x))；约束为构件类型/数量/可制造性/结构承载；展示 Opt 1/2/3 三组候选。">
+            </figure>
+            <div class="constraints-grid" aria-label="离散化决策约束">
+              <div>
+                <strong>Block Type</strong>
+                <span>系统选择哪些基础构件参与搭建。</span>
+              </div>
+              <div>
+                <strong>Block Amount</strong>
+                <span>系统在有限预算中分配材料。</span>
+              </div>
+              <div>
+                <strong>Fabricability</strong>
+                <span>结果必须可切削、连接、运输与搭建。</span>
+              </div>
+              <div>
+                <strong>Structural Capacity</strong>
+                <span>构件组织不能只保留视觉形态。</span>
+              </div>
+            </div>
+            <p class="campaign-conclusion">系统在建造成本与形体逼近度之间，输出不同的离散候选方案。</p>
+          </article>
         </div>
-      </div>
-    </section>
+      </section>
 
-    
-    <!-- =========================
-         03 / Discretization Algorithm
-    ========================== -->
-    <section class="section dark">
-      <div class="section-head">
-        <div class="section-no">03 / Algorithm</div>
-        <h2 class="section-title">以装配为导向的结构离散化算法。</h2>
-      </div>
-
-      <p class="section-text">
-        我参与使用 OR-Tools 进行模块选型与排列优化，在建造约束下提升几何填充效率。
-        这个过程本质上是一种将复杂需求拆解为标准化模块的设计方法：既要满足空间形态，也要让每个构件可以被编号、抓取、放置和复用。
-      </p>
-
-      <div class="logic-matrix">
-        <article class="logic-cell logic-solution">
-          <div class="logic-label">Objective</div>
-          <h3 class="logic-title">成本与精度平衡</h3>
-          <p class="logic-desc">
-            在构件数量、建造成本和几何近似精度之间寻找平衡，避免过度复杂或失真。
-          </p>
-        </article>
-
-        <article class="logic-cell logic-solution">
-          <div class="logic-label">Constraint 01</div>
-          <h3 class="logic-title">构件类型约束</h3>
-          <p class="logic-desc">
-            使用有限类型的木构模块进行组合，保证系统具有标准化和可重复生产能力。
-          </p>
-        </article>
-
-        <article class="logic-cell logic-solution">
-          <div class="logic-label">Constraint 02</div>
-          <h3 class="logic-title">制造与装配约束</h3>
-          <p class="logic-desc">
-            离散结果需要满足机械臂抓取、放置、连接和重构的物理操作条件。
-          </p>
-        </article>
-
-        <article class="logic-cell logic-solution">
-          <div class="logic-label">Constraint 03</div>
-          <h3 class="logic-title">结构性能约束</h3>
-          <p class="logic-desc">
-            在模块组合过程中考虑支撑关系、承载能力和结构稳定性。
-          </p>
-        </article>
-      </div>
-
-      <div class="media-grid">
-        <div class="media-item full contain">
-          <img src="images/llmToConstruction/methodology.jpg" alt="Assembly-oriented discretization algorithm and optimization results">
+      <section class="section reveal" id="mesh-to-block" aria-label="Mesh 到 Block 的核心对照">
+        <div class="campaign-assets">
+          <article class="campaign-block">
+            <div class="campaign-copy">
+              <h3>同一座桥，从连续 Mesh 变成离散构件系统。</h3>
+              <p>同一组几何语义，先以连续 Mesh 记录空间意图，再被离散规则改写为可生产、可连接的构件。</p>
+            </div>
+            <figure class="campaign-feature mesh-block-feature">
+              <img src="images/llmToConstruction/BRIDGE_MESH&amp;BLOCK.jpg" alt="同一座桥：左侧为连续 Mesh（空间意图），右侧为离散 Block 系统（可生产输出）。">
+              <span class="mesh-label mesh-label-left" aria-hidden="true">
+                <span class="label-en">Continuous Mesh</span>
+                <span class="label-zh">空间意图</span>
+              </span>
+              <span class="mesh-label mesh-label-right" aria-hidden="true">
+                <span class="label-en">Discrete Blocks</span>
+                <span class="label-zh">可生产输出</span>
+              </span>
+            </figure>
+          </article>
         </div>
-      </div>
+      </section>
 
-      <p class="section-text" style="margin-top: 14px;">
-        Assembly-Oriented Discretization Algorithm：在 block type、block amount、fabricability 与 structural capacity 等约束下进行构件分配与排列优化。
-      </p>
-    </section>
-
-    <!-- =========================
-         04 / Robotic Fabrication Test
-    ========================== -->
-    <section class="section soft">
-      <div class="section-head">
-        <div class="section-no">04 / Robotic Fabrication Test</div>
-        <h2 class="section-title">通过机械臂验证模块抓取、放置与重构流程。</h2>
-      </div>
-
-      <p class="section-text">
-        实体制造测试验证了从离散化结果到机械臂动作序列的可执行性。
-        机械臂根据构件信息进行抓取、移动和放置，并按照重构流程将第一轮结构转换为第二轮结构。
-        测试过程包括读取模块类型、约束模块数量、生成下一轮离散化方案，以及对设计结果进行批准或重新生成。
-      </p>
-
-      <div class="media-grid">
-        <div class="media-item full contain">
-          <img src="images/llmToConstruction/fabrication.jpg" alt="Autonomous robotic manufacturing and reconfiguration test">
+      <section class="section reveal" id="physical" aria-label="实体结果：物理验证">
+        <div class="campaign-assets">
+          <article class="campaign-block">
+            <div class="campaign-copy">
+              <h3>离散构件进入实体，MESH成为可构建的空间原型</h3>
+              <p>1:50 实体模型在真实搭建流程下被完成。视频作为可验证证据，不附额外标签。</p>
+            </div>
+            <figure class="campaign-feature campaign-feature--video">
+              <video src="images/llmToConstruction/final.mp4" autoplay loop muted playsinline preload="metadata"></video>
+            </figure>
+          </article>
+          <article class="campaign-block">
+            <div class="campaign-copy">
+              <h3>离散构件进入实体，桥梁成为可重构的空间原型。</h3>
+              <p>与斯图加特大学团队协作完成 1:50 实体模型搭建。实体过程验证了离散构件、连接关系与重构逻辑可进入真实搭建流程。</p>
+            </div>
+            <figure class="campaign-feature">
+              <img src="images/llmToConstruction/BRIDGE_00.jpg" alt="1:50 桥梁实体模型在 CAUP 展览空间中的完整夜景视图。">
+            </figure>
+            <div class="gallery-mosaic" aria-label="构件连接与结构细节">
+              <figure class="m-a">
+                <img src="images/llmToConstruction/BRIDGE (5).jpg" alt="桥体前侧角度的构件互锁与堆叠细节。">
+              </figure>
+              <figure class="m-b">
+                <img src="images/llmToConstruction/BRIDGE (4).jpg" alt="桥体侧下方悬挑与基座连接处的构件细节。">
+              </figure>
+            </div>
+          </article>
         </div>
-      </div>
+      </section>
 
-      <p class="section-text" style="margin-top: 14px;">
-        Autonomous Manufacturing：机械臂根据离散化结果进行 grab、place 与 reconfiguration 操作，验证模块化结构在物理环境中的可重构性。
-      </p>
-    </section>
-
-    <!-- =========================
-         05 / Collaboration & Outcome
-    ========================== -->
-    <section class="section dark">
-      <div class="section-head">
-        <div class="section-no">05 / Collaboration & Outcome</div>
-        <h2 class="section-title">成果</h2>
-      </div>
-
-      <p class="section-text">
-        项目过程中，我与斯图加特大学研究团队及建筑设计团队协作，参与完成 1:50 实体模型搭建，并将算法流程、空间逻辑与建造约束整理为可展示的成果。
-      </p>
-
-      <p class="section-text">
-        它不仅是一个建筑机器人研究项目，也是一套面向未来智能建造的产品化流程原型：
-        将模糊的自然语言需求，逐步转化为可编辑、可优化、可交付、可物理执行的建造系统。
-      </p>
-
-      <div class="media-grid">
-        <div class="media-item full contain">
-          <video src="images/llmToConstruction/final.mp4" autoplay loop muted playsinline></video>
+      <footer class="page-footer">
+        <div class="footer-inner">
+          <p class="footer-title">设计意图不是终点；可执行的构件系统才是。</p>
+          <div class="footer-links">
+            <a class="minimal-link" href="work-ai-commerce.html"><span>Previous Project</span>AI 电商素材生成平台</a>
+            <a class="minimal-link" href="work-interior-ai.html"><span>Next Project</span>商业空间视觉设计</a>
+          </div>
         </div>
-      </div>
-
-    </section>
-
-    <!-- =========================
-         Footer Navigation
-    ========================== -->
-    <footer class="project-footer">
-      <a class="nav-card" href="index.html">
-        <div class="nav-kicker">返回</div>
-        <h2 class="nav-title">回到首页</h2>
-      </a>
-
-      <a class="nav-card" href="work-ucl.html">
-        <div class="nav-kicker">下一个项目</div>
-        <h2 class="nav-title">极端环境下的无人建造</h2>
-      </a>
-    </footer>
-
-    <a class="back-home" href="index.html">Map</a>
+      </footer>
+    </div>
   </div>
+
+  <script>
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("in");
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll(".reveal").forEach((el) => observer.observe(el));
+  </script>
+
+  <div class="index-overlay" id="indexOverlay" aria-hidden="true">
+    <div class="index-overlay-panel" role="dialog" aria-modal="true" aria-label="作品索引">
+      <button class="index-overlay-close" type="button" aria-label="关闭索引">×</button>
+      <div class="index-overlay-head">
+        <h2>项目经历</h2>
+        <p>3 种能力维度：空间意图生成、空间智能仿真、生成能力产品化。</p>
+      </div>
+      <div class="index-overlay-grid">
+            <a class="io-card" data-page="work-ucl.html" href="work-ucl.html">
+              <img src="images/UCL/STIG_00.jpg" alt="极端环境下的无人建造" loading="lazy" />
+              <div class="io-card-body">
+                <div class="io-no">01</div>
+                <h3 class="io-name">极端环境下的无人建造</h3>
+                <div class="io-tags">空间设计 × 机器人控制 × 交互仿真 × 智能建造</div>
+              </div>
+            </a>
+            <a class="io-card" data-page="work-ai-commerce.html" href="work-ai-commerce.html">
+              <img src="images/EC/0.jpg" alt="AI 电商素材生成平台" loading="lazy" />
+              <div class="io-card-body">
+                <div class="io-no">02</div>
+                <h3 class="io-name">AI 电商素材生成平台</h3>
+                <div class="io-tags">PRD文档 · 竞品分析报告 · 多模型Benchmark评测报告</div>
+              </div>
+            </a>
+            <a class="io-card" data-page="work-LLM_to_Construction.html" href="work-LLM_to_Construction.html">
+              <img src="images/llmToConstruction/BRIDGE_00.jpg" alt="自然语言需求转化" loading="lazy" />
+              <div class="io-card-body">
+                <div class="io-no">03</div>
+                <h3 class="io-name">自然语言需求转化</h3>
+                <div class="io-tags">TEXT-TO-3D × 模块化建造 × 跨团队协作</div>
+              </div>
+            </a>
+            <a class="io-card" data-page="work-interior-ai.html" href="work-interior-ai.html">
+              <img src="images/ARC/0.png" alt="商业空间视觉设计" loading="lazy" />
+              <div class="io-card-body">
+                <div class="io-no">04</div>
+                <h3 class="io-name">商业空间视觉设计</h3>
+                <div class="io-tags">AIGC工作流落地 · Prompt体系沉淀 · 流程标准化</div>
+              </div>
+            </a>
+            <a class="io-card" data-page="work-global-relay-conference.html" href="work-global-relay-conference.html">
+              <img src="images/AGR/Final Assets/2100s_2.jpg" alt="AI GLOBAL RELAY会议" loading="lazy" />
+              <div class="io-card-body">
+                <div class="io-no">05</div>
+                <h3 class="io-name">AI GLOBAL RELAY会议</h3>
+                <div class="io-tags">Spatial AIGC / Sketch / Reference / Prompt</div>
+              </div>
+            </a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      var overlay = document.getElementById("indexOverlay");
+      if (!overlay) return;
+      var openBtn = document.getElementById("indexOpen");
+      var closeBtn = overlay.querySelector(".index-overlay-close");
+
+      function setOpen(open) {
+        overlay.classList.toggle("is-open", open);
+        overlay.setAttribute("aria-hidden", String(!open));
+        document.body.style.overflow = open ? "hidden" : "";
+      }
+
+      if (openBtn) openBtn.addEventListener("click", function () { setOpen(true); });
+      if (closeBtn) closeBtn.addEventListener("click", function () { setOpen(false); });
+      overlay.addEventListener("click", function (event) {
+        if (event.target === overlay) setOpen(false);
+      });
+      document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape") setOpen(false);
+      });
+
+      var page = location.pathname.split("/").pop();
+      overlay.querySelectorAll("[data-page]").forEach(function (card) {
+        if (card.getAttribute("data-page") === page) card.classList.add("is-current");
+      });
+    })();
+  </script>
+  <script src="about-overlay.js"></script>
 </body>
 </html>

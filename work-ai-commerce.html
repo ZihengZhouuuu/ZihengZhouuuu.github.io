@@ -9,21 +9,20 @@
 
   <style>
     :root {
-      --bg: #f4f1ea;
-      --paper: #fffdf8;
-      --ink: #181817;
-      --muted: #68645c;
-      --line: rgba(24, 24, 23, 0.16);
-      --dark: #15171a;
-      --dark-soft: #23262b;
-      --blue: #3ba1d6;
-      --mint: #a6cbbb;
-      --coral: #f29972;
-      --gray: #979797;
-      --green: #1e8f6e;
-      --pad: clamp(18px, 4vw, 52px);
-      --max: 1320px;
-      --font: Arial, "PingFang SC", "Microsoft YaHei", sans-serif;
+      --bg: #eceef2;
+      --paper: #ffffff;
+      --ink: #15161a;
+      --muted: #62666f;
+      --soft: #dfe3eb;
+      --line: rgba(21, 22, 26, 0.16);
+      --blue: #012169;
+      --blue-mid: #073b8f;
+      --blue-light: #eef4ff;
+      --hero-gradient: linear-gradient(135deg, #012169 0%, #06347c 54%, #0b55ba 100%);
+      --radius: 28px;
+      --pad: clamp(22px, 4vw, 56px);
+      --max: 1540px;
+      --font: Inter, Arial, "PingFang SC", "Microsoft YaHei", sans-serif;
     }
 
     * {
@@ -32,22 +31,17 @@
       padding: 0;
     }
 
-    html,
+    html {
+      scroll-behavior: smooth;
+    }
+
     body {
       min-height: 100%;
       font-family: var(--font);
       background: var(--bg);
       color: var(--ink);
-      letter-spacing: 0;
+      letter-spacing: -0.03em;
       overflow-x: hidden;
-      scroll-behavior: smooth;
-    }
-
-    body {
-      background-image:
-        linear-gradient(to right, rgba(24, 24, 23, 0.055) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(24, 24, 23, 0.055) 1px, transparent 1px);
-      background-size: 48px 48px;
     }
 
     a {
@@ -55,9 +49,19 @@
       text-decoration: none;
     }
 
-    img {
+    img,
+    video {
       display: block;
       width: 100%;
+    }
+
+    button {
+      font: inherit;
+    }
+
+    ::selection {
+      background: var(--ink);
+      color: var(--paper);
     }
 
     .topbar {
@@ -65,177 +69,670 @@
       top: 24px;
       left: var(--pad);
       right: var(--pad);
-      z-index: 50;
+      z-index: 999;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      color: #fff;
-      mix-blend-mode: difference;
-      font-size: 14px;
-      font-weight: 900;
+      gap: 24px;
+      padding: 0 0 14px;
+      color: var(--ink);
+      background: linear-gradient(to bottom, rgba(236, 238, 242, 0.82), rgba(236, 238, 242, 0));
+      font-size: clamp(14px, 1.15vw, 18px);
+      font-weight: 950;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
     }
 
-    .topbar nav {
+    .topbar-primary,
+    .topbar-actions,
+    .topbar-cta,
+    .view-toggle {
       display: flex;
-      gap: 18px;
+      align-items: center;
     }
 
-    .topbar a {
-      transition: opacity 0.2s ease, transform 0.2s ease;
+    .topbar-primary {
+      gap: 24px;
+      min-width: 0;
     }
 
-    .topbar a:hover {
-      opacity: 0.72;
+    .topbar-actions,
+    .topbar-cta,
+    .view-toggle {
+      gap: 12px;
+    }
+
+    .brand {
+      display: inline-block;
+      white-space: nowrap;
+    }
+
+    .topbar-link,
+    .topbar-btn {
+      display: inline-block;
+      padding: 6px 0;
+      color: inherit;
+      white-space: nowrap;
+      opacity: 0.78;
+      transition: opacity 180ms ease, transform 180ms ease;
+    }
+
+    .topbar-link:hover,
+    .topbar-link:focus-visible,
+    .topbar-btn:hover,
+    .topbar-btn:focus-visible,
+    .brand:hover {
+      opacity: 1;
       transform: translateY(-1px);
+    }
+
+    .topbar-link:focus-visible,
+    .topbar-btn:focus-visible,
+    .brand:focus-visible {
+      outline: 2px solid currentColor;
+      outline-offset: 4px;
+    }
+
+    .view-dot {
+      width: 4px;
+      height: 4px;
+      border-radius: 999px;
+      background: currentColor;
+      opacity: 0.42;
+    }
+
+    .page {
+      width: 100%;
+      padding: 0 0 52px;
+    }
+
+    .content {
+      width: min(100%, var(--max));
+      margin: 0 auto;
+      padding: 0 var(--pad);
     }
 
     .hero {
       position: relative;
-      min-height: 92dvh;
-      padding: 118px var(--pad) 72px;
-      display: grid;
-      align-items: end;
-      color: #fff;
-      background: var(--dark);
+      width: 100vw;
+      margin-left: calc(50% - 50vw);
       overflow: hidden;
+      background: var(--bg);
     }
 
-    .hero picture,
-    .hero::after {
-      position: absolute;
-      inset: 0;
+    .hero-statement {
+      width: 100%;
+      margin: 0 auto;
+      padding: clamp(62px, 8vw, 110px) var(--pad) clamp(72px, 8vw, 118px);
+      text-align: center;
     }
 
-    .hero picture {
-      z-index: 1;
+    .hero-statement h1,
+    .hero-statement p {
+      width: min(100%, 760px);
+      max-width: 760px;
+      margin-left: auto;
+      margin-right: auto;
     }
 
-    .hero img {
+    .hero-statement h1 {
+      font-size: clamp(28px, 3.2vw, 54px);
+      line-height: 0.98;
+      letter-spacing: -0.055em;
+      text-transform: none;
+    }
+
+    .hero-statement p {
+      color: var(--muted);
+      font-size: clamp(15px, 1.1vw, 18px);
+      line-height: 1.45;
+      font-weight: 680;
+      margin-top: 18px;
+    }
+
+    .template-slot {
+      width: min(960px, 88vw);
+      margin: 34px auto 0;
+      padding: 10px;
+      border-radius: 18px;
+      background: var(--paper);
+      box-shadow: 0 20px 54px rgba(45, 55, 80, 0.1);
+    }
+
+    .template-slot img {
+      width: 100%;
+      height: auto;
+      margin: 0;
+      border-radius: 12px;
+      object-fit: contain;
+    }
+
+    .section {
+      padding: clamp(76px, 9vw, 132px) 0 0;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 28px;
+      margin-bottom: 26px;
+      padding-bottom: 18px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .section-title {
+      font-size: clamp(32px, 4.4vw, 74px);
+      line-height: 0.96;
+      font-weight: 930;
+      letter-spacing: -0.065em;
+      text-transform: uppercase;
+    }
+
+    .section-note {
+      max-width: 520px;
+      color: var(--muted);
+      font-size: clamp(15px, 1.1vw, 18px);
+      line-height: 1.45;
+      font-weight: 620;
+      text-align: right;
+    }
+
+    .direction-section {
+      width: 100vw;
+      margin-left: calc(50% - 50vw);
+      padding: 0;
+    }
+
+    .directions {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      min-height: 100dvh;
+    }
+
+    .direction-card {
+      position: relative;
+      min-height: 100dvh;
+      overflow: hidden;
+      background: var(--ink);
+      isolation: isolate;
+    }
+
+    .direction-card img {
       height: 100%;
       object-fit: cover;
-      object-position: center;
-      filter: saturate(0.94) contrast(1.08) brightness(0.56);
-      transform: scale(1.02);
+      filter: saturate(0.96) contrast(1.05) brightness(0.92);
+      transition: transform 0.8s cubic-bezier(.16, 1, .3, 1), filter 0.8s ease;
     }
 
-    .hero::after {
-      content: "";
+    .direction-copy {
+      position: absolute;
+      inset: clamp(22px, 3.2vw, 52px);
       z-index: 2;
-      background:
-        linear-gradient(90deg, rgba(0, 0, 0, 0.76), rgba(0, 0, 0, 0.38) 56%, rgba(0, 0, 0, 0.72)),
-        linear-gradient(180deg, rgba(0, 0, 0, 0.22), rgba(0, 0, 0, 0.78));
+      display: flex;
+      align-items: flex-start;
+      justify-content: flex-start;
+      color: var(--paper);
     }
 
-    .hero-inner {
+    .direction-copy h3 {
+      max-width: 9.5ch;
+      color: var(--paper);
+      font-size: clamp(38px, 5vw, 92px);
+      line-height: 0.84;
+      font-weight: 950;
+      letter-spacing: -0.075em;
+      text-transform: uppercase;
+      text-shadow: 0 18px 54px rgba(0, 0, 0, 0.42);
+    }
+
+    .campaign-assets {
+      width: 100vw;
+      margin-left: calc(50% - 50vw);
+      padding: 0 var(--pad);
+      display: grid;
+      gap: clamp(58px, 8vw, 122px);
+    }
+
+    .campaign-block {
+      display: grid;
+      gap: clamp(18px, 2.4vw, 34px);
+    }
+
+    .campaign-copy {
+      width: min(100%, var(--max));
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: minmax(0, 0.78fr) minmax(260px, 0.42fr);
+      align-items: end;
+      gap: 28px;
+      padding-bottom: 18px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .campaign-copy h3 {
+      font-size: clamp(30px, 4.2vw, 74px);
+      line-height: 0.96;
+      font-weight: 930;
+      letter-spacing: -0.065em;
+      text-transform: uppercase;
+    }
+
+    .campaign-copy p {
+      color: var(--muted);
+      font-size: clamp(14px, 1vw, 17px);
+      line-height: 1.45;
+      font-weight: 650;
+    }
+
+    .campaign-feature,
+    .campaign-card {
       position: relative;
-      z-index: 3;
+      aspect-ratio: 16 / 9;
+      overflow: hidden;
+      border-radius: var(--radius);
+      background: var(--paper);
+      box-shadow: 0 20px 54px rgba(45, 55, 80, 0.12);
+    }
+
+    .campaign-feature {
+      width: min(100%, calc(var(--max) + (var(--pad) * 2)));
+      margin: 0 auto;
+    }
+
+    .campaign-card img,
+    .campaign-feature img {
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.7s cubic-bezier(.16, 1, .3, 1);
+    }
+
+    .campaign-card:hover img,
+    .campaign-feature:hover img {
+      transform: scale(1.03);
+    }
+
+    .campaign-regional-strip {
+      width: min(100%, calc(var(--max) + (var(--pad) * 2)));
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: clamp(12px, 1.4vw, 22px);
+    }
+
+    .page-footer {
+      width: 100vw;
+      margin-left: calc(50% - 50vw);
+      margin-top: clamp(82px, 10vw, 142px);
+      padding: clamp(70px, 8vw, 112px) var(--pad) 44px;
+      color: var(--paper);
+      background: var(--ink);
+    }
+
+    .footer-inner {
       width: min(100%, var(--max));
       margin: 0 auto;
     }
 
-    .eyebrow {
-      margin-bottom: 18px;
-      color: rgba(255, 255, 255, 0.68);
-      font-size: 13px;
-      font-weight: 900;
-    }
-
-    h1 {
+    .footer-title {
       max-width: 980px;
-      font-size: clamp(44px, 8vw, 112px);
-      line-height: 0.98;
-      font-weight: 950;
-      text-wrap: balance;
+      margin: 0 0 clamp(42px, 6vw, 72px);
+      font-size: clamp(38px, 6.4vw, 104px);
+      line-height: 0.94;
+      font-weight: 930;
+      letter-spacing: -0.07em;
     }
 
-    .hero-summary {
-      max-width: 760px;
-      margin-top: 24px;
-      color: rgba(255, 255, 255, 0.8);
-      font-size: clamp(17px, 1.6vw, 24px);
-      line-height: 1.48;
-      font-weight: 700;
-    }
-
-    .hero-actions {
-      margin-top: 26px;
+    .footer-links {
       display: flex;
       flex-wrap: wrap;
-      gap: 10px;
+      justify-content: space-between;
+      gap: 18px 34px;
+      padding-top: 18px;
+      border-top: 1px solid rgba(255, 255, 255, 0.24);
     }
 
-    .button {
+    .minimal-link {
       display: inline-flex;
+      align-items: baseline;
+      gap: 10px;
+      color: rgba(255, 255, 255, 0.86);
+      font-size: clamp(16px, 1.4vw, 22px);
+      font-weight: 850;
+      line-height: 1.1;
+      transition: opacity 180ms ease, transform 180ms ease;
+    }
+
+    .minimal-link span {
+      color: rgba(255, 255, 255, 0.56);
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .minimal-link:hover,
+    .minimal-link:focus-visible {
+      opacity: 1;
+      transform: translateY(-1px);
+    }
+
+    .minimal-link:focus-visible {
+      outline: 2px solid currentColor;
+      outline-offset: 4px;
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(22px);
+      transition: opacity 0.7s ease, transform 0.7s cubic-bezier(.16, 1, .3, 1);
+    }
+
+    .reveal.in {
+      opacity: 1;
+      transform: none;
+    }
+
+    @media (max-width: 1000px) {
+      .topbar {
+        flex-wrap: wrap;
+      }
+
+      .topbar-primary {
+        width: 100%;
+        justify-content: space-between;
+      }
+
+      .topbar-actions {
+        width: 100%;
+        justify-content: flex-end;
+      }
+
+      .section-head {
+        display: block;
+      }
+
+      .section-note {
+        margin-top: 12px;
+        text-align: left;
+      }
+
+      .directions {
+        grid-template-columns: 1fr;
+        min-height: auto;
+      }
+
+      .direction-card {
+        min-height: 100svh;
+      }
+
+      .campaign-copy {
+        grid-template-columns: 1fr;
+      }
+
+      .campaign-regional-strip {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 680px) {
+      :root {
+        --pad: 18px;
+        --radius: 22px;
+      }
+
+      .topbar {
+        top: 14px;
+        font-size: 12px;
+      }
+
+      .hero-statement {
+        padding-top: 54px;
+        padding-bottom: 68px;
+      }
+
+      .template-slot {
+        width: min(100%, 420px);
+        padding: 8px;
+        border-radius: 16px;
+      }
+
+      .direction-card {
+        min-height: 100svh;
+      }
+
+      .direction-copy {
+        inset: 24px 18px;
+      }
+
+      .direction-copy h3 {
+        max-width: 8.7ch;
+        font-size: clamp(44px, 15vw, 78px);
+      }
+
+      .campaign-assets {
+        padding: 0 14px;
+        gap: 58px;
+      }
+
+      .campaign-copy {
+        padding: 0 4px 16px;
+        gap: 10px;
+      }
+
+      .campaign-copy h3 {
+        font-size: clamp(34px, 12vw, 58px);
+      }
+
+      .campaign-regional-strip {
+        grid-template-columns: 1fr;
+        gap: 14px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+
+      *,
+      *::before,
+      *::after {
+        transition: none !important;
+        animation: none !important;
+      }
+    }
+      /* =========================
+       Index Overlay（全局索引弹层）
+    ========================= */
+    .index-open {
+      appearance: none;
+      background: none;
+      border: 0;
+      color: inherit;
+      font: inherit;
+      letter-spacing: inherit;
+      text-transform: inherit;
+      cursor: pointer;
+    }
+
+    .index-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 2000;
+      display: flex;
       align-items: center;
       justify-content: center;
-      min-height: 42px;
-      padding: 0 16px;
-      border: 1px solid #fff;
-      border-radius: 6px;
-      background: #fff;
-      color: var(--ink);
-      font-size: 13px;
-      font-weight: 900;
-      transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease;
+      padding: 24px;
+      background: rgba(21, 22, 26, 0.55);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
     }
 
-    .button:hover {
-      transform: translateY(-2px);
-      background: #334EAC;
-      color: #fff;
+    .index-overlay.is-open {
+      opacity: 1;
+      pointer-events: auto;
     }
 
-    .button.secondary {
-      background: transparent;
-      color: #fff;
+    .index-overlay-panel {
+      position: relative;
+      width: min(1080px, 94vw);
+      max-height: min(82vh, 900px);
+      overflow-y: auto;
+      padding: clamp(24px, 4vw, 48px);
+      border-radius: 28px;
+      background: #ffffff;
+      color: #15161a;
+      box-shadow: 0 32px 80px rgba(0, 0, 0, 0.3);
+      transform: translateY(18px) scale(0.98);
+      transition: transform 0.35s cubic-bezier(.16, 1, .3, 1);
     }
 
-    .button.secondary:hover {
-      background: rgba(255, 255, 255, 0.14);
+    .index-overlay.is-open .index-overlay-panel {
+      transform: none;
     }
 
-    .meta-grid {
-      width: min(100%, var(--max));
-      margin: -1px auto 0;
+    .index-overlay-close {
+      position: absolute;
+      top: 14px;
+      right: 18px;
+      z-index: 2;
+      width: 40px;
+      height: 40px;
       display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      border-top: 1px solid var(--line);
-      border-left: 1px solid var(--line);
-      background: rgba(255, 253, 248, 0.76);
+      place-items: center;
+      border: 0;
+      border-radius: 999px;
+      background: rgba(21, 22, 26, 0.08);
+      color: #15161a;
+      font-size: 22px;
+      line-height: 1;
+      cursor: pointer;
+      transition: background 0.2s ease;
     }
 
-    .meta-item {
-      min-height: 132px;
-      padding: 20px;
-      border-right: 1px solid var(--line);
-      border-bottom: 1px solid var(--line);
+    .index-overlay-close:hover {
+      background: rgba(21, 22, 26, 0.16);
+    }
+
+    .index-overlay-head {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 2px solid #15161a;
+    }
+
+    .index-overlay-head h2 {
+      font-size: clamp(28px, 4vw, 56px);
+      line-height: 0.92;
+      font-weight: 950;
+      letter-spacing: -0.07em;
+      text-transform: uppercase;
+    }
+
+    .index-overlay-head p {
+      max-width: 320px;
+      font-size: 13px;
+      line-height: 1.45;
+      font-weight: 700;
+      color: rgba(21, 22, 26, 0.58);
+    }
+
+    .index-overlay-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+    }
+
+    .io-card {
+      display: block;
+      overflow: hidden;
+      border-radius: 18px;
+      background: #ffffff;
+      box-shadow: 0 16px 36px rgba(17, 17, 17, 0.1);
+      transition: transform 0.25s cubic-bezier(.16, 1, .3, 1), box-shadow 0.2s ease;
+    }
+
+    .io-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 24px 52px rgba(17, 17, 17, 0.14);
+    }
+
+    .io-card.is-current {
+      outline: 3px solid #15161a;
+      outline-offset: 2px;
+    }
+
+    .io-card img {
+      display: block;
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      object-fit: cover;
+      background: #ddd;
+    }
+
+    .io-card-body {
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
-      gap: 18px;
+      gap: 5px;
+      padding: 12px 14px 16px;
     }
 
-    .label {
-      color: var(--muted);
-      font-size: 12px;
-      font-weight: 900;
-    }
-
-    .value {
-      font-size: clamp(20px, 2.4vw, 34px);
-      line-height: 1.08;
+    .io-no {
+      font-size: 11px;
       font-weight: 950;
+      letter-spacing: 0.14em;
+      opacity: 0.5;
     }
 
-    .section {
-      padding: clamp(72px, 8vw, 118px) var(--pad);
-      background: var(--bg);
+    .io-name {
+      font-size: 16px;
+      line-height: 1.05;
+      font-weight: 950;
+      letter-spacing: -0.04em;
+      text-transform: uppercase;
     }
 
-    .section.dark {
-      background: var(--dark);
-      color: #fff;
+    .io-tags {
+      font-size: 10px;
+      font-weight: 850;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: rgba(21, 22, 26, 0.55);
     }
+  
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
 
     #prd,
     #benchmark {
@@ -250,8 +747,7 @@
     .inner,
     .chapter-head,
     .proof-grid,
-    .chart-grid,
-    .footer-nav {
+    .chart-grid {
       width: min(100%, var(--max));
       margin-left: auto;
       margin-right: auto;
@@ -310,6 +806,7 @@
 
     .deriv-panel {
       grid-area: 1 / 1;
+      min-width: 0;
       min-height: 380px;
       padding: 26px;
       border: 1px solid var(--line);
@@ -497,6 +994,7 @@
     }
 
     .cmp-wrap {
+      min-width: 0;
       overflow-x: auto;
     }
 
@@ -1083,82 +1581,25 @@
       color: rgba(255, 255, 255, 0.72);
     }
 
-    .mini-grid {
-      width: min(100%, var(--max));
-      margin: 28px auto 0;
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 12px;
-    }
+    
 
-    .mini-card {
-      min-height: 142px;
-      padding: 18px;
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      background: rgba(255, 253, 248, 0.8);
-    }
+    
 
-    .mini-card b {
-      display: block;
-      margin-bottom: 12px;
-      color: var(--green);
-      font-size: 13px;
-      font-weight: 950;
-    }
+    
 
-    .mini-card p {
-      color: var(--muted);
-      font-size: 14px;
-      line-height: 1.5;
-      font-weight: 650;
-    }
+    
 
-    .demo-grid {
-      width: min(100%, var(--max));
-      margin: 0 auto;
-      display: grid;
-      grid-template-columns: 1.1fr 1fr;
-      gap: 18px;
-      align-items: stretch;
-    }
+    
 
-    .demo-panel {
-      padding: 22px;
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      background: #fff;
-      display: grid;
-      gap: 12px;
-    }
+    
 
-    .demo-card {
-      padding: 14px 0;
-      border-top: 1px solid var(--line);
-      display: grid;
-      grid-template-columns: 92px minmax(0, 1fr);
-      gap: 14px;
-      align-items: start;
-    }
+    
 
-    .demo-card:first-child {
-      border-top: 0;
-      padding-top: 0;
-    }
+    
 
-    .demo-card b {
-      color: #081F5C;
-      font-size: 13px;
-      line-height: 1.25;
-      font-weight: 950;
-    }
+    
 
-    .demo-card p {
-      color: var(--muted);
-      font-size: 14px;
-      line-height: 1.55;
-      font-weight: 650;
-    }
+    
 
     .demo-actions {
       display: flex;
@@ -1192,18 +1633,9 @@
       font-weight: 700;
     }
 
-    .demo-preview {
-      overflow: hidden;
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      background: #fff;
-    }
+    
 
-    .demo-preview img {
-      aspect-ratio: 4 / 3;
-      background: #fff;
-      object-fit: cover;
-    }
+    
 
     .footer-nav {
       padding: 0 var(--pad) 72px;
@@ -1212,34 +1644,13 @@
       gap: 14px;
     }
 
-    .nav-card {
-      min-height: 150px;
-      padding: 22px;
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      background: #fff;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      transition: transform 0.2s ease, background 0.2s ease;
-    }
+    
 
-    .nav-card:hover {
-      transform: translateY(-3px);
-      background: #D0E3FF;
-    }
+    
 
-    .nav-card span {
-      color: var(--muted);
-      font-size: 12px;
-      font-weight: 950;
-    }
+    
 
-    .nav-card strong {
-      font-size: clamp(26px, 3vw, 44px);
-      line-height: 1.05;
-      font-weight: 950;
-    }
+    
 
     @media (max-width: 960px) {
       .meta-grid,
@@ -1333,57 +1744,446 @@
         height: 270px;
       }
     }
+      /* =========================
+       Index Overlay（全局索引弹层）
+    ========================= */
+    .index-open {
+      appearance: none;
+      background: none;
+      border: 0;
+      color: inherit;
+      font: inherit;
+      letter-spacing: inherit;
+      text-transform: inherit;
+      cursor: pointer;
+    }
+
+    .index-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 2000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: rgba(21, 22, 26, 0.55);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .index-overlay.is-open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .index-overlay-panel {
+      position: relative;
+      width: min(1080px, 94vw);
+      max-height: min(82vh, 900px);
+      overflow-y: auto;
+      padding: clamp(24px, 4vw, 48px);
+      border-radius: 28px;
+      background: #ffffff;
+      color: #15161a;
+      box-shadow: 0 32px 80px rgba(0, 0, 0, 0.3);
+      transform: translateY(18px) scale(0.98);
+      transition: transform 0.35s cubic-bezier(.16, 1, .3, 1);
+    }
+
+    .index-overlay.is-open .index-overlay-panel {
+      transform: none;
+    }
+
+    .index-overlay-close {
+      position: absolute;
+      top: 14px;
+      right: 18px;
+      z-index: 2;
+      width: 40px;
+      height: 40px;
+      display: grid;
+      place-items: center;
+      border: 0;
+      border-radius: 999px;
+      background: rgba(21, 22, 26, 0.08);
+      color: #15161a;
+      font-size: 22px;
+      line-height: 1;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    .index-overlay-close:hover {
+      background: rgba(21, 22, 26, 0.16);
+    }
+
+    .index-overlay-head {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 2px solid #15161a;
+    }
+
+    .index-overlay-head h2 {
+      font-size: clamp(28px, 4vw, 56px);
+      line-height: 0.92;
+      font-weight: 950;
+      letter-spacing: -0.07em;
+      text-transform: uppercase;
+    }
+
+    .index-overlay-head p {
+      max-width: 320px;
+      font-size: 13px;
+      line-height: 1.45;
+      font-weight: 700;
+      color: rgba(21, 22, 26, 0.58);
+    }
+
+    .index-overlay-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+    }
+
+    .io-card {
+      display: block;
+      overflow: hidden;
+      border-radius: 18px;
+      background: #ffffff;
+      box-shadow: 0 16px 36px rgba(17, 17, 17, 0.1);
+      transition: transform 0.25s cubic-bezier(.16, 1, .3, 1), box-shadow 0.2s ease;
+    }
+
+    .io-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 24px 52px rgba(17, 17, 17, 0.14);
+    }
+
+    .io-card.is-current {
+      outline: 3px solid #15161a;
+      outline-offset: 2px;
+    }
+
+    .io-card img {
+      display: block;
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      object-fit: cover;
+      background: #ddd;
+    }
+
+    .io-card-body {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      padding: 12px 14px 16px;
+    }
+
+    .io-no {
+      font-size: 11px;
+      font-weight: 950;
+      letter-spacing: 0.14em;
+      opacity: 0.5;
+    }
+
+    .io-name {
+      font-size: 16px;
+      line-height: 1.05;
+      font-weight: 950;
+      letter-spacing: -0.04em;
+      text-transform: uppercase;
+    }
+
+    .io-tags {
+      font-size: 10px;
+      font-weight: 850;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: rgba(21, 22, 26, 0.55);
+    }
+  
+    /* ===== Commerce 保留版块容器（01 / 02） ===== */
+    .ec-section {
+      position: relative;
+      z-index: 5;
+      padding: clamp(72px, 8vw, 118px) var(--pad);
+    }
+
+    .ec-section.dark {
+      background: #000;
+      color: #fff;
+    }
+
+    /* 02/Benchmark 黑色背景通栏铺满 */
+    #benchmark.ec-section {
+      width: 100vw;
+      margin-left: calc(50% - 50vw);
+    }
+
+    /* 01/需求推导 背景与页面保持一致 */
+    #prd.ec-section {
+      background: transparent;
+    }
+
+    #prd,
+    #benchmark {
+      --max: 1320px;
+    }
+
+    #benchmark {
+      --dark: #000;
+      --dark-soft: #101214;
+    }
+
+    /* 01/02 大标题强制单行 */
+    #prd .chapter-head h2,
+    #benchmark .chapter-head h2 {
+      white-space: nowrap;
+    }
+
+    @media (max-width: 680px) {
+      #prd .chapter-head h2,
+      #benchmark .chapter-head h2 {
+        font-size: clamp(24px, 7vw, 40px);
+      }
+    }
+
+    /* ===== 03 / 数据闭环（参考页卡片语言） ===== */
+    .loop-strip {
+      width: min(100%, calc(var(--max) + (var(--pad) * 2)));
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: clamp(12px, 1.4vw, 22px);
+    }
+
+    .loop-card {
+      min-height: 150px;
+      padding: 20px;
+      border-radius: var(--radius);
+      background: var(--paper);
+      box-shadow: 0 20px 54px rgba(45, 55, 80, 0.12);
+    }
+
+    .loop-card b {
+      display: block;
+      margin-bottom: 10px;
+      color: var(--blue);
+      font-size: 15px;
+      font-weight: 950;
+    }
+
+    .loop-card p {
+      color: var(--muted);
+      font-size: 13.5px;
+      line-height: 1.5;
+      font-weight: 650;
+    }
+
+    /* ===== 04 / Demo 链接 ===== */
+    .demo-link-row {
+      width: min(100%, var(--max));
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .demo-link-row a {
+      display: inline-flex;
+      align-items: center;
+      min-height: 48px;
+      padding: 0 22px;
+      border: 1.5px solid var(--ink);
+      border-radius: 999px;
+      background: var(--paper);
+      color: var(--ink);
+      font-size: 14px;
+      font-weight: 950;
+      transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease;
+    }
+
+    .demo-link-row a:first-child {
+      background: var(--ink);
+      color: var(--paper);
+    }
+
+    .demo-link-row a:hover {
+      transform: translateY(-2px);
+    }
+
+    @media (max-width: 1000px) {
+      .loop-strip {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 680px) {
+      .loop-strip {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="project-hero-system.css">
+  <link rel="stylesheet" href="about-overlay.css">
+<style id="mobile-topbar-title-fix">
+    /* =========================
+       移动端全局修复：顶栏单行 + 标题缩放
+    ========================= */
+    @media (max-width: 680px) {
+      .topbar.case-nav {
+        flex-wrap: nowrap;
+        row-gap: 0;
+        gap: 14px;
+        font-size: 12px;
+      }
+
+      .topbar.case-nav .topbar-primary {
+        width: auto;
+        flex: 1 1 auto;
+        justify-content: flex-start;
+        gap: 12px;
+      }
+
+      .topbar.case-nav #indexOpen {
+        margin-left: auto;
+      }
+
+      .topbar.case-nav .topbar-actions,
+      .topbar.case-nav .topbar-cta {
+        width: auto;
+        justify-content: flex-end;
+        gap: 10px;
+      }
+
+      .case-landing .case-title {
+        font-size: clamp(34px, 10.5vw, 64px);
+      }
+
+      .case-landing .case-summary {
+        max-width: 100%;
+      }
+    }
+  </style>
+  <style>
+    /* =========================
+       Hero Symbol · 相切双环与拓扑点（D1 relay，白色分层）
+       深靛蓝渐变底 + 纯白符号，特征与 work-global-relay-conference 一致；
+       共享 CSS 的白环/白盘伪元素对新符号是冲突，禁用。
+    ========================= */
+    .case-symbol--commerce::before,
+    .case-symbol--commerce::after {
+      content: none;
+    }
+
+    .case-symbol--commerce svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+  </style>
+  <style>
+    /* =========================
+       Topbar 右侧入口：Projects • Index • 关于我（首页同款 view-toggle 模式）。
+       基色深灰 #4a4a52，hover/激活转纯黑；白色渐变过渡背景条由共享 CSS 的
+       .topbar.case-nav 提供，保持不动。置于 mobile-topbar-title-fix 之后，
+       以覆盖移动端 #indexOpen 的 margin-left:auto。
+    ========================= */
+    .view-toggle {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 18px; font-weight: 950; letter-spacing: 0.08em;
+      text-transform: uppercase; color: #4a4a52;
+    }
+    .view-toggle a, .view-toggle button {
+      appearance: none; border: 0; background: transparent;
+      font-family: inherit; font-size: inherit; font-weight: inherit;
+      letter-spacing: inherit; color: inherit; text-transform: uppercase;
+      text-decoration: none; cursor: pointer; padding: 6px 0;
+      transition: color 0.2s ease;
+    }
+    .view-toggle a:hover, .view-toggle a:focus-visible,
+    .view-toggle button:hover, .view-toggle button.active { color: var(--ink, #15161a); }
+    .view-toggle a:focus-visible, .view-toggle button:focus-visible {
+      outline: 2px solid currentColor; outline-offset: 4px;
+    }
+    .view-toggle .view-dot {
+      width: 4px; height: 4px; flex-shrink: 0; border-radius: 50%;
+      background: currentColor; opacity: 0.8;
+    }
+
+    @media (max-width: 680px) {
+      .view-toggle { font-size: 12px; gap: 6px; }
+      .topbar.case-nav #indexOpen { margin-left: 0; }
+    }
   </style>
 </head>
 
 <body>
-  <header class="topbar">
-    <a href="index.html">周子恒</a>
-    <nav aria-label="Project navigation">
-      <a href="#prd">PRD</a>
-      <a href="#benchmark">Benchmark</a>
-      <a href="demo-ai-commerce.html">Demo</a>
-    </nav>
-  </header>
-
-  <main>
-    <section class="hero" aria-label="AI commerce case study hero">
-      <picture>
-        <img src="images/EC/gas_station_model_image_models.jpg" alt="AI 电商模特图多模型生成对照" />
-      </picture>
-      <div class="hero-inner">
-        <div class="eyebrow">AIGC Product Design / Model Evaluation / Portfolio Case</div>
-        <h1>AI 电商素材生成与模型评测系统</h1>
-        <p class="hero-summary">面向中小电商商家，设计从商品图、虚拟模特图到商品视频的生成流程，并用 Benchmark 支撑后台模型推荐策略。</p>
-        <div class="hero-actions">
-          <a class="button" href="demo-ai-commerce.html">打开高保真 Demo</a>
-          <a class="button secondary" href="#benchmark">查看 Benchmark</a>
-        </div>
-      </div>
-    </section>
-
-    <div class="meta-grid" aria-label="Project facts">
-      <div class="meta-item">
-        <div class="label">Role</div>
-        <div class="value">AIGC 产品方案</div>
-      </div>
-      <div class="meta-item">
-        <div class="label">Scope</div>
-        <div class="value">PRD / Demo / Feedback / Benchmark</div>
-      </div>
-      <div class="meta-item">
-        <div class="label">Models</div>
-        <div class="value">5 图像 + 6 视频</div>
-      </div>
-      <div class="meta-item">
-        <div class="label">Status</div>
-        <div class="value">研究与原型阶段</div>
-      </div>
+  <header class="topbar case-nav" aria-label="项目导航">
+    <div class="topbar-primary">
+      <a class="brand" href="index.html">周子恒</a>
     </div>
 
-    <section class="section" id="prd">
-      <div class="chapter-head">
-        <div class="chapter-no">01 / 需求推导</div>
+    <div class="topbar-actions">
+      <!-- 右侧唯一入口：Projects • Index • 关于我，与首页顶栏一致；白色渐变过渡背景条来自共享 project-hero-system.css -->
+      <div class="view-toggle" aria-label="视图切换">
+        <a class="view-link" href="index.html">Projects</a>
+        <span class="view-dot" aria-hidden="true"></span>
+        <button id="indexOpen" type="button" aria-haspopup="dialog" aria-controls="indexOverlay">Index</button>
+        <span class="view-dot" aria-hidden="true"></span>
+        <button class="view-link" type="button" data-about-open aria-haspopup="dialog" aria-controls="aboutOverlay">关于我</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="page">
+    <main class="hero case-landing case-landing--commerce" aria-labelledby="hero-title">
+
+          <div class="case-symbol case-symbol--commerce" aria-hidden="true">
+            <svg viewBox="0 0 200 200" fill="none" role="presentation">
+              <circle cx="75" cy="100" r="45" fill="#ffffff" />
+              <circle cx="135" cy="105" r="30" stroke="#ffffff" stroke-width="12" fill="none" />
+              <circle cx="160" cy="55" r="10" fill="#ffffff" />
+            </svg>
+          </div>
+
+          <div class="case-footer">
+            <h1 class="case-title" id="hero-title">
+              AI 电商素材<br>
+              <span>Benchmark</span>
+            </h1>
+            <p class="case-summary">PRD 需求推导 · 多模型 Benchmark · 数据闭环 · 平台布局</p>
+          </div>
+    </main>
+
+      <section class="section reveal">
+        <div class="campaign-assets">
+          <article class="campaign-block">
+            <div class="campaign-copy">
+              <h3>AI 电商素材生成平台</h3>
+              <p>围绕商品图、虚拟模特和视频素材，建立可比较、可路由的生成平台体验。</p>
+            </div>
+            <div class="demo-link-row">
+              <a href="素材生成全流程Demo-v3.html">打开工作台 Demo</a>
+              <a href="demo-ai-commerce-results.html">结果选择</a>
+              <a href="demo-ai-commerce-benchmark.html">后台依据</a>
+            </div>
+            <figure class="campaign-feature">
+              <img src="images/EC/full_body_video_keyframes.jpg" alt="电商素材生成评测与结果对照" loading="lazy">
+            </figure>
+          </article>
+        </div>
+      </section>
+
+    <section class="ec-section" id="prd">
+      <div class="chapter-head" align="center">
         <div>
           <h2>从素材缺口到P0推导</h2>
         </div>
@@ -1429,11 +2229,11 @@
           <div class="deriv-panel" data-panel="position" role="tabpanel" aria-label="产品定位">
             <div class="deriv-kicker">产品定位</div>
             <p class="position-statement">为电商商家提供从商品图、模特图到营销视频的全流程 AI 内容生成服务，显著降低内容生产成本，提升营销素材产出效率。</p>
-            <div class="kpi-row">
-              <div class="kpi"><b>−70%</b><span>单商品素材成本降低</span></div>
-              <div class="kpi"><b>3天→2小时</b><span>全渠道素材产出时间</span></div>
-              <div class="kpi"><b>≥ 实拍</b><span>AI 素材点击转化率（A/B 对比）</span></div>
-              <div class="kpi"><b>10+</b><span>主流电商平台规格适配</span></div>
+            <div class="kpi-row" aria-label="待验证的成功条件">
+              <div class="kpi"><b>−70%</b><span>成本目标（待验证）</span></div>
+              <div class="kpi"><b>3天→2小时</b><span>时效目标（待验证）</span></div>
+              <div class="kpi"><b>≥ 实拍</b><span>效果假设（需 A/B 验证）</span></div>
+              <div class="kpi"><b>10+</b><span>规格覆盖目标</span></div>
             </div>
             <div class="deriv-conclusion">→ 目标必须可验证：质量与稳定性交给 Benchmark 量化 → 见 02 / Benchmark。</div>
           </div>
@@ -1480,38 +2280,19 @@
       </div>
     </section>
 
-    <section class="section dark" id="benchmark">
+    <section class="ec-section dark" id="benchmark">
       <div class="chapter-head">
         <div class="chapter-no">02 / Benchmark</div>
         <div>
           <h2>多模型Benchmark评测</h2>
-          <p class="lead">围绕商品还原、人物一致性、动作可控、镜头稳定、商业可用性和成本效率完成小样本评测。</p>
+          <p class="lead">围绕商品还原、人物一致性、动作可控、镜头稳定、商业可用性和成本效率完成评测。</p>
         </div>
-      </div>
-
-      <div class="method-strip" aria-label="Benchmark method summary">
-        <article class="method-card">
-          <b>Scoring</b>
-          <p>1-5 分制，按任务权重计算加权总分；图像和视频保留各自原生维度。</p>
-        </article>
-        <article class="method-card">
-          <b>Evidence</b>
-          <p>分数对应输出图、视频关键帧和失败观察，避免只展示抽象排序。</p>
-        </article>
-        <article class="method-card">
-          <b>Boundary</b>
-          <p>当前是小样本主观初评，不宣称统计显著，也不写成线上用户效果。</p>
-        </article>
-        <article class="method-card">
-          <b>Next Check</b>
-          <p>后续补原始 Prompt 归档、双人复评和失败标签复核。</p>
-        </article>
       </div>
 
       <div class="chart-grid">
         <figure class="chart-card" aria-label="Image model performance chart">
           <h3 class="chart-title">图片模型: Nano 领先, FLUX 紧随其后</h3>
-          <p class="chart-note">明度即分数，颜色越深得分越高，最深的柱梯为本图最高纪录。</p>
+          <p class="chart-note">明度即分数，颜色越深得分越高。</p>
           <div class="legend">
             <span><i class="swatch" style="--c: #081F5C;"></i>chart high ≥4.35</span>
             <span><i class="swatch" style="--c: #334EAC;"></i>strong ≥4.15</span>
@@ -1522,7 +2303,7 @@
           <div class="chart-svg-wrap">
             <svg class="chart-svg" id="imageBenchmarkChart" viewBox="0 0 620 360" role="img" aria-label="Image model performance by benchmark task"></svg>
           </div>
-          <div class="chart-src">PAIRED RUNGS EXTENDED · PORCELAIN · 10 TRUE IMAGE MODEL RECORDS · SCORE SCALE 0 TO 5</div>
+          <div class="chart-src">Scoring：1-5 分制，按任务权重计算加权总分；图像和视频保留各自原生维度。<br >Evidence：分数对应输出图、视频关键帧和失败观察，避免只展示抽象排序。</div>
         </figure>
 
         <figure class="chart-card" aria-label="Video model performance chart">
@@ -1538,7 +2319,7 @@
           <div class="chart-svg-wrap">
             <svg class="chart-svg" id="videoBenchmarkChart" viewBox="0 0 620 360" role="img" aria-label="Video model performance by benchmark task"></svg>
           </div>
-          <div class="chart-src">PAIRED RUNGS EXTENDED · PORCELAIN · 12 TRUE VIDEO MODEL RECORDS · SCORE SCALE 0 TO 5</div>
+          <div class="chart-src">Scoring：1-5 分制，按任务权重计算加权总分；图像和视频保留各自原生维度。<br >Evidence：分数对应输出图、视频关键帧和失败观察，避免只展示抽象排序。</div>
         </figure>
       </div>
 
@@ -1546,7 +2327,6 @@
         <div class="matrix-head">
           <div>
             <h3 class="matrix-title">多维评分表</h3>
-            <p class="matrix-note">One dot = one scored model-dimension record. Dot size compares models within the same dimension; color keeps the absolute score band.</p>
           </div>
           <div class="matrix-tabs" role="tablist" aria-label="Benchmark matrix dataset">
             <button class="matrix-tab is-active" type="button" data-matrix="image" aria-selected="true">Image</button>
@@ -1580,8 +2360,8 @@
       <figure class="matrix-card" aria-label="Backend model recommendation chart">
         <div class="matrix-head">
           <div>
-            <h3 class="matrix-title">后台策略：默认模型与兜底模型</h3>
-            <p class="matrix-note">Benchmark 结果转化为系统侧推荐依据，不作为商家主流程展示。One line = one backend decision：粗线 + 总分 = 默认推荐，细线 = 备选兜底；节点面积 = 覆盖任务数，深色节点 = 承担默认生成的模型。前台只显示推荐模型、可切换选项和失败后的重试建议。</p>
+            <h3 class="matrix-title">模型选择策略</h3>
+            <p class="matrix-note">Benchmark 结果转化为系统侧推荐依据。粗线 + 总分 = 默认推荐，细线 = 备选兜底；节点面积 = 覆盖任务数，深色节点 = 承担默认生成的模型。前台只显示推荐模型、可切换选项和失败后的重试建议。</p>
           </div>
         </div>
         <div class="legend">
@@ -1593,88 +2373,49 @@
         <div class="chart-svg-wrap">
           <svg class="route-svg" id="routeChart" viewBox="0 0 1000 440" role="img" aria-label="Backend model recommendations derived from benchmark scores"></svg>
         </div>
-        <div class="chart-src">TYPE COLONNADE ADAPTED · PORCELAIN · 4 TASKS → 6 MODELS · 10 BACKEND DECISIONS · SCORES = WEIGHTED TOTALS</div>
       </figure>
     </section>
 
-    <section class="section">
-      <div class="chapter-head">
-        <div class="chapter-no">03 / 数据闭环</div>
-        <div>
-          <h2>结果页反馈进入模型策略，而不是停在下载按钮。</h2>
-          <p class="lead">设计功能点击、上传、生成、下载、重新生成和失败反馈埋点，用于判断素材采纳率、生成稳定性和失败原因分布。</p>
+      <section class="section reveal">
+        <div class="campaign-assets">
+          <article class="campaign-block">
+            <div class="campaign-copy">
+              <h3>Data Loop · 数据闭环</h3>
+            </div>
+            <div class="loop-strip">
+              <div class="loop-card"><b>采纳</b><p>下载率、收藏率和最终选择结果用于判断素材商业可用性。</p></div>
+              <div class="loop-card"><b>重生成</b><p>记录重生成频次，定位模板、Prompt 或后台模型选择问题。</p></div>
+              <div class="loop-card"><b>失败归因</b><p>商品变形、颜色偏差、手部异常、镜头漂移等进入标签体系。</p></div>
+              <div class="loop-card"><b>下一步</b><p>补双人复评、小样本访谈和 LLM Judge 校准，增强评测可信度。</p></div>
+            </div>
+          </article>
         </div>
-      </div>
+      </section>
 
-      <div class="mini-grid">
-        <article class="mini-card">
-          <b>采纳</b>
-          <p>下载率、收藏率和最终选择结果用于判断素材商业可用性。</p>
-        </article>
-        <article class="mini-card">
-          <b>重生成</b>
-          <p>记录重生成频次，定位模板、Prompt 或后台模型选择问题。</p>
-        </article>
-        <article class="mini-card">
-          <b>失败归因</b>
-          <p>商品变形、颜色偏差、手部异常、镜头漂移等进入标签体系。</p>
-        </article>
-        <article class="mini-card">
-          <b>下一步</b>
-          <p>补双人复评、小样本访谈和 LLM Judge 校准，增强评测可信度。</p>
-        </article>
-      </div>
-    </section>
-
-    <section class="section" id="demo">
-      <div class="chapter-head">
-        <div class="chapter-no">04 / DEMO</div>
-        <div>
-          <h2>Demo 聚焦上传、生成、修改和下载。</h2>
-          <p class="lead">商家不需要理解后台模型选择。高保真原型只展示任务创建、结果选择和推荐模型，Benchmark 作为后台策略依据。</p>
-        </div>
-      </div>
-
-      <div class="demo-grid">
-        <div class="demo-panel">
-          <article class="demo-card">
-            <b>创建任务</b>
-            <p>素材类型、商品信息、生成目标和平台规格放在同一条任务线上。</p>
-          </article>
-          <article class="demo-card">
-            <b>选择结果</b>
-            <p>候选切换、采纳、需要修改、失败标签和重生成策略形成可追踪反馈。</p>
-          </article>
-          <article class="demo-card">
-            <b>模型推荐</b>
-            <p>系统默认给出推荐模型，进阶用户可在高级设置里手动切换。</p>
-          </article>
-          <div class="demo-actions">
-            <a href="demo-ai-commerce.html">创建任务 Demo</a>
-            <a href="demo-ai-commerce-results.html">结果选择</a>
-            <a href="demo-ai-commerce-benchmark.html">后台依据</a>
+      <footer class="page-footer">
+        <div class="footer-inner">
+          <p class="footer-title">把素材质量的判断，变成后台可执行的模型策略。</p>
+          <div class="footer-links">
+            <a class="minimal-link" href="work-ucl.html"><span>Previous Project</span>极端环境下的无人建造</a>
+            <a class="minimal-link" href="work-LLM_to_Construction.html"><span>Next Project</span>自然语言需求转化</a>
           </div>
-          <p class="demo-boundary">原型指标均为 Demo data，生成过程由当前样例模拟。</p>
         </div>
+      </footer>
+    </main>
+  </div>
 
-        <figure class="demo-preview">
-          <img src="images/EC/children_room_image_models.jpg" alt="儿童房多商品场景图模型对照" loading="lazy" />
-          <figcaption class="caption">多商品场景样例：用于连接 PRD 中的场景图需求、Benchmark 分数和前台结果页反馈。</figcaption>
-        </figure>
-      </div>
-    </section>
-  </main>
+  <script>
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("in");
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
 
-  <footer class="footer-nav">
-    <a class="nav-card" href="index.html">
-      <span>返回</span>
-      <strong>回到首页</strong>
-    </a>
-    <a class="nav-card" href="demo-ai-commerce.html">
-      <span>继续查看</span>
-      <strong>高保真 Demo</strong>
-    </a>
-  </footer>
+    document.querySelectorAll(".reveal").forEach((el) => observer.observe(el));
+  </script>
 
   <div class="record-tooltip" id="recordTooltip" role="status" aria-live="polite"></div>
 
@@ -2464,5 +3205,87 @@
       })();
     })();
   </script>
+
+  <div class="index-overlay" id="indexOverlay" aria-hidden="true">
+    <div class="index-overlay-panel" role="dialog" aria-modal="true" aria-label="作品索引">
+      <button class="index-overlay-close" type="button" aria-label="关闭索引">×</button>
+      <div class="index-overlay-head">
+        <h2>项目经历</h2>
+        <p>3 种能力维度：空间意图生成、空间智能仿真、生成能力产品化。</p>
+      </div>
+      <div class="index-overlay-grid">
+            <a class="io-card" data-page="work-ucl.html" href="work-ucl.html">
+              <img src="images/UCL/STIG_00.jpg" alt="极端环境下的无人建造" loading="lazy" />
+              <div class="io-card-body">
+                <div class="io-no">01</div>
+                <h3 class="io-name">极端环境下的无人建造</h3>
+                <div class="io-tags">空间设计 × 机器人控制 × 交互仿真 × 智能建造</div>
+              </div>
+            </a>
+            <a class="io-card" data-page="work-ai-commerce.html" href="work-ai-commerce.html">
+              <img src="images/EC/0.jpg" alt="AI 电商素材生成平台" loading="lazy" />
+              <div class="io-card-body">
+                <div class="io-no">02</div>
+                <h3 class="io-name">AI 电商素材生成平台</h3>
+                <div class="io-tags">PRD文档 · 竞品分析报告 · 多模型Benchmark评测报告</div>
+              </div>
+            </a>
+            <a class="io-card" data-page="work-LLM_to_Construction.html" href="work-LLM_to_Construction.html">
+              <img src="images/llmToConstruction/BRIDGE_00.jpg" alt="自然语言需求转化" loading="lazy" />
+              <div class="io-card-body">
+                <div class="io-no">03</div>
+                <h3 class="io-name">自然语言需求转化</h3>
+                <div class="io-tags">TEXT-TO-3D × 模块化建造 × 跨团队协作</div>
+              </div>
+            </a>
+            <a class="io-card" data-page="work-interior-ai.html" href="work-interior-ai.html">
+              <img src="images/ARC/0.png" alt="商业空间视觉设计" loading="lazy" />
+              <div class="io-card-body">
+                <div class="io-no">04</div>
+                <h3 class="io-name">商业空间视觉设计</h3>
+                <div class="io-tags">AIGC工作流落地 · Prompt体系沉淀 · 流程标准化</div>
+              </div>
+            </a>
+            <a class="io-card" data-page="work-global-relay-conference.html" href="work-global-relay-conference.html">
+              <img src="images/AGR/Final Assets/2100s_2.jpg" alt="AI GLOBAL RELAY会议" loading="lazy" />
+              <div class="io-card-body">
+                <div class="io-no">05</div>
+                <h3 class="io-name">AI GLOBAL RELAY会议</h3>
+                <div class="io-tags">Spatial AIGC / Sketch / Reference / Prompt</div>
+              </div>
+            </a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      var overlay = document.getElementById("indexOverlay");
+      if (!overlay) return;
+      var openBtn = document.getElementById("indexOpen");
+      var closeBtn = overlay.querySelector(".index-overlay-close");
+
+      function setOpen(open) {
+        overlay.classList.toggle("is-open", open);
+        overlay.setAttribute("aria-hidden", String(!open));
+        document.body.style.overflow = open ? "hidden" : "";
+      }
+
+      if (openBtn) openBtn.addEventListener("click", function () { setOpen(true); });
+      if (closeBtn) closeBtn.addEventListener("click", function () { setOpen(false); });
+      overlay.addEventListener("click", function (event) {
+        if (event.target === overlay) setOpen(false);
+      });
+      document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape") setOpen(false);
+      });
+
+      var page = location.pathname.split("/").pop();
+      overlay.querySelectorAll("[data-page]").forEach(function (card) {
+        if (card.getAttribute("data-page") === page) card.classList.add("is-current");
+      });
+    })();
+  </script>
+  <script src="about-overlay.js"></script>
 </body>
 </html>

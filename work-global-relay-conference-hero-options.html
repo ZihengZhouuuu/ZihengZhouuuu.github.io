@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Global Relay Conference Hero Options</title>
+  <link rel="icon" href="images/icon.png" type="image/png">
+
+  <style>
+    :root {
+      --bg: #eceef2;
+      --paper: #ffffff;
+      --cream: #f5f0e6;
+      --ink: #15161a;
+      --muted: #62666f;
+      --line: rgba(21, 22, 26, 0.16);
+      --blue: #012169;
+      --bright-blue: #176bff;
+      --deep: #111214;
+      --radius: 24px;
+      --pad: clamp(18px, 3.2vw, 46px);
+      --font: Inter, Arial, "PingFang SC", "Microsoft YaHei", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      min-height: 100%;
+      overflow-x: hidden;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--font);
+      letter-spacing: -0.03em;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    img,
+    video {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .previewbar {
+      position: fixed;
+      top: 18px;
+      left: var(--pad);
+      right: var(--pad);
+      z-index: 50;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding-bottom: 13px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(236, 238, 242, 0.72);
+      color: var(--ink);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      font-size: clamp(13px, 1vw, 17px);
+      font-weight: 900;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .previewbar nav {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      color: var(--muted);
+    }
+
+    .option {
+      position: relative;
+      width: 100vw;
+      min-height: 100dvh;
+      overflow: hidden;
+      background: var(--bg);
+    }
+
+    .option + .option {
+      border-top: 1px solid var(--line);
+    }
+
+    .option-label {
+      position: absolute;
+      right: var(--pad);
+      bottom: 28px;
+      z-index: 10;
+      color: rgba(21, 22, 26, 0.42);
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .kicker {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 850;
+      line-height: 1;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .small-copy {
+      color: var(--muted);
+      font-size: clamp(14px, 1vw, 18px);
+      line-height: 1.45;
+      font-weight: 650;
+      letter-spacing: -0.03em;
+    }
+
+    .option-one {
+      min-height: 144dvh;
+      padding: clamp(86px, 11vh, 126px) var(--pad) 52px;
+      background: #f7f8fa;
+    }
+
+    .wordmark-title {
+      margin-top: 4px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .wordmark-title h1 {
+      font-size: clamp(76px, 17.4vw, 336px);
+      line-height: 0.78;
+      font-weight: 950;
+      letter-spacing: -0.095em;
+      text-transform: none;
+      white-space: nowrap;
+    }
+
+    .title-notes {
+      display: grid;
+      grid-template-columns: minmax(160px, 0.45fr) minmax(0, 1fr) minmax(240px, 0.72fr);
+      gap: 24px;
+      padding: 14px 0 28px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .title-notes p:last-child {
+      justify-self: end;
+      max-width: 440px;
+    }
+
+    .horizontal-strip {
+      position: relative;
+      left: calc(-1 * var(--pad));
+      width: 100vw;
+      display: flex;
+      align-items: end;
+      gap: clamp(12px, 1.5vw, 24px);
+      margin-top: clamp(54px, 8vh, 96px);
+      padding: 0 var(--pad);
+      overflow: hidden;
+    }
+
+    .strip-card {
+      flex: 0 0 clamp(180px, 21vw, 390px);
+      overflow: hidden;
+      background: var(--paper);
+      box-shadow: 0 20px 58px rgba(45, 55, 80, 0.12);
+    }
+
+    .strip-card:nth-child(1),
+    .strip-card:nth-child(5) {
+      flex-basis: clamp(120px, 12vw, 230px);
+      aspect-ratio: 1 / 1;
+    }
+
+    .strip-card:nth-child(2),
+    .strip-card:nth-child(4) {
+      aspect-ratio: 4 / 3;
+    }
+
+    .strip-card:nth-child(3),
+    .strip-card:nth-child(6) {
+      flex-basis: clamp(220px, 26vw, 500px);
+      aspect-ratio: 16 / 10;
+    }
+
+    .option-one .center-statement {
+      width: min(440px, 100%);
+      margin: clamp(62px, 9vh, 112px) auto 0;
+      text-align: center;
+    }
+
+    .center-statement h2 {
+      margin-bottom: 24px;
+      font-size: clamp(22px, 2vw, 36px);
+      line-height: 1.05;
+      font-weight: 850;
+      letter-spacing: -0.045em;
+    }
+
+    .center-statement img {
+      width: 54px;
+      height: 54px;
+      margin: 0 auto 24px;
+      object-fit: contain;
+    }
+
+    .featured-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+      margin-top: clamp(72px, 10vh, 128px);
+      padding-top: 26px;
+      border-top: 1px solid var(--line);
+    }
+
+    .featured-card {
+      overflow: hidden;
+      aspect-ratio: 16 / 10;
+      background: var(--paper);
+    }
+
+    .option-two {
+      min-height: 158dvh;
+      background: var(--cream);
+    }
+
+    .option-hybrid {
+      min-height: 164dvh;
+      background: #f7f8fa;
+    }
+
+    .hybrid-body {
+      padding: clamp(42px, 6vw, 86px) var(--pad) 56px;
+      background: #f7f8fa;
+    }
+
+    .hybrid-body .horizontal-strip {
+      margin-top: 0;
+    }
+
+    .option-hybrid .center-statement {
+      width: min(460px, 100%);
+      margin: clamp(60px, 8vh, 106px) auto 0;
+      text-align: center;
+    }
+
+    .poster-top {
+      position: relative;
+      min-height: 70dvh;
+      padding: clamp(86px, 11vh, 126px) var(--pad) 44px;
+      overflow: hidden;
+      background: var(--bright-blue);
+      color: var(--paper);
+    }
+
+    .poster-nav {
+      display: flex;
+      justify-content: space-between;
+      color: rgba(255, 255, 255, 0.78);
+      font-size: 12px;
+      font-weight: 850;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .poster-symbol {
+      position: absolute;
+      left: 50%;
+      top: 52%;
+      width: min(660px, 56vw);
+      aspect-ratio: 1 / 1;
+      transform: translate(-50%, -50%);
+    }
+
+    .poster-symbol img {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 34%;
+      height: auto;
+      object-fit: contain;
+      transform: translate(-50%, -50%);
+      filter: brightness(0) invert(1);
+      opacity: 0.95;
+    }
+
+    .petal {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 23%;
+      height: 42%;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.92);
+      transform-origin: 50% 100%;
+    }
+
+    .petal:nth-child(1) { transform: translate(-50%, -100%) rotate(0deg); }
+    .petal:nth-child(2) { transform: translate(-50%, -100%) rotate(30deg); }
+    .petal:nth-child(3) { transform: translate(-50%, -100%) rotate(60deg); }
+    .petal:nth-child(4) { transform: translate(-50%, -100%) rotate(90deg); }
+    .petal:nth-child(5) { transform: translate(-50%, -100%) rotate(120deg); }
+    .petal:nth-child(6) { transform: translate(-50%, -100%) rotate(150deg); }
+    .petal:nth-child(7) { transform: translate(-50%, -100%) rotate(180deg); }
+    .petal:nth-child(8) { transform: translate(-50%, -100%) rotate(210deg); }
+    .petal:nth-child(9) { transform: translate(-50%, -100%) rotate(240deg); }
+    .petal:nth-child(10) { transform: translate(-50%, -100%) rotate(270deg); }
+    .petal:nth-child(11) { transform: translate(-50%, -100%) rotate(300deg); }
+    .petal:nth-child(12) { transform: translate(-50%, -100%) rotate(330deg); }
+
+    .poster-date {
+      position: absolute;
+      left: var(--pad);
+      bottom: 44px;
+      display: grid;
+      grid-template-columns: auto auto;
+      align-items: end;
+      gap: 8px 16px;
+      color: var(--paper);
+      font-size: clamp(56px, 9vw, 150px);
+      line-height: 0.84;
+      font-weight: 850;
+      letter-spacing: -0.08em;
+    }
+
+    .poster-date span:nth-child(2) {
+      padding: 4px 14px 8px;
+      background: var(--paper);
+      color: var(--bright-blue);
+    }
+
+    .poster-year {
+      position: absolute;
+      right: var(--pad);
+      bottom: 44px;
+      color: var(--paper);
+      font-size: clamp(52px, 8vw, 136px);
+      line-height: 0.82;
+      font-weight: 850;
+      letter-spacing: -0.08em;
+    }
+
+    .poster-story {
+      display: grid;
+      grid-template-columns: minmax(240px, 0.75fr) minmax(0, 1.25fr);
+      gap: clamp(24px, 4vw, 70px);
+      padding: clamp(42px, 6vw, 86px) var(--pad);
+      border-bottom: 1px solid rgba(21, 22, 26, 0.12);
+    }
+
+    .poster-story h1 {
+      max-width: 520px;
+      font-size: clamp(28px, 4vw, 76px);
+      line-height: 0.98;
+      font-weight: 900;
+      letter-spacing: -0.075em;
+    }
+
+    .poster-collage {
+      display: grid;
+      grid-template-columns: 0.9fr 1.15fr 0.8fr;
+      align-items: end;
+      gap: 0;
+    }
+
+    .poster-collage .shot {
+      overflow: hidden;
+      background: var(--paper);
+    }
+
+    .poster-collage .shot:nth-child(1) {
+      aspect-ratio: 4 / 3;
+      margin-top: 50px;
+    }
+
+    .poster-collage .shot:nth-child(2) {
+      aspect-ratio: 16 / 11;
+    }
+
+    .poster-collage .shot:nth-child(3) {
+      aspect-ratio: 4 / 5;
+      margin-bottom: 34px;
+    }
+
+    .type-band {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      height: clamp(160px, 24vw, 360px);
+      overflow: hidden;
+      background: var(--cream);
+      color: var(--blue);
+      font-size: clamp(150px, 28vw, 450px);
+      line-height: 0.78;
+      font-weight: 950;
+      letter-spacing: -0.14em;
+    }
+
+    .type-band span:nth-child(2) {
+      color: var(--bright-blue);
+    }
+
+    .type-band span:nth-child(3) {
+      color: var(--ink);
+    }
+
+    .option-three {
+      min-height: 140dvh;
+      padding: clamp(86px, 11vh, 126px) var(--pad) 52px;
+      background: #111214;
+      color: #f3f0e7;
+    }
+
+    .launch-shell {
+      overflow: hidden;
+      border: 1px solid rgba(243, 240, 231, 0.12);
+      border-radius: 18px;
+      background: #18191b;
+      box-shadow: 0 28px 90px rgba(0, 0, 0, 0.34);
+    }
+
+    .launch-hero {
+      position: relative;
+      min-height: min(62dvh, 720px);
+      padding: clamp(32px, 4vw, 64px);
+      display: flex;
+      align-items: flex-start;
+      overflow: hidden;
+      color: #f5f0e6;
+    }
+
+    .launch-hero img {
+      position: absolute;
+      inset: 0;
+      filter: saturate(0.95) contrast(1.08) brightness(0.58);
+    }
+
+    .launch-hero::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(90deg, rgba(17, 18, 20, 0.78), rgba(17, 18, 20, 0.22)),
+        linear-gradient(180deg, rgba(17, 18, 20, 0.08), rgba(17, 18, 20, 0.5));
+    }
+
+    .launch-copy {
+      position: relative;
+      z-index: 2;
+      width: min(680px, 100%);
+    }
+
+    .launch-copy h1 {
+      margin-top: 18px;
+      font-size: clamp(42px, 7vw, 124px);
+      line-height: 0.9;
+      font-weight: 830;
+      letter-spacing: -0.075em;
+      text-transform: uppercase;
+    }
+
+    .launch-copy p {
+      max-width: 520px;
+      margin-top: 22px;
+      color: rgba(245, 240, 230, 0.72);
+      font-size: clamp(15px, 1.05vw, 19px);
+      line-height: 1.5;
+      font-weight: 620;
+    }
+
+    .mini-player {
+      position: absolute;
+      right: 28px;
+      bottom: 26px;
+      z-index: 3;
+      width: min(360px, 32vw);
+      display: grid;
+      grid-template-columns: 84px 1fr;
+      gap: 12px;
+      padding: 10px;
+      border: 1px solid rgba(245, 240, 230, 0.14);
+      border-radius: 12px;
+      background: rgba(17, 18, 20, 0.72);
+      color: rgba(245, 240, 230, 0.82);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+
+    .mini-player img {
+      position: relative;
+      border-radius: 8px;
+      filter: none;
+    }
+
+    .mini-player strong {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 12px;
+      line-height: 1.15;
+      letter-spacing: 0;
+    }
+
+    .mini-player span {
+      color: rgba(245, 240, 230, 0.52);
+      font-size: 11px;
+      line-height: 1.25;
+      font-weight: 650;
+    }
+
+    .launch-logo-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: clamp(22px, 5vw, 82px);
+      padding: 38px 20px;
+      color: rgba(245, 240, 230, 0.58);
+      font-size: 13px;
+      font-weight: 850;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .launch-logo-row img {
+      width: auto;
+      max-height: 34px;
+      object-fit: contain;
+      filter: brightness(0) invert(1);
+      opacity: 0.62;
+    }
+
+    .launch-section {
+      display: grid;
+      grid-template-columns: minmax(240px, 0.62fr) minmax(0, 1.38fr);
+      gap: clamp(24px, 4vw, 72px);
+      margin-top: clamp(70px, 10vh, 128px);
+      align-items: center;
+    }
+
+    .launch-section h2 {
+      font-size: clamp(32px, 5vw, 88px);
+      line-height: 0.92;
+      font-weight: 830;
+      letter-spacing: -0.07em;
+      text-transform: uppercase;
+    }
+
+    .launch-card {
+      overflow: hidden;
+      min-height: min(46dvh, 520px);
+      border: 1px solid rgba(245, 240, 230, 0.12);
+      border-radius: 18px;
+      background: #f5f0e6;
+      color: var(--ink);
+    }
+
+    .launch-card img {
+      height: min(38dvh, 420px);
+    }
+
+    .launch-card p {
+      padding: 20px 22px 24px;
+      color: rgba(21, 22, 26, 0.68);
+      font-size: 15px;
+      line-height: 1.45;
+      font-weight: 650;
+    }
+
+    @media (max-width: 1000px) {
+      .title-notes,
+      .poster-story,
+      .launch-section {
+        grid-template-columns: 1fr;
+      }
+
+      .title-notes p:last-child {
+        justify-self: start;
+      }
+
+      .wordmark-title h1 {
+        white-space: normal;
+      }
+
+      .horizontal-strip {
+        overflow-x: auto;
+        padding-bottom: 6px;
+      }
+
+      .poster-symbol {
+        width: min(560px, 76vw);
+      }
+
+      .poster-collage {
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+
+      .poster-collage .shot:nth-child(3) {
+        grid-column: span 2;
+        aspect-ratio: 16 / 9;
+        margin-bottom: 0;
+      }
+    }
+
+    @media (max-width: 680px) {
+      :root {
+        --pad: 16px;
+        --radius: 18px;
+      }
+
+      .previewbar {
+        top: 14px;
+        flex-wrap: wrap;
+        row-gap: 8px;
+      }
+
+      .previewbar nav {
+        gap: 12px;
+      }
+
+      .option-one,
+      .option-hybrid,
+      .option-three {
+        min-height: auto;
+        padding-top: 104px;
+      }
+
+      .option-hybrid {
+        padding-top: 0;
+      }
+
+      .hybrid-body {
+        padding-top: 36px;
+      }
+
+      .wordmark-title h1 {
+        font-size: clamp(64px, 24vw, 132px);
+      }
+
+      .strip-card {
+        flex-basis: 72vw;
+      }
+
+      .featured-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .poster-top {
+        min-height: 86svh;
+        padding-top: 104px;
+      }
+
+      .poster-symbol {
+        top: 42%;
+        width: 104vw;
+      }
+
+      .poster-date {
+        grid-template-columns: 1fr;
+        font-size: clamp(58px, 20vw, 116px);
+      }
+
+      .poster-year {
+        right: 16px;
+        bottom: 34px;
+        font-size: clamp(54px, 18vw, 104px);
+      }
+
+      .poster-story {
+        padding-top: 40px;
+      }
+
+      .poster-collage {
+        grid-template-columns: 1fr;
+      }
+
+      .poster-collage .shot,
+      .poster-collage .shot:nth-child(1),
+      .poster-collage .shot:nth-child(2),
+      .poster-collage .shot:nth-child(3) {
+        grid-column: auto;
+        margin: 0;
+        aspect-ratio: 4 / 3;
+      }
+
+      .type-band {
+        grid-template-columns: 1fr;
+        height: auto;
+        font-size: clamp(132px, 44vw, 220px);
+      }
+
+      .launch-hero {
+        min-height: 76svh;
+        padding: 26px 18px;
+      }
+
+      .launch-copy h1 {
+        font-size: clamp(40px, 15vw, 86px);
+      }
+
+      .mini-player {
+        position: relative;
+        right: auto;
+        bottom: auto;
+        z-index: 4;
+        width: 100%;
+        margin-top: 28px;
+      }
+
+      .launch-logo-row {
+        flex-wrap: wrap;
+        justify-content: flex-start;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="previewbar">
+    <a href="work-global-relay-conference.html">周子恒</a>
+    <nav aria-label="Hero options">
+      <a href="#option-hybrid">混合版</a>
+      <a href="#option-1">方案1</a>
+      <a href="#option-2">方案2</a>
+      <a href="#option-3">方案3</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="option option-hybrid" id="option-hybrid">
+      <div class="poster-top">
+        <div class="poster-nav">
+          <span>AI Leadership Forum</span>
+          <span>Global Relay</span>
+        </div>
+
+        <div class="poster-symbol" aria-hidden="true">
+          <span class="petal"></span>
+          <span class="petal"></span>
+          <span class="petal"></span>
+          <span class="petal"></span>
+          <span class="petal"></span>
+          <span class="petal"></span>
+          <span class="petal"></span>
+          <span class="petal"></span>
+          <span class="petal"></span>
+          <span class="petal"></span>
+          <span class="petal"></span>
+          <span class="petal"></span>
+          <img src="images/AGR/relay/logo-ai-dark.png" alt="">
+        </div>
+
+        <div class="poster-date">
+          <span>AI</span>
+          <span>RELAY</span>
+        </div>
+        <div class="poster-year">2025</div>
+      </div>
+
+      <div class="hybrid-body">
+        <div class="horizontal-strip" aria-label="Selected campaign materials">
+          <article class="strip-card"><img src="images/AGR/relay/logo-ai-light.png" alt="AI Leadership Forum logo"></article>
+          <article class="strip-card"><img src="images/AGR/relay/dawn-america.jpg" alt="Conference poster visual"></article>
+          <article class="strip-card"><img src="images/AGR/relay/city-new-york.jpg" alt="City campaign visual"></article>
+          <article class="strip-card"><img src="images/AGR/relay/figure-earth.jpg" alt="Human consciousness visual"></article>
+          <article class="strip-card"><img src="images/AGR/relay/wave-field.jpg" alt="Wave visual detail"></article>
+          <article class="strip-card"><img src="images/AGR/relay/future-africa.jpg" alt="Future landscape visual"></article>
+        </div>
+
+        <div class="center-statement">
+          <h2>Design the forum as a living visual system.</h2>
+          <img src="images/AGR/relay/logo-ai-dark.png" alt="AI Leadership Forum mark">
+          <p class="small-copy">强符号负责第一眼记忆，作品带立刻说明这是一套完整的会议传播系统。</p>
+        </div>
+      </div>
+
+      <div class="option-label">混合版 海报首屏与作品带</div>
+    </section>
+
+    <section class="option option-one" id="option-1">
+      <div class="wordmark-title">
+        <h1>AI Relay</h1>
+      </div>
+
+      <div class="title-notes">
+        <p class="small-copy">Conference visual system for a global AI leadership forum.</p>
+        <div></div>
+        <p class="small-copy">A campaign identity built from natural landscapes, city networks and future scenes.</p>
+      </div>
+
+      <div class="horizontal-strip" aria-label="Selected campaign materials">
+        <article class="strip-card"><img src="images/AGR/relay/logo-ai-light.png" alt="AI Leadership Forum logo"></article>
+        <article class="strip-card"><img src="images/AGR/relay/dawn-america.jpg" alt="Conference poster visual"></article>
+        <article class="strip-card"><img src="images/AGR/relay/city-new-york.jpg" alt="City campaign visual"></article>
+        <article class="strip-card"><img src="images/AGR/relay/figure-earth.jpg" alt="Human consciousness visual"></article>
+        <article class="strip-card"><img src="images/AGR/relay/wave-field.jpg" alt="Wave visual detail"></article>
+        <article class="strip-card"><img src="images/AGR/relay/future-africa.jpg" alt="Future landscape visual"></article>
+      </div>
+
+      <div class="center-statement">
+        <h2>Design the forum as a living visual system.</h2>
+        <img src="images/AGR/relay/logo-ai-dark.png" alt="AI Leadership Forum mark">
+        <p class="small-copy">The opening behaves like a studio case page: a strong wordmark, then a row of work that immediately proves the system.</p>
+      </div>
+
+      <div class="featured-grid">
+        <article class="featured-card"><img src="images/AGR/relay/between-cities.jpg" alt="Between cities visual"></article>
+        <article class="featured-card"><img src="images/AGR/relay/wave-landscape.jpg" alt="Wave landscape visual"></article>
+      </div>
+
+      <div class="option-label">方案1 巨大标题与作品带</div>
+    </section>
+
+    <section class="option option-two" id="option-2">
+      <div class="poster-top">
+        <div class="poster-nav">
+          <span>AI Leadership Forum</span>
+          <span>Global Relay</span>
+        </div>
+
+        <div class="poster-symbol" aria-hidden="true">
+          <span class="petal"></span>
+          <span class="petal"></span>
+          <span class="petal"></span>
+          <span class="petal"></span>
+          <span class="petal"></span>
+          <span class="petal"></span>
+          <span class="petal"></span>
+          <span class="petal"></span>
+          <span class="petal"></span>
+          <span class="petal"></span>
+          <span class="petal"></span>
+          <span class="petal"></span>
+          <img src="images/AGR/relay/logo-ai-dark.png" alt="">
+        </div>
+
+        <div class="poster-date">
+          <span>AI</span>
+          <span>RELAY</span>
+        </div>
+        <div class="poster-year">2025</div>
+      </div>
+
+      <div class="poster-story">
+        <h1>把会议视觉做成一套活动识别。</h1>
+        <p class="small-copy">这个方向参考活动网站的长卷方式：强符号开场，随后用图片、字形和合作方信息向下展开。</p>
+      </div>
+
+      <div class="poster-collage">
+        <article class="shot"><img src="images/AGR/relay/dawn-europe.jpg" alt="Natural visual direction"></article>
+        <article class="shot"><img src="images/AGR/relay/city-riyadh.jpg" alt="City visual direction"></article>
+        <article class="shot"><img src="images/AGR/relay/future-riyadh.jpg" alt="Future visual direction"></article>
+      </div>
+
+      <div class="type-band" aria-label="Visual system type band">
+        <span>A</span>
+        <span>I</span>
+        <span>R</span>
+      </div>
+
+      <div class="option-label">方案2 活动海报长卷</div>
+    </section>
+
+    <section class="option option-three" id="option-3">
+      <div class="launch-shell">
+        <div class="launch-hero">
+          <img src="images/AGR/relay/wave-landscape.jpg" alt="AI wave campaign visual">
+          <div class="launch-copy">
+            <div class="kicker">AI Leadership Forum</div>
+            <h1>A new dawn in human consciousness</h1>
+            <p>以产品发布页的秩序展示会议视觉：主视觉、品牌标识、视频和资产模块层层展开。</p>
+          </div>
+          <div class="mini-player">
+            <img src="images/AGR/relay/dawn-america.jpg" alt="Motion preview still">
+            <div>
+              <strong>Opening motion</strong>
+              <span>Poster sequence, wave loop and city relay material.</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="launch-logo-row" aria-label="Brand marks">
+          <img src="images/AGR/relay/logo-ai-light.png" alt="AI Leadership Forum">
+          <img src="images/AGR/relay/logo-duke-ce.png" alt="Duke Corporate Education">
+          <img src="images/AGR/relay/logo-studiox.png" alt="StudioX">
+        </div>
+      </div>
+
+      <div class="launch-section">
+        <h2>The campaign foundation model</h2>
+        <article class="launch-card">
+          <img src="images/AGR/relay/between-cities.jpg" alt="Campaign foundation visual">
+          <p>下方叙事可以像科技发布页一样继续分模块展开，每一段只承担一个清晰信息。</p>
+        </article>
+      </div>
+
+      <div class="option-label">方案3 科技发布式模块</div>
+    </section>
+  </main>
+</body>
+</html>

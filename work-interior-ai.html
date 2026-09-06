@@ -3,27 +3,25 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>商业建筑效果图AIGC生成方案｜周子恒</title>
+  <title>商业空间 AI Workflow｜周子恒</title>
   <link rel="icon" href="images/icon.png" type="image/png">
 
   <style>
     :root {
-      --bg: #f4efe7;
-      --fg: #222222;
-      --paper: #fffdf6;
-      --grey: #8a8377;
-
-      --blue: #2f6bff;
-      --pink: #ff5c9a;
-      --green: #12a889;
-      --yellow: #ffd34d;
-
-      --accent: var(--yellow);
-
-      --pad: clamp(20px, 4vw, 48px);
-      --content-max: 1440px;
-      --text-max: 1280px;
-      --image-max: 1440px;
+      --bg: #eceef2;
+      --paper: #ffffff;
+      --ink: #15161a;
+      --muted: #62666f;
+      --soft: #dfe3eb;
+      --line: rgba(21, 22, 26, 0.16);
+      --blue: #012169;
+      --purple: #4D387A;
+      --blue-mid: #073b8f;
+      --blue-light: #eef4ff;
+      --hero-gradient: linear-gradient(135deg, #012169 0%, #06347c 54%, #0b55ba 100%);
+      --radius: 28px;
+      --pad: clamp(22px, 4vw, 56px);
+      --max: 1540px;
       --font: Inter, Arial, "PingFang SC", "Microsoft YaHei", sans-serif;
     }
 
@@ -33,21 +31,16 @@
       padding: 0;
     }
 
-    html,
-    body {
-      width: 100%;
-      min-height: 100%;
-      font-family: var(--font);
-      background:
-        radial-gradient(circle at 75% 18%, rgba(47, 107, 255, 0.11), transparent 34%),
-        radial-gradient(circle at 18% 82%, rgba(255, 211, 77, 0.16), transparent 30%),
-        radial-gradient(circle at 86% 78%, rgba(255, 92, 154, 0.1), transparent 30%),
-        var(--bg);
-      color: var(--fg);
-      letter-spacing: -0.04em;
+    html {
+      scroll-behavior: smooth;
     }
 
     body {
+      min-height: 100%;
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--ink);
+      letter-spacing: -0.03em;
       overflow-x: hidden;
     }
 
@@ -62,1400 +55,1321 @@
       width: 100%;
     }
 
+    button {
+      font: inherit;
+    }
+
     ::selection {
-      background: var(--fg);
-      color: var(--bg);
+      background: var(--ink);
+      color: var(--paper);
     }
 
-    .page {
-      position: relative;
-      width: 100%;
-      min-height: 100vh;
-      overflow: hidden;
-    }
-
-    .noise {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      opacity: 0.045;
-      background-image:
-        linear-gradient(45deg, #000 25%, transparent 25%),
-        linear-gradient(-45deg, #000 25%, transparent 25%),
-        linear-gradient(45deg, transparent 75%, #000 75%),
-        linear-gradient(-45deg, transparent 75%, #000 75%);
-      background-size: 6px 6px;
-      z-index: 100;
-    }
-
-    .grid-lines {
-      position: fixed;
-      inset: 0;
-      z-index: 0;
-      pointer-events: none;
-      opacity: 0.16;
-      background-image:
-        linear-gradient(to right, rgba(34, 34, 34, 0.08) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(34, 34, 34, 0.08) 1px, transparent 1px);
-      background-size: 56px 56px;
-      mask-image: radial-gradient(circle at 55% 30%, #000 0%, transparent 78%);
-    }
-
-    /* =========================
-       Topbar
-    ========================= */
     .topbar {
       position: fixed;
-      top: 28px;
+      top: 24px;
       left: var(--pad);
       right: var(--pad);
-      z-index: 90;
-
+      z-index: 999;
       display: flex;
       align-items: center;
       justify-content: space-between;
-
-      font-size: 18px;
+      gap: 24px;
+      padding: 0 0 14px;
+      color: var(--ink);
+      background: linear-gradient(to bottom, rgba(236, 238, 242, 0.82), rgba(236, 238, 242, 0));
+      font-size: clamp(14px, 1.15vw, 18px);
       font-weight: 950;
       letter-spacing: 0.08em;
       text-transform: uppercase;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
 
-      color: #ffffff;
-      mix-blend-mode: difference;
+    .topbar-primary,
+    .topbar-actions,
+    .topbar-cta,
+    .view-toggle {
+      display: flex;
+      align-items: center;
+    }
+
+    .topbar-primary {
+      gap: 24px;
+      min-width: 0;
+    }
+
+    .topbar-actions,
+    .topbar-cta,
+    .view-toggle {
+      gap: 12px;
     }
 
     .brand {
-      cursor: pointer;
+      display: inline-block;
+      white-space: nowrap;
     }
 
-    .top-actions {
-      display: flex;
-      align-items: center;
-      gap: 18px;
+    .topbar-link,
+    .topbar-btn {
+      display: inline-block;
+      padding: 6px 0;
+      color: inherit;
+      white-space: nowrap;
+      opacity: 0.78;
+      transition: opacity 180ms ease, transform 180ms ease;
     }
 
-    .top-link {
-      cursor: pointer;
-      opacity: 0.72;
-    }
-
-    .top-link:hover {
+    .topbar-link:hover,
+    .topbar-link:focus-visible,
+    .topbar-btn:hover,
+    .topbar-btn:focus-visible,
+    .brand:hover {
       opacity: 1;
+      transform: translateY(-1px);
     }
 
-    /* =========================
-       Full Background Hero
-    ========================= */
+    .topbar-link:focus-visible,
+    .topbar-btn:focus-visible,
+    .brand:focus-visible {
+      outline: 2px solid currentColor;
+      outline-offset: 4px;
+    }
+
+    .view-dot {
+      width: 4px;
+      height: 4px;
+      border-radius: 999px;
+      background: currentColor;
+      opacity: 0.42;
+    }
+
+    .page {
+      width: 100%;
+      padding: 0 0 52px;
+    }
+
+    .content {
+      width: min(100%, var(--max));
+      margin: 0 auto;
+      padding: 0 var(--pad);
+    }
+
     .hero {
       position: relative;
-      z-index: 5;
-
-      width: 100%;
-      min-height: 100vh;
-      padding: 108px var(--pad) 64px;
-
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
+      width: 100vw;
+      margin-left: calc(50% - 50vw);
       overflow: hidden;
-      background: var(--fg);
-      text-align: center;
+      background: var(--bg);
     }
 
-    .hero-bg-image {
-      position: absolute;
-      inset: 0;
-      z-index: 1;
-
+    .hero-statement {
       width: 100%;
-      height: 100%;
-      overflow: hidden;
-    }
-
-    .hero-bg-image img,
-    .hero-bg-image video {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-
-      filter:
-        saturate(1.04)
-        contrast(1.06)
-        brightness(0.78);
-      transform: scale(1.02);
-    }
-
-    .hero-overlay {
-      position: absolute;
-      inset: 0;
-      z-index: 2;
-
-      background:
-        linear-gradient(
-          90deg,
-          rgba(0, 0, 0, 0.42) 0%,
-          rgba(0, 0, 0, 0.28) 32%,
-          rgba(0, 0, 0, 0.2) 68%,
-          rgba(0, 0, 0, 0.42) 100%
-        ),
-        linear-gradient(
-          180deg,
-          rgba(0, 0, 0, 0.58) 0%,
-          rgba(0, 0, 0, 0.22) 42%,
-          rgba(0, 0, 0, 0.68) 100%
-        );
-      pointer-events: none;
-    }
-
-    .hero-content {
-      position: relative;
-      z-index: 4;
-
-      width: min(100%, 1120px);
-      margin-top: 0;
-
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .project-kicker {
-      margin-bottom: 18px;
-
-      font-size: clamp(12px, 1vw, 18px);
-      font-weight: 950;
-      line-height: 1;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
+      margin: 0 auto;
+      padding: clamp(62px, 8vw, 110px) var(--pad) clamp(72px, 8vw, 118px);
       text-align: center;
-
-      color: rgba(244, 239, 231, 0.72);
     }
 
-    .project-title {
-      font-size: clamp(58px, 9vw, 160px);
-      line-height: 0.98;
-      font-weight: 950;
-      letter-spacing: -0.05em;
-      text-transform: uppercase;
-      text-align: center;
-
-      color: var(--bg);
-      text-shadow: 0 8px 30px rgba(0, 0, 0, 0.34);
-    }
-
-    .project-title .accent {
-      color: var(--yellow);
-    }
-
-    .project-desc {
-      margin-top: 28px;
+    .hero-statement h1,
+    .hero-statement p {
+      width: min(100%, 760px);
+      max-width: 760px;
       margin-left: auto;
       margin-right: auto;
-
-      font-size: clamp(18px, 1.35vw, 28px);
-      line-height: 1.42;
-      font-weight: 720;
-      letter-spacing: -0.045em;
-      text-align: center;
-
-      color: rgba(244, 239, 231, 0.82);
-      text-shadow: 0 4px 18px rgba(0, 0, 0, 0.36);
     }
 
-    .hero-tags {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 8px;
-      margin-top: 28px;
+    .hero-statement h1 {
+      font-size: clamp(28px, 3.2vw, 54px);
+      line-height: 0.98;
+      letter-spacing: -0.055em;
+      text-transform: none;
     }
 
-    .hero-tags span {
-      padding: 8px 11px;
-      border: 1.5px solid rgba(244, 239, 231, 0.48);
-      border-radius: 999px;
-      background: rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(8px);
-
-      font-size: 10px;
-      line-height: 1;
-      font-weight: 950;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: rgba(244, 239, 231, 0.78);
-    }
-
-    /* =========================
-       Section General
-    ========================= */
-    .section {
-      position: relative;
-      z-index: 5;
-      padding: 88px var(--pad);
-    }
-
-    .section.soft {
-      background: rgba(255, 253, 246, 0.45);
-    }
-
-    .section.dark {
-      background: var(--fg);
-      color: var(--bg);
-    }
-
-    .section-head {
-      display: grid;
-      grid-template-columns: 220px 1fr;
-      gap: 36px;
-
-      margin-bottom: 34px;
-      padding-bottom: 18px;
-      border-bottom: 2px solid currentColor;
-    }
-
-    .section-no {
-      font-size: 12px;
-      font-weight: 950;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      color: rgba(34, 34, 34, 0.5);
-    }
-
-    .dark .section-no {
-      color: rgba(244, 239, 231, 0.5);
-    }
-
-    .section-title {
-      font-size: clamp(34px, 5vw, 88px);
-      line-height: 0.9;
-      font-weight: 950;
-      letter-spacing: -0.08em;
-      text-transform: uppercase;
-    }
-
-    .section-text {
-      margin-left: 220px;
-
-      font-size: clamp(17px, 1.28vw, 25px);
-      line-height: 1.56;
-      font-weight: 650;
-      letter-spacing: -0.04em;
-
-      color: rgba(34, 34, 34, 0.68);
-    }
-
-    .section-text + .section-text {
+    .hero-statement p {
+      color: var(--muted);
+      font-size: clamp(15px, 1.1vw, 18px);
+      line-height: 1.45;
+      font-weight: 680;
       margin-top: 18px;
     }
 
-    .dark .section-text {
-      color: rgba(244, 239, 231, 0.72);
-    }
-
-    .logic-section .section-head {
-      border-bottom: none;
-      padding-bottom: 0;
-      margin-bottom: 24px;
-    }
-
-    /* =========================
-       Problem / Solution Matrix
-       4 Columns x 2 Rows
-    ========================= */
-    .logic-matrix {
-      margin-top: 42px;
-
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 12px;
-    }
-
-    .logic-cell {
-      position: relative;
-      min-height: 170px;
-      padding: 15px;
-
-      border: 2px solid rgba(244, 239, 231, 0.82);
-      color: var(--bg);
-
-      clip-path: polygon(
-        0 0,
-        calc(100% - 16px) 0,
-        100% 16px,
-        100% 100%,
-        16px 100%,
-        0 calc(100% - 16px)
-      );
-    }
-
-    .logic-problem {
-      background: rgba(244, 239, 231, 0.06);
-    }
-
-    .logic-solution {
+    .template-slot {
+      width: min(960px, 88vw);
+      margin: 34px auto 0;
+      padding: 6px;
+      border-radius: 18px;
       background: var(--paper);
-      color: var(--fg);
-      box-shadow: 5px 5px 0 rgba(244, 239, 231, 0.14);
+      box-shadow: 0 20px 54px rgba(45, 55, 80, 0.1);
     }
 
-    .logic-solution::before {
-      content: "";
-      position: absolute;
-      left: 14px;
-      right: 14px;
-      top: -2px;
-      height: 6px;
-      background: var(--accent);
+    .template-slot img {
+      width: 100%;
+      height: auto;
+      margin: 0;
+      border-radius: 12px;
+      object-fit: contain;
     }
 
-    .logic-label {
-      margin-bottom: 12px;
-      padding-right: 28px;
+    .input-summary {
+      max-width: 680px !important;
+      margin-top: 24px !important;
+      color: var(--ink) !important;
+      font-size: clamp(15px, 1.05vw, 17px) !important;
+      font-weight: 760 !important;
+    }
 
-      font-size: 8px;
-      font-weight: 950;
-      line-height: 1.1;
+    .case-frame,
+    .quality-section {
+      width: 100vw;
+      margin-left: calc(50% - 50vw);
+    }
+
+    .case-frame {
+      padding: clamp(74px, 9vw, 132px) var(--pad);
+      color: var(--paper);
+      background: var(--purple);
+    }
+
+    .case-frame-inner,
+    .quality-inner,
+    .direction-intro {
+      width: min(100%, var(--max));
+      margin: 0 auto;
+    }
+
+    .case-kicker,
+    .direction-kicker,
+    .quality-kicker {
+      font-size: 12px;
+      font-weight: 850;
       letter-spacing: 0.12em;
       text-transform: uppercase;
-
-      opacity: 0.58;
     }
 
-    .logic-title {
-      max-width: 100%;
+    .case-kicker {
+      color: rgba(255, 255, 255, 0.68);
+    }
 
-      font-size: clamp(18px, 1.55vw, 28px);
-      line-height: 0.96;
+    .case-frame h2,
+    .direction-intro h2,
+    .quality-intro h2 {
+      max-width: 13ch;
+      margin-top: 18px;
+      font-size: clamp(46px, 6.2vw, 104px);
+      line-height: 0.9;
       font-weight: 950;
       letter-spacing: -0.07em;
-      text-transform: uppercase;
     }
 
-    .logic-desc {
-      max-width: 100%;
-      margin-top: 12px;
-
-      font-size: 12px;
-      line-height: 1.36;
-      font-weight: 680;
-      letter-spacing: -0.03em;
-      opacity: 0.72;
+    .case-frame h2 {
+      color: var(--paper);
     }
 
-    .logic-solution .logic-desc {
-      color: rgba(34, 34, 34, 0.64);
-      opacity: 1;
+    .case-frame-lead {
+      max-width: 700px;
+      margin-top: 28px;
+      color: rgba(255, 255, 255, 0.82);
+      font-size: clamp(17px, 1.35vw, 24px);
+      line-height: 1.42;
+      font-weight: 660;
     }
 
-    .logic-tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 4px;
-      margin-top: 13px;
-    }
-
-    .logic-tags span {
-      padding: 5px 6px;
-
-      border: 1.5px solid currentColor;
-      border-radius: 999px;
-
-      font-size: 7px;
-      font-weight: 950;
-      line-height: 1;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-    }
-
-    .logic-arrow {
-      position: absolute;
-      right: 10px;
-      top: 10px;
-
-      width: 24px;
-      height: 24px;
-
+    .case-principles {
       display: grid;
-      place-items: center;
-
-      border: 2px solid currentColor;
-      border-radius: 999px;
-
-      font-size: 12px;
-      font-weight: 950;
+      grid-template-columns: 1.1fr 1fr 1fr;
+      gap: clamp(26px, 4vw, 68px);
+      margin-top: clamp(48px, 7vw, 96px);
     }
 
-    /* =========================
-       Feature Carousel
-    ========================= */
-    .feature-carousel {
-      margin-top: 40px;
-      width: 100vw;
-      margin-left: calc(-1 * var(--pad));
-      position: relative;
+    .case-principles p {
+      max-width: 21ch;
+      color: rgba(255, 255, 255, 0.72);
+      font-size: clamp(15px, 1.08vw, 18px);
+      line-height: 1.42;
+      font-weight: 620;
     }
 
-    .feature-track {
+    .case-principles strong {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--paper);
+      font-size: clamp(21px, 1.8vw, 32px);
+      line-height: 1;
+      font-weight: 900;
+      letter-spacing: -0.045em;
+    }
+
+    .section {
+      padding: clamp(76px, 9vw, 132px) 0 0;
+    }
+
+    .section-head {
       display: flex;
-      gap: 20px;
-      overflow-x: auto;
-      scroll-behavior: smooth;
-      scrollbar-width: none;
-      padding: 0 var(--pad) 10px var(--pad);
-      scroll-padding-left: var(--pad);
+      align-items: end;
+      justify-content: space-between;
+      gap: 28px;
+      margin-bottom: 26px;
+      padding-bottom: 18px;
+      border-bottom: 1px solid var(--line);
     }
 
-    .feature-track::-webkit-scrollbar {
-      display: none;
+    .section-title {
+      font-size: clamp(32px, 4.4vw, 74px);
+      line-height: 0.96;
+      font-weight: 930;
+      letter-spacing: -0.065em;
+      text-transform: uppercase;
     }
 
-    .feature-card {
-      flex: 0 0 min(620px, 72vw);
-      scroll-snap-align: start;
+    .section-note {
+      max-width: 520px;
+      color: var(--muted);
+      font-size: clamp(15px, 1.1vw, 18px);
+      line-height: 1.45;
+      font-weight: 620;
+      text-align: right;
+    }
 
-      border: 2px solid var(--fg);
-      background: var(--paper);
-      box-shadow: 9px 9px 0 rgba(17, 17, 17, 0.18);
+    .direction-section {
+      width: 100vw;
+      margin-left: calc(50% - 50vw);
+      padding: 0;
+    }
 
-      clip-path: polygon(
-        0 0,
-        calc(100% - 24px) 0,
-        100% 24px,
-        100% 100%,
-        24px 100%,
-        0 calc(100% - 24px)
-      );
+    .direction-intro {
+      padding: clamp(74px, 9vw, 132px) var(--pad) clamp(46px, 6vw, 82px);
+    }
 
+    .direction-kicker,
+    .quality-kicker {
+      color: var(--blue-mid);
+    }
+
+    .direction-intro h2,
+    .quality-intro h2 {
+      color: var(--ink);
+    }
+
+    .direction-intro > p:last-child,
+    .quality-intro > p:last-child {
+      max-width: 600px;
+      margin-top: 24px;
+      color: var(--muted);
+      font-size: clamp(16px, 1.15vw, 20px);
+      line-height: 1.45;
+      font-weight: 650;
+    }
+
+    .directions {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      min-height: 100dvh;
+    }
+
+    .direction-card {
+      position: relative;
+      min-height: 100dvh;
       overflow: hidden;
+      background: var(--ink);
+      isolation: isolate;
     }
 
-    .feature-media {
-      width: 100%;
-      aspect-ratio: 5 / 4;
-      background: var(--fg);
-      overflow: hidden;
-    }
-
-    .feature-media img,
-    .feature-media video {
-      width: 100%;
+    .direction-card img {
       height: 100%;
       object-fit: cover;
+      filter: saturate(0.96) contrast(1.05) brightness(0.92);
+      transition: transform 0.8s cubic-bezier(.16, 1, .3, 1), filter 0.8s ease;
     }
 
-    .feature-copy {
-      padding: 18px 18px 22px;
+    .direction-copy {
+      position: absolute;
+      inset: clamp(22px, 3.2vw, 52px);
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: space-between;
+      color: var(--paper);
     }
 
-    .feature-copy h3 {
-      margin-bottom: 10px;
-
-      font-size: clamp(24px, 3vw, 46px);
-      line-height: 0.9;
+    .direction-copy h3 {
+      max-width: 9.5ch;
+      color: var(--paper);
+      font-size: clamp(38px, 5vw, 92px);
+      line-height: 0.84;
       font-weight: 950;
       letter-spacing: -0.075em;
       text-transform: uppercase;
+      text-shadow: 0 18px 54px rgba(0, 0, 0, 0.42);
     }
 
-    .feature-copy p {
-      max-width: 92%;
-      font-size: 15px;
-      line-height: 1.42;
-      font-weight: 700;
-      letter-spacing: -0.035em;
-      color: rgba(34, 34, 34, 0.62);
+    .direction-copy p {
+      max-width: 23ch;
+      color: rgba(255, 255, 255, 0.9);
+      font-size: clamp(15px, 1.1vw, 19px);
+      line-height: 1.38;
+      font-weight: 720;
+      text-shadow: 0 10px 28px rgba(0, 0, 0, 0.48);
     }
 
-    .carousel-controls {
-      display: flex;
-      justify-content: flex-end;
-      gap: 10px;
-      margin-top: 18px;
-      padding-right: var(--pad);
+    .quality-section {
+      padding: clamp(76px, 9vw, 132px) var(--pad) 0;
     }
 
-    .carousel-arrow {
-      width: 44px;
-      height: 44px;
-
-      border: 2px solid var(--fg);
-      background: var(--paper);
-      color: var(--fg);
-
-      font-size: 24px;
-      font-weight: 950;
-      cursor: pointer;
-
-      box-shadow: 4px 4px 0 rgba(17, 17, 17, 0.16);
-      transition:
-        transform 0.2s ease,
-        background 0.2s ease,
-        color 0.2s ease;
+    .quality-intro {
+      padding-bottom: clamp(38px, 5vw, 70px);
     }
 
-    .carousel-arrow:hover {
-      transform: translateY(-2px);
-      background: var(--fg);
-      color: var(--bg);
-    }
-
-    /* =========================
-       Media Grid
-    ========================= */
-    .media-grid {
+    .quality-grid {
       display: grid;
-      grid-template-columns: repeat(12, 1fr);
-      gap: 20px;
-      margin-top: 42px;
+      grid-template-columns: minmax(0, 1.1fr) minmax(320px, 0.9fr);
+      gap: clamp(28px, 5vw, 90px);
+      align-items: start;
     }
 
-    .media-item {
-      min-height: 360px;
-      background: var(--fg);
+    .quality-reference {
       overflow: hidden;
-      border: 2px solid var(--fg);
-      box-shadow: 9px 9px 0 rgba(17, 17, 17, 0.18);
+      border-radius: var(--radius);
+      background: var(--paper);
+      box-shadow: 0 20px 54px rgba(45, 55, 80, 0.1);
     }
 
-    .media-item.wide {
-      grid-column: span 7;
-    }
-
-    .media-item.small {
-      grid-column: span 5;
-    }
-
-    .media-item.half {
-      grid-column: span 6;
-    }
-
-    .media-item.full {
-      grid-column: 1 / -1;
-      min-height: 660px;
-    }
-
-    .media-item img,
-    .media-item video {
-      width: 100%;
-      height: 100%;
+    .quality-reference img {
+      aspect-ratio: 4 / 3;
       object-fit: cover;
     }
 
-    .caption {
-      max-width: 860px;
-      margin-top: 16px;
-      margin-left: 220px;
-
-      font-size: 13px;
-      line-height: 1.4;
-      font-weight: 750;
-      letter-spacing: -0.02em;
-      color: rgba(34, 34, 34, 0.52);
-    }
-
-    /* =========================
-       Result
-    ========================= */
-    .result-panel {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 14px;
-      margin-top: 42px;
-    }
-
-    .result-item {
-      min-height: 260px;
-      padding: 22px;
-
-      border: 2px solid var(--bg);
-      background: rgba(244, 239, 231, 0.06);
-      color: var(--bg);
-    }
-
-    .result-number {
-      font-size: clamp(54px, 6vw, 116px);
-      line-height: 0.78;
-      font-weight: 950;
-      letter-spacing: -0.1em;
-    }
-
-    .result-desc {
-      max-width: 360px;
-      margin-top: 26px;
-
+    .quality-reference figcaption {
+      padding: 18px 20px 22px;
+      color: var(--ink);
       font-size: 15px;
+      line-height: 1.35;
+      font-weight: 760;
+    }
+
+    .quality-criteria {
+      display: grid;
+      gap: clamp(22px, 3vw, 38px);
+      padding-top: 6px;
+    }
+
+    .quality-criteria strong {
+      display: block;
+      font-size: clamp(23px, 2.1vw, 36px);
+      line-height: 0.96;
+      font-weight: 920;
+      letter-spacing: -0.055em;
+    }
+
+    .quality-criteria p {
+      max-width: 29ch;
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: clamp(15px, 1.05vw, 18px);
       line-height: 1.42;
-      font-weight: 680;
-      letter-spacing: -0.035em;
-
-      color: rgba(244, 239, 231, 0.68);
+      font-weight: 630;
     }
 
-    /* =========================
-       Footer Nav
-    ========================= */
-    .project-footer {
-      position: relative;
-      z-index: 5;
+    .quality-criteria .tradeoff strong {
+      color: var(--blue-mid);
+    }
 
-      padding: 88px var(--pad) 48px;
-
+    .campaign-assets {
+      width: 100vw;
+      margin-left: calc(50% - 50vw);
+      padding: 0 var(--pad);
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 18px;
+      gap: clamp(58px, 8vw, 122px);
     }
 
-    .nav-card {
-      position: relative;
-      min-height: 180px;
-      padding: 22px;
-
-      border: 2px solid var(--fg);
-      background: var(--paper);
-      box-shadow: 9px 9px 0 rgba(17, 17, 17, 0.18);
-
-      clip-path: polygon(
-        0 0,
-        calc(100% - 26px) 0,
-        100% 26px,
-        100% 100%,
-        26px 100%,
-        0 calc(100% - 26px)
-      );
-
-      transition:
-        transform 0.24s cubic-bezier(.16, 1, .3, 1),
-        background 0.2s ease,
-        color 0.2s ease;
-    }
-
-    .nav-card:hover {
-      transform: translateY(-5px);
-      background: var(--accent);
-      color: #ffffff;
-      box-shadow: 12px 12px 0 rgba(17, 17, 17, 0.28);
-    }
-
-    .nav-kicker {
-      margin-bottom: 18px;
-
-      font-size: 11px;
-      font-weight: 950;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      opacity: 0.62;
-    }
-
-    .nav-title {
-      font-size: clamp(28px, 4vw, 64px);
-      line-height: 0.9;
-      font-weight: 950;
-      letter-spacing: -0.08em;
-      text-transform: uppercase;
-    }
-
-    .back-home {
-      position: fixed;
-      right: var(--pad);
-      bottom: 28px;
-      z-index: 80;
-
-      width: 86px;
-      height: 44px;
-
+    .campaign-block {
       display: grid;
-      place-items: center;
+      gap: clamp(18px, 2.4vw, 34px);
+    }
 
-      border: 2px solid var(--fg);
-      background: var(--fg);
-      color: var(--fg);
+    .campaign-copy {
+      width: min(100%, var(--max));
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: minmax(0, 0.78fr) minmax(260px, 0.42fr);
+      align-items: end;
+      gap: 28px;
+      padding-bottom: 18px;
+      border-bottom: 1px solid var(--line);
+    }
 
-      font-size: 11px;
-      font-weight: 950;
-      letter-spacing: 0.08em;
+    .campaign-copy h3 {
+      font-size: clamp(30px, 4.2vw, 74px);
+      line-height: 0.96;
+      font-weight: 930;
+      letter-spacing: -0.065em;
       text-transform: uppercase;
-
-      box-shadow: 5px 5px 0 rgba(17, 17, 17, 0.18);
     }
 
-    .back-home:hover {
-      background: var(--accent);
-      color: #ffffff;
-    }
-
-    /* =========================
-       Responsive
-    ========================= */
-    @media (max-width: 1200px) {
-      .logic-matrix {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-
-      .result-panel {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    @media (max-width: 980px) {
-      .topbar {
-        mix-blend-mode: normal;
-        color: #ffffff;
-      }
-
-      .section-head {
-        grid-template-columns: 1fr;
-        gap: 10px;
-      }
-
-      .section-text,
-      .caption {
-        margin-left: 0;
-      }
-
-      .media-item.wide,
-      .media-item.small,
-      .media-item.half,
-      .media-item.full {
-        grid-column: 1 / -1;
-      }
-    }
-
-    @media (max-width: 720px) {
-      :root {
-        --pad: 20px;
-      }
-
-      .topbar {
-        top: 18px;
-        font-size: 13px;
-      }
-
-      .top-actions {
-        gap: 12px;
-      }
-
-      .hero {
-        min-height: 100svh;
-        padding-top: 86px;
-        padding-bottom: 42px;
-      }
-
-      .hero-content {
-        width: 100%;
-        margin-top: 0;
-      }
-
-      .project-title {
-        font-size: clamp(46px, 15vw, 82px);
-      }
-
-      .project-desc {
-        max-width: 100%;
-        font-size: 15px;
-      }
-
-      .hero-overlay {
-        background:
-          linear-gradient(
-            180deg,
-            rgba(0, 0, 0, 0.76) 0%,
-            rgba(0, 0, 0, 0.42) 45%,
-            rgba(0, 0, 0, 0.76) 100%
-          );
-      }
-
-      .section {
-        padding: 68px var(--pad);
-      }
-
-      .section-title {
-        font-size: clamp(36px, 13vw, 58px);
-      }
-
-      .section-text {
-        font-size: 15px;
-      }
-
-      .logic-matrix {
-        grid-template-columns: 1fr;
-        gap: 12px;
-      }
-
-      .logic-cell {
-        min-height: auto;
-        padding: 18px;
-      }
-
-      .logic-title {
-        font-size: clamp(26px, 9vw, 42px);
-      }
-
-      .logic-desc {
-        font-size: 14px;
-      }
-
-      .feature-card {
-        flex-basis: 82vw;
-      }
-
-      .media-item {
-        min-height: auto;
-        aspect-ratio: 4 / 3;
-      }
-
-      .media-item.full {
-        min-height: auto;
-        aspect-ratio: 1 / 1;
-      }
-
-      .project-footer {
-        grid-template-columns: 1fr;
-      }
-
-      .back-home {
-        right: 20px;
-        bottom: 20px;
-      }
-    }
-     /* =========================================================
-      Comfortable Portfolio Scale Override
-      让页面从“展板尺度”调整为“网页阅读尺度”
-    ========================================================= */
-
-    /* 页面整体不要无限铺开 */
-    .section,
-    .project-footer {
-      padding-left: var(--pad);
-      padding-right: var(--pad);
-    }
-
-    /* Hero 副标题更适合阅读 */
-    .project-desc {
-      max-width: 760px;
-      margin-top: 24px;
-      font-size: clamp(15px, 1.15vw, 20px);
-      line-height: 1.58;
+    .campaign-copy p {
+      color: var(--muted);
+      font-size: clamp(14px, 1vw, 17px);
+      line-height: 1.45;
       font-weight: 650;
     }
 
-    /* 标签别太抢眼 */
-    .hero-tags {
-      max-width: 760px;
-      gap: 7px;
-      margin-top: 24px;
+    .campaign-feature,
+    .campaign-card {
+      position: relative;
+      aspect-ratio: 16 / 9;
+      overflow: hidden;
+      border-radius: var(--radius);
+      background: var(--paper);
+      box-shadow: 0 20px 54px rgba(45, 55, 80, 0.12);
     }
 
-    .hero-tags span {
-      padding: 7px 10px;
-      font-size: 9px;
+    .campaign-feature {
+      width: min(100%, calc(var(--max) + (var(--pad) * 2)));
+      margin: 0 auto;
     }
 
-    /* Section 整体上下留白更克制 */
-    .section {
-      padding-top: 72px;
-      padding-bottom: 72px;
+    .campaign-card img,
+    .campaign-feature img {
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.7s cubic-bezier(.16, 1, .3, 1);
     }
 
-    /* Section 头部控制在内容宽度内 */
-    .section-head {
-      width: min(100%, var(--content-max));
-      margin-left: auto;
-      margin-right: auto;
-
-      grid-template-columns: 170px minmax(0, 1fr);
-      gap: 28px;
-
-      margin-bottom: 28px;
-      padding-bottom: 16px;
+    .campaign-card:hover img,
+    .campaign-feature:hover img {
+      transform: scale(1.03);
     }
 
-    /* 小编号不要太远 */
-    .section-no {
-      font-size: 11px;
+    .campaign-regional-strip {
+      width: min(100%, calc(var(--max) + (var(--pad) * 2)));
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: clamp(12px, 1.4vw, 22px);
     }
 
-    /* Section 大标题降尺度 */
-    .section-title {
-      font-size: clamp(30px, 4.2vw, 62px);
-      line-height: 0.96;
+    /* ===== 错落图片组合：同级图片有大有小、上下错位 ===== */
+    .gallery-mosaic {
+      width: min(100%, calc(var(--max) + (var(--pad) * 2)));
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      gap: clamp(14px, 1.8vw, 26px);
+      align-items: start;
+    }
+
+    .gallery-mosaic figure {
+      position: relative;
+      margin: 0;
+      overflow: hidden;
+      border-radius: var(--radius);
+      background: var(--paper);
+      box-shadow: 0 20px 54px rgba(45, 55, 80, 0.12);
+    }
+
+    .gallery-mosaic img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.7s cubic-bezier(.16, 1, .3, 1);
+    }
+
+    .gallery-mosaic figure:hover img {
+      transform: scale(1.03);
+    }
+
+    .gallery-mosaic figcaption {
+      position: absolute;
+      left: 18px;
+      bottom: 18px;
+      right: 18px;
+      color: var(--paper);
+      font-size: clamp(15px, 1.05vw, 18px);
+      line-height: 1.2;
+      font-weight: 850;
+      text-shadow: 0 8px 22px rgba(0, 0, 0, 0.56);
+    }
+
+    .m-a {
+      grid-column: 1 / 9;
+      aspect-ratio: 16 / 10;
+    }
+
+    .m-b {
+      grid-column: 9 / 13;
+      aspect-ratio: 3 / 4;
+      margin-top: clamp(36px, 7vw, 110px);
+    }
+
+    .m-c {
+      grid-column: 1 / 6;
+      aspect-ratio: 4 / 5;
+      margin-top: clamp(16px, 3vw, 44px);
+    }
+
+    .m-d {
+      grid-column: 6 / 13;
+      aspect-ratio: 16 / 9;
+      margin-top: clamp(36px, 8vw, 120px);
+    }
+
+    @media (max-width: 680px) {
+      .m-a {
+        grid-column: 1 / 13;
+        margin-top: 0;
+      }
+
+      .m-b {
+        grid-column: 1 / 8;
+        margin-top: 0;
+      }
+
+      .m-c {
+        grid-column: 8 / 13;
+        margin-top: clamp(36px, 12vw, 72px);
+      }
+
+      .m-d {
+        grid-column: 1 / 13;
+        margin-top: 0;
+      }
+    }
+
+    .page-footer {
+      width: 100vw;
+      margin-left: calc(50% - 50vw);
+      margin-top: clamp(82px, 10vw, 142px);
+      padding: clamp(70px, 8vw, 112px) var(--pad) 44px;
+      color: var(--paper);
+      background: var(--ink);
+    }
+
+    .footer-inner {
+      width: min(100%, var(--max));
+      margin: 0 auto;
+    }
+
+    .footer-title {
+      max-width: 980px;
+      margin: 0 0 clamp(42px, 6vw, 72px);
+      font-size: clamp(38px, 6.4vw, 104px);
+      line-height: 0.94;
+      font-weight: 930;
       letter-spacing: -0.07em;
     }
 
-    /* 正文收窄，不要横跨整屏 */
-    .section-text {
-      width: min(100%, var(--text-max));
-      max-width: var(--text-max);
-      margin-left: calc((100% - min(100%, var(--content-max))) / 2 + 170px + 28px);
-
-      font-size: clamp(15px, 1vw, 18px);
-      line-height: 1.72;
-      font-weight: 560;
-      letter-spacing: -0.025em;
+    .footer-links {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 18px 34px;
+      padding-top: 18px;
+      border-top: 1px solid rgba(255, 255, 255, 0.24);
     }
 
-    /* 多段正文间距 */
-    .section-text + .section-text {
-      margin-top: 14px;
+    .minimal-link {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 10px;
+      color: rgba(255, 255, 255, 0.86);
+      font-size: clamp(16px, 1.4vw, 22px);
+      font-weight: 850;
+      line-height: 1.1;
+      transition: opacity 180ms ease, transform 180ms ease;
     }
 
-    /* 卡片矩阵不要铺满全屏 */
-    .logic-matrix {
-      width: min(100%, var(--content-max));
-      margin-left: auto;
-      margin-right: auto;
-      margin-top: 34px;
-      gap: 12px;
+    .minimal-link span {
+      color: rgba(255, 255, 255, 0.56);
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
     }
 
-    /* 卡片高度和字体降低 */
-    .logic-cell {
-      min-height: 160px;
-      padding: 14px;
+    .minimal-link:hover,
+    .minimal-link:focus-visible {
+      opacity: 1;
+      transform: translateY(-1px);
     }
 
-    .logic-title {
-      font-size: clamp(17px, 1.25vw, 23px);
-      line-height: 1;
+    .minimal-link:focus-visible {
+      outline: 2px solid currentColor;
+      outline-offset: 4px;
     }
 
-    .logic-desc {
-      font-size: 14px;
-      line-height: 1.45;
+    .reveal {
+      opacity: 0;
+      transform: translateY(22px);
+      transition: opacity 0.7s ease, transform 0.7s cubic-bezier(.16, 1, .3, 1);
     }
 
-    /* 图片区域控制宽度 */
-    .media-grid {
-      width: min(100%, var(--image-max));
-      margin-left: auto;
-      margin-right: auto;
-      margin-top: 34px;
-      gap: 18px;
+    .reveal.in {
+      opacity: 1;
+      transform: none;
     }
 
-    /* 图片不要用固定巨大高度 */
-    .media-item {
-      min-height: auto;
-    }
+    @media (max-width: 1000px) {
+      .topbar {
+        flex-wrap: wrap;
+      }
 
-    /* full 图片改成自然比例 */
-    .media-item.full {
-      min-height: auto;
-    }
+      .topbar-primary {
+        width: 100%;
+        justify-content: space-between;
+      }
 
-    /* 给横向展板图一个舒服比例 */
-    .media-item.full.contain {
-      aspect-ratio: 16 / 9;
-    }
+      .topbar-actions {
+        width: 100%;
+        justify-content: flex-end;
+      }
 
-    /* 双栏图片比例 */
-    .media-item.half {
-      min-height: auto;
-      aspect-ratio: 16 / 9;
-    }
-
-    /* 图片完整显示，不裁切 */
-    .media-item.contain img,
-    .media-item.contain video {
-      object-fit: auto;
-      /*background: #f4efe7;*/
-    }
-
-    /* Result 面板控制宽度 */
-    .result-panel {
-      width: min(100%, var(--content-max));
-      margin-left: auto;
-      margin-right: auto;
-      margin-top: 34px;
-      gap: 12px;
-    }
-
-    /* Result 卡片降低压迫感 */
-    .result-item {
-      min-height: 190px;
-      padding: 18px;
-    }
-
-    .result-number {
-      font-size: clamp(34px, 4vw, 68px);
-    }
-
-    .result-desc {
-      margin-top: 20px;
-      font-size: 13.5px;
-      line-height: 1.5;
-    }
-
-    /* Footer 控制宽度 */
-    .project-footer {
-      width: min(100%, calc(var(--content-max) + var(--pad) * 2));
-      margin-left: auto;
-      margin-right: auto;
-      padding-top: 72px;
-    }
-
-    @media (max-width: 980px) {
       .section-head {
+        display: block;
+      }
+
+      .section-note {
+        margin-top: 12px;
+        text-align: left;
+      }
+
+      .directions {
         grid-template-columns: 1fr;
-        width: 100%;
+        min-height: auto;
       }
 
-      .section-text,
-      .caption {
-        margin-left: 0;
-        width: 100%;
-        max-width: 100%;
+      .case-principles {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
       }
 
-      .section-title {
-        max-width: 100%;
+      .quality-grid {
+        grid-template-columns: 1fr;
       }
 
-      .media-grid,
-      .logic-matrix,
-      .result-panel {
-        width: 100%;
+      .direction-card {
+        min-height: 100svh;
+      }
+
+      .case-frame,
+      .direction-intro,
+      .quality-section {
+        padding-left: 18px;
+        padding-right: 18px;
+      }
+
+      .case-frame h2,
+      .direction-intro h2,
+      .quality-intro h2 {
+        font-size: clamp(44px, 14vw, 72px);
+      }
+
+      .case-principles {
+        grid-template-columns: 1fr;
+        gap: 26px;
+        margin-top: 44px;
+      }
+
+      .case-principles p {
+        max-width: 30ch;
+      }
+
+      .direction-intro {
+        padding-top: 72px;
+        padding-bottom: 44px;
+      }
+
+      .quality-section {
+        padding-top: 72px;
+      }
+
+      .campaign-copy {
+        grid-template-columns: 1fr;
+      }
+
+      .campaign-regional-strip {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
       }
     }
 
-    @media (max-width: 720px) {
-      .hero {
-        min-height: 86svh;
-        padding-top: 86px;
-        padding-bottom: 48px;
+    @media (max-width: 680px) {
+      :root {
+        --pad: 18px;
+        --radius: 22px;
       }
 
-      .project-title {
-        font-size: clamp(40px, 13vw, 68px);
+      .topbar {
+        top: 14px;
+        font-size: 12px;
       }
 
-      .section {
-        padding-top: 56px;
-        padding-bottom: 56px;
+      .hero-statement {
+        padding-top: 54px;
+        padding-bottom: 68px;
       }
 
-      .section-title {
-        font-size: clamp(30px, 11vw, 48px);
+      .template-slot {
+        width: min(100%, 420px);
+        padding: 8px;
+        border-radius: 16px;
       }
 
-      .section-text {
-        font-size: 14.5px;
-        line-height: 1.68;
+      .direction-card {
+        min-height: 100svh;
       }
 
-      .media-item.full.contain,
-      .media-item.half {
-        aspect-ratio: auto;
+      .direction-copy {
+        inset: 24px 18px;
       }
 
-      .media-item img,
-      .media-item video {
-        max-height: none;
+      .direction-copy h3 {
+        max-width: 8.7ch;
+        font-size: clamp(44px, 15vw, 78px);
       }
+
+      .campaign-assets {
+        padding: 0 14px;
+        gap: 58px;
+      }
+
+      .campaign-copy {
+        padding: 0 4px 16px;
+        gap: 10px;
+      }
+
+      .campaign-copy h3 {
+        font-size: clamp(34px, 12vw, 58px);
+      }
+
+      .campaign-regional-strip {
+        grid-template-columns: 1fr;
+        gap: 14px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+
+      *,
+      *::before,
+      *::after {
+        transition: none !important;
+        animation: none !important;
+      }
+    }
+      /* =========================
+       Index Overlay（全局索引弹层）
+    ========================= */
+    .index-open {
+      appearance: none;
+      background: none;
+      border: 0;
+      color: inherit;
+      font: inherit;
+      letter-spacing: inherit;
+      text-transform: inherit;
+      cursor: pointer;
+    }
+
+    .index-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 2000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: rgba(21, 22, 26, 0.55);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .index-overlay.is-open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .index-overlay-panel {
+      position: relative;
+      width: min(1080px, 94vw);
+      max-height: min(82vh, 900px);
+      overflow-y: auto;
+      padding: clamp(24px, 4vw, 48px);
+      border-radius: 28px;
+      background: #ffffff;
+      color: #15161a;
+      box-shadow: 0 32px 80px rgba(0, 0, 0, 0.3);
+      transform: translateY(18px) scale(0.98);
+      transition: transform 0.35s cubic-bezier(.16, 1, .3, 1);
+    }
+
+    .index-overlay.is-open .index-overlay-panel {
+      transform: none;
+    }
+
+    .index-overlay-close {
+      position: absolute;
+      top: 14px;
+      right: 18px;
+      z-index: 2;
+      width: 40px;
+      height: 40px;
+      display: grid;
+      place-items: center;
+      border: 0;
+      border-radius: 999px;
+      background: rgba(21, 22, 26, 0.08);
+      color: #15161a;
+      font-size: 22px;
+      line-height: 1;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    .index-overlay-close:hover {
+      background: rgba(21, 22, 26, 0.16);
+    }
+
+    .index-overlay-head {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 2px solid #15161a;
+    }
+
+    .index-overlay-head h2 {
+      font-size: clamp(28px, 4vw, 56px);
+      line-height: 0.92;
+      font-weight: 950;
+      letter-spacing: -0.07em;
+      text-transform: uppercase;
+    }
+
+    .index-overlay-head p {
+      max-width: 320px;
+      font-size: 13px;
+      line-height: 1.45;
+      font-weight: 700;
+      color: rgba(21, 22, 26, 0.58);
+    }
+
+    .index-overlay-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+    }
+
+    .io-card {
+      display: block;
+      overflow: hidden;
+      border-radius: 18px;
+      background: #ffffff;
+      box-shadow: 0 16px 36px rgba(17, 17, 17, 0.1);
+      transition: transform 0.25s cubic-bezier(.16, 1, .3, 1), box-shadow 0.2s ease;
+    }
+
+    .io-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 24px 52px rgba(17, 17, 17, 0.14);
+    }
+
+    .io-card.is-current {
+      outline: 3px solid #15161a;
+      outline-offset: 2px;
+    }
+
+    .io-card img {
+      display: block;
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      object-fit: cover;
+      background: #ddd;
+    }
+
+    .io-card-body {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      padding: 12px 14px 16px;
+    }
+
+    .io-no {
+      font-size: 11px;
+      font-weight: 950;
+      letter-spacing: 0.14em;
+      opacity: 0.5;
+    }
+
+    .io-name {
+      font-size: 16px;
+      line-height: 1.05;
+      font-weight: 950;
+      letter-spacing: -0.04em;
+      text-transform: uppercase;
+    }
+
+    .io-tags {
+      font-size: 10px;
+      font-weight: 850;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: rgba(21, 22, 26, 0.55);
+    }
+  </style>
+  <link rel="stylesheet" href="project-hero-system.css">
+  <link rel="stylesheet" href="about-overlay.css">
+  <style id="mobile-topbar-title-fix">
+    /* =========================
+       移动端全局修复：顶栏单行 + 标题缩放
+    ========================= */
+    @media (max-width: 680px) {
+      .topbar.case-nav {
+        flex-wrap: nowrap;
+        row-gap: 0;
+        gap: 14px;
+        font-size: 12px;
+      }
+
+      .topbar.case-nav .topbar-primary {
+        width: auto;
+        flex: 1 1 auto;
+        justify-content: flex-start;
+        gap: 12px;
+      }
+
+      .topbar.case-nav #indexOpen {
+        margin-left: auto;
+      }
+
+      .topbar.case-nav .topbar-actions,
+      .topbar.case-nav .topbar-cta {
+        width: auto;
+        justify-content: flex-end;
+        gap: 10px;
+      }
+
+      .case-landing .case-title {
+        font-size: clamp(34px, 10.5vw, 64px);
+      }
+
+      .case-landing .case-summary {
+        max-width: 100%;
+      }
+    }
+  </style>
+  <style>
+    /* =========================
+       Hero Symbol · 平行切割面横条（D1 workflow，白色分层）
+       深紫渐变底 + 纯白符号，特征与 work-global-relay-conference 一致；
+       共享 CSS 的白环/白盘伪元素对新符号是冲突，禁用。
+    ========================= */
+    .case-symbol--aperture::before,
+    .case-symbol--aperture::after {
+      content: none;
+    }
+
+    .case-symbol--aperture svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+  </style>
+  <style>
+    .view-toggle {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 18px; font-weight: 950; letter-spacing: 0.08em;
+      text-transform: uppercase; color: #4a4a52;
+    }
+    .view-toggle a, .view-toggle button {
+      appearance: none; border: 0; background: transparent;
+      font-family: inherit; font-size: inherit; font-weight: inherit;
+      letter-spacing: inherit; color: inherit; text-transform: uppercase;
+      text-decoration: none; cursor: pointer; padding: 6px 0;
+      transition: color 0.2s ease;
+    }
+    .view-toggle a:hover, .view-toggle a:focus-visible,
+    .view-toggle button:hover, .view-toggle button.active { color: var(--ink, #15161a); }
+    .view-toggle a:focus-visible, .view-toggle button:focus-visible {
+      outline: 2px solid currentColor; outline-offset: 4px;
+    }
+    .view-toggle .view-dot {
+      width: 4px; height: 4px; flex-shrink: 0; border-radius: 50%;
+      background: currentColor; opacity: 0.8;
+    }
+
+    @media (max-width: 680px) {
+      .view-toggle { font-size: 12px; gap: 6px; }
+      .topbar.case-nav #indexOpen { margin-left: 0; }
     }
   </style>
 </head>
 
 <body>
-  <div class="page">
-    <div class="grid-lines"></div>
-    <div class="noise"></div>
-
-    <header class="topbar">
+  <header class="topbar case-nav" aria-label="项目导航">
+    <div class="topbar-primary">
       <a class="brand" href="index.html">周子恒</a>
+    </div>
 
-      <nav class="top-actions">
-        <a class="top-link" href="index.html">Map</a>
-        <a class="top-link" href="index.html#works">Index</a>
-        <a class="top-link" href="mailto:zhou_ziheng1@outlook.com">Contact</a>
-      </nav>
-    </header>
+    <div class="topbar-actions">
+      <!-- 右侧唯一入口：Projects • Index • 关于我，与首页顶栏一致；白色渐变过渡背景条来自共享 project-hero-system.css -->
+      <div class="view-toggle" aria-label="视图切换">
+        <a class="view-link" href="index.html">Projects</a>
+        <span class="view-dot" aria-hidden="true"></span>
+        <button id="indexOpen" type="button" aria-haspopup="dialog" aria-controls="indexOverlay">Index</button>
+        <span class="view-dot" aria-hidden="true"></span>
+        <button class="view-link" type="button" data-about-open aria-haspopup="dialog" aria-controls="aboutOverlay">关于我</button>
+      </div>
+    </div>
+  </header>
 
-    <!-- =========================
-         Hero
-    ========================== -->
-    <main class="hero">
-      <div class="hero-bg-image">
-        <video src="images/ARC/Hero.mp4" autoplay loop muted playsinline></video>
+  <div class="page">
+    <main class="hero case-landing case-landing--interior" aria-labelledby="hero-title">
+      <div class="case-symbol case-symbol--aperture" aria-hidden="true">
+        <svg viewBox="0 0 200 200" fill="none" role="presentation">
+          <rect x="30" y="50" width="140" height="18" fill="#ffffff" />
+          <rect x="30" y="80" width="100" height="18" fill="#ffffff" />
+          <rect x="30" y="110" width="140" height="18" fill="rgba(255,255,255,0.7)" />
+          <rect x="30" y="140" width="60" height="18" fill="#ffffff" />
+        </svg>
       </div>
 
-      <div class="hero-overlay"></div>
-
-      <section class="hero-content">
-        <div class="project-kicker">INTERIOR AI · ARCHITECTURE GENERATION</div>
-
-        <h1 class="project-title">
-          商业空间效果图<br>
-          <span class="accent">工作流落地</span>
+      <section class="case-footer">
+        <h1 class="case-title" id="hero-title">
+          商业空间<br>
+          <span>AI Workflow</span>
         </h1>
-
-        <p class="project-desc">
-          基于 ComfyUI、FLUX、Qwen、Canny、Depth 等控制方式，将商业建筑与室内设计中的空间结构、立面语义和视觉风格转化为可复用的生成工作流。
-        </p>
-
-        <div class="hero-tags">
-          <span>ComfyUI</span>
-          <span>FLUX</span>
-          <span>Qwen</span>
-          <span>Canny</span>
-          <span>Depth</span>
-          <span>Seed</span>
-          <span>Prompt Template</span>
-        </div>
+        <p class="case-summary">用空间轮廓、控制图和风格变量，把效果图生产转化为可复用的生成流程。</p>
       </section>
     </main>
 
-    <!-- =========================
-         Context + System Logic
-    ========================== -->
-    <section class="section dark logic-section">
-      <div class="section-head">
-        <div class="section-no">Context / System Logic</div>
-        <h2 class="section-title">不是生成几张效果图，而是建立一套可复用的建筑视觉生成流程。</h2>
-      </div>
+    <main class="content">
+      <section class="hero-statement reveal">
+        <h1>把空间设计意图，变成可审查的 AI 生成流程。</h1>
+        <p>不把一张好看的图当作结果，而是先定义输入条件、可变变量与输出标准。</p>
+        <figure class="template-slot">
+          <video src="images/ARC/Hero.mp4" aria-label="基础模型结构控制示意" autoplay muted loop playsinline>
+        </figure>
+        <p class="input-summary">固定：空间轮廓、竖向交通、主要构件与业态。<br>可变：材质、光影、陈设和风格氛围。</p>
+      </section>
 
-      <p class="section-text">
-        这个项目的核心不是追求单张图像的视觉冲击力，而是把建筑设计中的空间结构、材料语义、商业氛围和风格判断拆解为可以被控制、记录和复用的生成变量。
-      </p>
+      <section class="case-frame reveal" aria-label="项目命题">
+        <div class="case-frame-inner">
+          <p class="case-kicker">Design problem</p>
+          <h2>一条 Prompt，不能保证空间成立。</h2>
+          <p class="case-frame-lead">空间设计需要连续的动线、构件和业态关系。只追求视觉效果，会让每次生成都变成不可比较的单张灵感图。</p>
+          <div class="case-principles">
+            <p><strong>输入条件</strong>控制图锁定空间骨架与不能被改变的主要关系。</p>
+            <p><strong>生成变量</strong>让材质、光影、陈设与氛围在明确边界内变化。</p>
+            <p><strong>输出标准</strong>以空间保留、商业匹配与视觉一致性判断结果。</p>
+          </div>
+        </div>
+      </section>
 
-      <p class="section-text">
-        我将建筑生成流程拆分为结构控制、语义控制、风格控制和批量实验四个层级。每一个设计问题都对应一套明确的 AIGC 控制方法，从而让生成结果从随机出图转向可追踪的设计迭代。
-      </p>
-
-      <div class="logic-matrix">
-        <!-- Row 01 / Problems -->
-        <article class="logic-cell logic-problem">
-          <div class="logic-arrow">?</div>
-          <div class="logic-label">Problem 01</div>
-          <h3 class="logic-title">如何保留空间结构？</h3>
-          <p class="logic-desc">
-            商业空间生成容易破坏透视、边界、体块关系和主要开口，导致图像虽然好看但无法服务设计判断。
-          </p>
-        </article>
-
-        <article class="logic-cell logic-problem">
-          <div class="logic-arrow">?</div>
-          <div class="logic-label">Problem 02</div>
-          <h3 class="logic-title">如何降低语义偏移？</h3>
-          <p class="logic-desc">
-            立面、材质、灯光、店铺陈列和室内氛围都需要明确限定，否则生成结果容易偏离商业建筑语境。
-          </p>
-        </article>
-
-        <article class="logic-cell logic-problem">
-          <div class="logic-arrow">?</div>
-          <div class="logic-label">Problem 03</div>
-          <h3 class="logic-title">如何稳定同一风格？</h3>
-          <p class="logic-desc">
-            单次出图难以复现，Seed、CFG、采样器、参考图权重和负面提示词都会影响最终视觉调性。
-          </p>
-        </article>
-
-        <article class="logic-cell logic-problem">
-          <div class="logic-arrow">?</div>
-          <div class="logic-label">Problem 04</div>
-          <h3 class="logic-title">如何批量比较方案？</h3>
-          <p class="logic-desc">
-            前期方案需要快速测试多种空间风格，而不是依赖人工反复建模和单张效果图筛选。
-          </p>
-        </article>
-
-        <!-- Row 02 / Methods -->
-        <article class="logic-cell logic-solution">
-          <div class="logic-arrow">→</div>
-          <div class="logic-label">Method 01 / Structure Control</div>
-          <h3 class="logic-title">使用 Canny 与 Depth 控制空间。</h3>
-          <p class="logic-desc">
-            通过边缘、深度和参考图权重，约束空间构图、透视关系、开口位置和主要体块边界。
-          </p>
-        </article>
-
-        <article class="logic-cell logic-solution">
-          <div class="logic-arrow">→</div>
-          <div class="logic-label">Method 02 / Semantic Control</div>
-          <h3 class="logic-title">建立商业空间 Prompt 词库。</h3>
-          <p class="logic-desc">
-            将店铺立面、室内材质、照明方式、陈列系统和商业氛围拆解为可复用的语义模块。
-          </p>
-        </article>
-
-        <article class="logic-cell logic-solution">
-          <div class="logic-arrow">→</div>
-          <div class="logic-label">Method 03 / Style Control</div>
-          <h3 class="logic-title">记录参数以复现风格。</h3>
-          <p class="logic-desc">
-            记录 Seed、CFG、采样器、模型版本、参考权重和负面提示词，让风格迭代具备可复现性。
-          </p>
-        </article>
-
-        <article class="logic-cell logic-solution">
-          <div class="logic-arrow">→</div>
-          <div class="logic-label">Method 04 / Batch Experiment</div>
-          <h3 class="logic-title">把生成变成批量实验。</h3>
-          <p class="logic-desc">
-            将每次生成视为实验，记录成功条件和失败原因，用于判断哪些参数组合可稳定服务设计讨论。
-          </p>
-        </article>
-      </div>
-    </section>
-
-    <!-- =========================
-         Style 01 / Methodology
-    ========================== -->
-    <section class="section soft">
-      <div class="section-head">
-        <div class="section-no">01 / Methodology</div>
-        <h2 class="section-title">把设计判断拆解为可控制的生成变量。</h2>
-      </div>
-
-      <p class="section-text">
-        我将建筑生成流程拆分为三个层级：结构控制、语义控制和风格控制。结构控制确保空间边界和透视关系不被破坏；语义控制限定材质、尺度、立面元素和室内氛围；风格控制统一图像调性和商业表达。
-      </p>
-
-      <div class="feature-carousel" data-feature-carousel>
-        <div class="feature-track" data-feature-track>
-          <article class="feature-card">
-            <div class="feature-media">
-              <img src="images/ARC/base-model.png" alt="Structure Control">
+      <section class="direction-section reveal" aria-label="生成控制逻辑">
+        <div class="direction-intro">
+          <p class="direction-kicker">Generation controls</p>
+          <h2>先锁定不可变条件，再允许风格变化。</h2>
+          <p>流程的价值不在于限制创意，而是让每一轮变化都能回到同一个空间基准进行比较。</p>
+        </div>
+        <div class="directions">
+          <article class="direction-card">
+            <img src="images/ARC/base-model.png" alt="温暖风格方向">
+            <div class="direction-copy">
+              <h3>输入条件<br>空间骨架</h3>
+              <p>固定动线、层高、竖向交通和主要构件关系。</p>
             </div>
-            <div class="feature-copy">
-              <h3>结构控制</h3>
-              <p>
-                使用 Canny、Depth 和参考图权重，约束空间构图、主要体块、透视关系与边界线索。
-              </p>
+          </article>
+          
+          <article class="direction-card">
+            <img src="images/ARC/Dictionary-1.png" alt="温暖自然风格方向">
+            <div class="direction-copy">
+              <h3>生成规则<br>边界明确</h3>
+              <p>固定业态、材质方向和光影基调，避免结果脱离方案意图。</p>
             </div>
           </article>
 
-          <article class="feature-card">
-            <div class="feature-media">
-              <img src="images/ARC/Dictionary-1.png" alt="Structure Dictionary">
-            </div>
-            <div class="feature-copy">
-              <h3>控制图层</h3>
-              <p>
-                将基础模型、参考图和控制图层组合，避免 AI 生成过程中过度改写原始空间结构。
-              </p>
-            </div>
-          </article>
-
-          <article class="feature-card">
-            <div class="feature-media">
-              <img src="images/ARC/Dictionary-2.png" alt="Semantic Control">
-            </div>
-            <div class="feature-copy">
-              <h3>语义控制</h3>
-              <p>
-                建立零售立面、室内材质、商业氛围相关 Prompt 词库，减少语义偏移。
-              </p>
-            </div>
-          </article>
-
-          <article class="feature-card">
-            <div class="feature-media">
-              <img src="images/ARC/Dictionary-3.png" alt="Style Control">
-            </div>
-            <div class="feature-copy">
-              <h3>风格控制</h3>
-              <p>
-                记录 Seed、CFG、采样器、参考图权重和负面提示词，实现可复用的风格迭代。
-              </p>
+          <article class="direction-card">
+            <img src="images/ARC/Dictionary-3.png" alt="工业极简风格方向">
+            <div class="direction-copy">
+              <h3>生成变量<br>风格网格</h3>
+              <p>在同一空间条件下，对比不同风格、陈设与氛围的可用性。</p>
             </div>
           </article>
         </div>
+      </section>
 
-        <div class="carousel-controls">
-          <button class="carousel-arrow" data-carousel-prev type="button">‹</button>
-          <button class="carousel-arrow" data-carousel-next type="button">›</button>
+      <section class="quality-section reveal" aria-label="输出标准与取舍">
+        <div class="quality-inner">
+          <div class="quality-intro">
+            <p class="quality-kicker">Output standard</p>
+            <h2>好看不是唯一标准。</h2>
+            <p>我用同一张空间控制图审查生成结果。它必须先保留空间意图，再讨论风格是否成立。</p>
+          </div>
+          <div class="quality-grid">
+            <figure class="quality-reference">
+              <img src="images/ARC/base-model.png" alt="用于比较所有生成结果的空间控制图">
+              <figcaption>所有风格输出都回到这一空间基准。</figcaption>
+            </figure>
+            <div class="quality-criteria">
+              <article>
+                <strong>空间保留</strong>
+                <p>动线、层级、竖向交通与主要构件不能被风格化过程破坏。</p>
+              </article>
+              <article>
+                <strong>商业匹配</strong>
+                <p>材质、陈设与活动密度需要服务具体业态，而不是停留在抽象氛围。</p>
+              </article>
+              <article>
+                <strong>视觉一致</strong>
+                <p>光影、色彩与材料语言应能支撑一轮可沟通的方案表达。</p>
+              </article>
+              <article class="tradeoff">
+                <strong>取舍</strong>
+                <p>优先保留空间关系与业态信息，因此接受部分风格自由度被约束。</p>
+              </article>
+            </div>
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <!-- =========================
-         Style 02 / Process
-    ========================== -->
-    <section class="section">
-      <div class="section-head">
-        <div class="section-no">02 / Process</div>
-        <h2 class="section-title">从单次生成，转向可追踪的批量实验。</h2>
-      </div>
-
-      <p class="section-text">
-        每一次生成都被视为一次实验，而不是一次孤立的出图。我记录关键词权重、Seed、模型参数、参考图关系和失败原因，用于判断哪些参数组合能够稳定产出符合空间逻辑的结果。
-      </p>
-
-      <div class="media-grid">
-        <div class="media-item full">
-          <img src="images/ARC/潮玩空间.jpg" alt="批量生成过程展示">
+      <section class="section reveal">
+        <div class="campaign-assets">
+          <article class="campaign-block">
+            <div class="campaign-copy">
+              <h3>同一条件下，比较不同输出</h3>
+              <p>不把它们当成彼此无关的效果图，而是比较不同风格是否仍符合前面的空间与商业标准。</p>
+            </div>
+            <div class="gallery-mosaic">
+              <figure class="m-a">
+                <img src="images/ARC/潮玩空间.jpg" alt="潮玩空间批量生成结果">
+                <figcaption>潮玩零售：强化业态识别与停留氛围</figcaption>
+              </figure>
+              <figure class="m-b">
+                <img src="images/ARC/温暖.png" alt="温暖风格">
+                <figcaption>温暖：比较材质与光线的亲和度</figcaption>
+              </figure>
+              <figure class="m-c">
+                <img src="images/ARC/工业极简.jpg" alt="工业极简风格">
+                <figcaption>工业极简：保留构件层级与清晰动线</figcaption>
+              </figure>
+              <figure class="m-d">
+                <img src="images/ARC/温暖自然.jpg" alt="温暖自然风格">
+                <figcaption>温暖自然：调整氛围，但不重写空间骨架</figcaption>
+              </figure>
+            </div>
+          </article>
         </div>
+      </section>
 
-        <div class="media-item half">
-          <img src="images/ARC/温暖.png" alt="温暖风格迭代">
+      <footer class="page-footer">
+        <div class="footer-inner">
+          <p class="footer-title">从随机出图，到能说明输入、变量、标准与取舍的设计实验。</p>
+          <div class="footer-links">
+            <a class="minimal-link" href="work-LLM_to_Construction.html"><span>Previous Project</span>自然语言需求转化</a>
+            <a class="minimal-link" href="work-global-relay-conference.html"><span>Next Project</span>AI GLOBAL RELAY会议</a>
+          </div>
         </div>
-
-        <div class="media-item half">
-          <img src="images/ARC/工业极简.jpg" alt="工业极简风格迭代">
-        </div>
-
-        <div class="media-item full">
-          <img src="images/ARC/温暖自然.jpg" alt="温暖自然风格迭代">
-        </div>
-      </div>
-    </section>
-    
-    <!-- =========================
-         Footer Navigation
-    ========================== -->
-    <footer class="project-footer">
-      <a class="nav-card" href="index.html">
-        <div class="nav-kicker">返回</div>
-        <h2 class="nav-title">回到首页</h2>
-      </a>
-
-      <a class="nav-card" href="work-LLM_to_Construction.html">
-        <div class="nav-kicker">下一个项目</div>
-        <h2 class="nav-title">Text-to-3D</h2>
-      </a>
-    </footer>
-
-    <a class="back-home" href="index.html">Map</a>
+      </footer>
+    </main>
   </div>
 
   <script>
-    /* =========================
-       Feature Carousel Arrows
-    ========================= */
-    document.querySelectorAll("[data-feature-carousel]").forEach(carousel => {
-      const track = carousel.querySelector("[data-feature-track]");
-      const prev = carousel.querySelector("[data-carousel-prev]");
-      const next = carousel.querySelector("[data-carousel-next]");
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("in");
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
 
-      function getScrollAmount() {
-        const card = track.querySelector(".feature-card");
-        if (!card) return 400;
-        const gap = 20;
-        return card.offsetWidth + gap;
-      }
-
-      if (prev) {
-        prev.addEventListener("click", () => {
-          track.scrollBy({
-            left: -getScrollAmount(),
-            behavior: "smooth"
-          });
-        });
-      }
-
-      if (next) {
-        next.addEventListener("click", () => {
-          track.scrollBy({
-            left: getScrollAmount(),
-            behavior: "smooth"
-          });
-        });
-      }
-    });
+    document.querySelectorAll(".reveal").forEach((el) => observer.observe(el));
   </script>
+
+  <div class="index-overlay" id="indexOverlay" aria-hidden="true">
+    <div class="index-overlay-panel" role="dialog" aria-modal="true" aria-label="作品索引">
+      <button class="index-overlay-close" type="button" aria-label="关闭索引">×</button>
+      <div class="index-overlay-head">
+        <h2>项目经历</h2>
+        <p>3 种能力维度：空间意图生成、空间智能仿真、生成能力产品化。</p>
+      </div>
+      <div class="index-overlay-grid">
+            <a class="io-card" data-page="work-ucl.html" href="work-ucl.html">
+              <img src="images/UCL/STIG_00.jpg" alt="极端环境下的无人建造" loading="lazy" />
+              <div class="io-card-body">
+                <div class="io-no">01</div>
+                <h3 class="io-name">极端环境下的无人建造</h3>
+                <div class="io-tags">空间设计 × 机器人控制 × 交互仿真 × 智能建造</div>
+              </div>
+            </a>
+            <a class="io-card" data-page="work-ai-commerce.html" href="work-ai-commerce.html">
+              <img src="images/EC/0.jpg" alt="AI 电商素材生成平台" loading="lazy" />
+              <div class="io-card-body">
+                <div class="io-no">02</div>
+                <h3 class="io-name">AI 电商素材生成平台</h3>
+                <div class="io-tags">PRD文档 · 竞品分析报告 · 多模型Benchmark评测报告</div>
+              </div>
+            </a>
+            <a class="io-card" data-page="work-LLM_to_Construction.html" href="work-LLM_to_Construction.html">
+              <img src="images/llmToConstruction/BRIDGE_00.jpg" alt="自然语言需求转化" loading="lazy" />
+              <div class="io-card-body">
+                <div class="io-no">03</div>
+                <h3 class="io-name">自然语言需求转化</h3>
+                <div class="io-tags">TEXT-TO-3D × 模块化建造 × 跨团队协作</div>
+              </div>
+            </a>
+            <a class="io-card" data-page="work-interior-ai.html" href="work-interior-ai.html">
+              <img src="images/ARC/0.png" alt="商业空间视觉设计" loading="lazy" />
+              <div class="io-card-body">
+                <div class="io-no">04</div>
+                <h3 class="io-name">商业空间视觉设计</h3>
+                <div class="io-tags">AIGC工作流落地 · Prompt体系沉淀 · 流程标准化</div>
+              </div>
+            </a>
+            <a class="io-card" data-page="work-global-relay-conference.html" href="work-global-relay-conference.html">
+              <img src="images/AGR/Final Assets/2100s_2.jpg" alt="AI GLOBAL RELAY会议" loading="lazy" />
+              <div class="io-card-body">
+                <div class="io-no">05</div>
+                <h3 class="io-name">AI GLOBAL RELAY会议</h3>
+                <div class="io-tags">Spatial AIGC / Sketch / Reference / Prompt</div>
+              </div>
+            </a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      var overlay = document.getElementById("indexOverlay");
+      if (!overlay) return;
+      var openBtn = document.getElementById("indexOpen");
+      var closeBtn = overlay.querySelector(".index-overlay-close");
+
+      function setOpen(open) {
+        overlay.classList.toggle("is-open", open);
+        overlay.setAttribute("aria-hidden", String(!open));
+        document.body.style.overflow = open ? "hidden" : "";
+      }
+
+      if (openBtn) openBtn.addEventListener("click", function () { setOpen(true); });
+      if (closeBtn) closeBtn.addEventListener("click", function () { setOpen(false); });
+      overlay.addEventListener("click", function (event) {
+        if (event.target === overlay) setOpen(false);
+      });
+      document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape") setOpen(false);
+      });
+
+      var page = location.pathname.split("/").pop();
+      overlay.querySelectorAll("[data-page]").forEach(function (card) {
+        if (card.getAttribute("data-page") === page) card.classList.add("is-current");
+      });
+    })();
+  </script>
+  <script src="about-overlay.js"></script>
 </body>
 </html>

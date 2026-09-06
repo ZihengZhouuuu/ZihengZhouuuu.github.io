@@ -4,1063 +4,491 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>周子恒｜设计智能</title>
-  <link rel="icon" href="images/icon.png" type="image/png">
-  <!-- Google Analytics -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-1TN7EZQEY6"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-
-    function gtag() {
-      dataLayer.push(arguments);
-    }
-
-    gtag('js', new Date());
-
-    gtag('config', 'G-1TN7EZQEY6');
-  </script>
-
-
+  <link rel="icon" href="images/icon.png" type="image/png" />
+  <link rel="stylesheet" href="about-overlay.css" />
   <style>
     :root {
-      --bg: #f4efe7;
-      --fg: #222222;
-      --grey: #8a8377;
-      --paper: #fffdf6;
-
-      --blue: #2f6bff;
-      --pink: #ff5c9a;
-      --green: #12a889;
-      --yellow: #ffd34d;
-
-      --line: rgba(34, 34, 34, 0.18);
+      --bg: #f7f7f7;
+      --ink: #111113;
+      --muted: #7c7d80;
       --pad: clamp(22px, 4vw, 56px);
+      --radius: 36px;
       --font: Inter, Arial, "PingFang SC", "Microsoft YaHei", sans-serif;
-      
-      --stage-x: 0vw;
-      --stage-y: 0vh;
-      --index-x: 4vw;
-      --index-y: 0vh;
+      --cubic: cubic-bezier(0.16, 1, 0.3, 1);
+      --fade: cubic-bezier(0.35, 0.2, 0.3, 1); /* 柔和消隐曲线：起步不突兀、收尾极缓 */
 
-      --card-scale: 1.1;
+      --paper: #ffffff;
+
+      /* 卡片与 portal 共用同一组尺寸，保证形变后与目标卡片严格对齐（含响应式） */
+      --card-w: min(70vw, 820px);
+      --card-h: min(43.75vw, 512.5px);   /* = card-w * 10 / 16 */
+
+      --compass-size: min(720px, 78vw, 70vh);
+      --portal-size: calc(var(--compass-size) * 0.45);
+
+      /* 卡片纵向堆叠间距（上一张/下一张与当前卡片的中心偏移） */
+      --stack-gap: 18vh;
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      width: 100%; height: 100%;
+      font-family: var(--font); color: var(--ink); background: var(--bg);
+      overflow: hidden; letter-spacing: -0.03em;
     }
-
-    html,
-    body {
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      font-family: var(--font);
-      background:
-        radial-gradient(circle at 68% 38%, rgba(17, 17, 17, 0.045), transparent 32%),
-        radial-gradient(circle at 18% 82%, rgba(245, 200, 75, 0.12), transparent 30%),
-        var(--bg);
-      color: var(--fg);
-      letter-spacing: -0.04em;
-    }
-
-    body {
-      transition: background 0.35s ease;
-    }
-
-    a {
-      color: inherit;
-      text-decoration: none;
-    }
-
-    button {
-      font-family: inherit;
-    }
+    a { color: inherit; text-decoration: none; }
+    img, video { display: block; max-width: 100%; }
 
     /* =========================
-       Background
-    ========================= */
-    .page {
-      position: relative;
-      width: 100vw;
-      height: 100vh;
-      display: flex;
-      overflow: hidden;
-    }
-
-    .noise {
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-      opacity: 0.045;
-      background-image:
-        linear-gradient(45deg, #000 25%, transparent 25%),
-        linear-gradient(-45deg, #000 25%, transparent 25%),
-        linear-gradient(45deg, transparent 75%, #000 75%),
-        linear-gradient(-45deg, transparent 75%, #000 75%);
-      background-size: 6px 6px;
-      z-index: 1;
-    }
-
-    .grid-lines {
-      position: absolute;
-      inset: 0;
-      z-index: 0;
-      pointer-events: none;
-      opacity: 0.18;
-      background-image:
-        linear-gradient(to right, rgba(34, 34, 34, 0.08) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(34, 34, 34, 0.08) 1px, transparent 1px);
-      background-size: 56px 56px;
-      mask-image: radial-gradient(circle at 62% 44%, #000 0%, transparent 74%);
-    }
-
-    .main-content {
-      position: relative;
-      flex: 1;
-      height: 100%;
-      display: grid;
-      place-items: center;
-      transition:
-        opacity 0.6s cubic-bezier(.16, 1, .3, 1),
-        filter 0.6s cubic-bezier(.16, 1, .3, 1);
-      z-index: 5;
-    }
-
-    /* =========================
-       Topbar
+       1. Topbar 顶栏
     ========================= */
     .topbar {
-      position: absolute;
-      top: 28px;
-      left: var(--pad);
-      right: var(--pad);
-      z-index: 999;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      font-size: 24px;
-      font-weight: 950;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      pointer-events: auto;
+      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px var(--pad); pointer-events: none;
+      font-size: 18px; font-weight: 950;
+      text-transform: uppercase; letter-spacing: 0.08em;
     }
-
+    .topbar > * { pointer-events: auto; }
     .brand {
-      font-size: 24px;
-      cursor: pointer;
-      user-select: none;
+      font-size: 18px; font-weight: 950; text-transform: uppercase;
+      cursor: pointer; user-select: none;
+      transition: color 0.5s var(--fade);
     }
+    .topbar-actions { display: flex; align-items: center; gap: 20px; }
 
-    .topbar-actions {
-      display: flex;
-      align-items: center;
-      gap: 20px;
-    }
-
+    /* 顶栏右侧唯一入口：Projects • Index • 关于我，全部走 view-toggle 模式。
+       黑/深灰层级：激活与 hover = 纯黑（--ink），未激活 = 深灰 #4a4a52（原 0.42 半透明灰过浅，已加深）。 */
     .view-toggle {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 24px;
-      letter-spacing: 0.08em;
-      font-weight: 950;
-      color: rgba(34, 34, 34, 0.42);
+      display: flex; align-items: center; gap: 10px;
+      font-size: 18px; font-weight: 950; letter-spacing: 0.08em;
+      text-transform: uppercase; color: #4a4a52;
+      transition: color 0.5s var(--fade);
     }
-
     .view-toggle button {
-      border: none;
-      background: transparent;
-      color: inherit;
-      font-size: inherit;
-      font-weight: inherit;
-      text-transform: uppercase;
-      letter-spacing: inherit;
-      cursor: pointer;
-      padding: 6px 0;
-      opacity: 0.55;
+      appearance: none; border: 0; background: transparent;
+      font-family: inherit; font-size: inherit; font-weight: inherit;
+      letter-spacing: inherit; color: inherit; text-transform: uppercase;
+      cursor: pointer; padding: 6px 0;
+      transition: color 0.2s ease;
     }
-
-    .view-toggle button.active {
-      color: var(--fg);
-      opacity: 1;
-    }
+    .view-toggle button:hover, .view-toggle button.active { color: var(--ink); }
 
     .view-dot {
-      width: 4px;
-      height: 4px;
-      border-radius: 50%;
-      background: currentColor;
-      opacity: 0.45;
+      width: 4px; height: 4px; flex-shrink: 0; border-radius: 50%;
+      background: currentColor; opacity: 0.8;
     }
+
+    /* 页尾为深色底（--ink），header 整排反白以保证对比度。
+       覆盖 --ink 即可带动 .view-toggle button.active 与 .view-dot（引用该变量或 currentColor），
+       .view-toggle 的深灰是硬编码值，需单独处理。 */
+    body.in-footer .topbar { --ink: #fff; color: #fff; }
+    body.in-footer .view-toggle { color: rgba(255, 255, 255, 0.78); }
+
+    /* Container Stage */
+    .viewport { position: relative; width: 100vw; height: 100vh; overflow: hidden; }
 
     /* =========================
-       Slogan
-    ========================= */
-    .slogan {
-      position: absolute;
-      left: var(--pad);
-      bottom: clamp(34px, 7vh, 72px);
-      z-index: 40;
-      max-width: 620px;
-      pointer-events: none;
-    }
-
-    .slogan-kicker {
-      font-size: 18px;
-      font-weight: 950;
-      text-transform: uppercase;
-      letter-spacing: 0.14em;
-      opacity: 0.56;
-      margin-bottom: 14px;
-    }
-
-    .slogan-title {
-      font-size: clamp(38px, 5.6vw, 108px);
-      line-height: 0.95;
-      font-weight: 950;
-      letter-spacing: -0.075em;
-      text-transform: uppercase;
-      max-width: 650px;
-    }
-
-    .slogan-desc {
-      margin-top: 20px;
-      max-width: 620px;
-      font-size: clamp(18px, 1.05vw, 30px);
-      line-height: 1.45;
-      font-weight: 650;
-      letter-spacing: -0.04em;
-      opacity: 0.62;
-    }
-
-    .hero-actions {
-      margin-top: 24px;
-      display: flex;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 10px;
-      pointer-events: auto;
-    }
-
-    .hero-btn {
-      position: relative;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 48px;
-      padding: 10px 15px;
-      border: 1.5px solid var(--fg);
-      border-radius: 999px;
-      background: rgba(255, 253, 246, 0.42);
-      color: var(--fg);
-      font-size: 18px;
-      font-weight: 950;
-      line-height: 1;
-      white-space: nowrap;
-      text-transform: uppercase;
-      box-shadow: 0 4px 0 rgba(17, 17, 17, 0.08);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      transform: translateY(0);
-      transition:
-        transform 0.2s cubic-bezier(.16, 1, .3, 1),
-        box-shadow 0.2s cubic-bezier(.16, 1, .3, 1),
-        background 0.2s ease,
-        color 0.2s ease;
-    }
-
-    .hero-btn:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 7px 0 rgba(17, 17, 17, 0.13);
-      background: var(--yellow);
-    }
-
-    .hero-btn-primary {
-      background: var(--fg);
-      color: var(--bg);
-    }
-
-    .hero-btn-primary:hover {
-      background: var(--blue);
-      color: #ffffff;
-    }
-
-    /* =========================
-       Compass
+       2. STAGE 1: 首屏罗盘区 (Hero)
     ========================= */
     .compass-stage {
-      position: relative;
-      z-index: 10;
-      width: min(112vmin, 1120px);
-      height: min(112vmin, 1120px);
-      display: grid;
-      place-items: center;
-
-      transform: translate(var(--stage-x), var(--stage-y));
-
-      transition:
-        transform 0.6s cubic-bezier(.16, 1, .3, 1),
-        opacity 0.4s ease;
-    }
-
-    .index-mode .compass-stage {
-      transform: translate(var(--stage-x), calc(var(--stage-y) - 3%)) scale(0.78);
-      opacity: 0.13;
-      pointer-events: none;
-    }
-
-    .category-mode .compass-stage {
-      transform: translate(var(--stage-x), var(--stage-y)) scale(0.92);
-    }
-
-    .category-mode #mapViewBtn {
-      color: var(--fg);
-      opacity: 1;
-    }
-
-    .category-mode #mapViewBtn::after {
-      content: " / BACK";
-      opacity: 0.45;
-    }
-
-    .compass-wrap {
-      position: relative;
-      z-index: 20;
-      width: min(86vmin, 860px);
-      height: min(86vmin, 860px);
-      display: grid;
-      place-items: center;
-    }
-
-    .compass {
-      width: 100%;
-      height: 100%;
-      overflow: visible;
-    }
-
-    .sector-group {
-      cursor: pointer;
-      transform-origin: 500px 500px;
-      transition:
-        transform 0.3s cubic-bezier(.16, 1, .3, 1),
-        filter 0.3s ease,
-        opacity 0.3s ease;
-      outline: none;
-    }
-
-    .sector-group:hover {
-      transform: scale(1.05);
-      filter: drop-shadow(0 14px 0 rgba(17, 17, 17, 0.12));
-    }
-
-    .ring-sector {
-      fill: var(--fg);
-      stroke: var(--grey);
-      stroke-width: 0.5;
-      cursor: pointer;
-      transform-origin: 500px 500px;
-      filter: url(#flat-shadow-initial);
-      transition:
-        fill 0.24s ease,
-        transform 0.28s cubic-bezier(.16, 1, .3, 1),
-        filter 0.28s ease;
-    }
-
-    .sector-group:hover .ring-sector,
-    .sector-group.touch-active .ring-sector {
-      transform: scale(1.05);
-      filter: url(#flat-shadow-active);
-    }
-
-    .sector-group[data-id="product"]:hover .ring-sector,
-    .sector-group[data-id="product"].touch-active .ring-sector {
-      fill: var(--blue);
-    }
-
-    .sector-group[data-id="spatial"]:hover .ring-sector,
-    .sector-group[data-id="spatial"].touch-active .ring-sector {
-      fill: var(--pink);
-    }
-
-    .sector-group[data-id="robotics"]:hover .ring-sector,
-    .sector-group[data-id="robotics"].touch-active .ring-sector {
-      fill: var(--green);
-    }
-
-    .sector-group[data-id="about"]:hover .ring-sector,
-    .sector-group[data-id="about"].touch-active .ring-sector {
-      fill: var(--yellow);
-    }
-
-    .ring-label {
-      font-size: 30px;
-      font-weight: 950;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      fill: var(--bg);
-      pointer-events: none;
-      transition: fill 0.28s cubic-bezier(.16, 1, .3, 1), opacity 0.3s ease;
-    }
-
-    .sector-group:hover .ring-label,
-    .sector-group.touch-active .ring-label {
-      fill: #ffffff;
-    }
-
-    .guide-path {
-      fill: none;
-      stroke: none;
-    }
-
-    .bg-deco-ring {
-      fill: none;
-      stroke: var(--fg);
-      stroke-width: 1.2;
-      opacity: 0.15;
-      pointer-events: none;
-    }
-
-    .sketch-arrow-path {
-      fill: none;
-      stroke: var(--paper);
-      stroke-width: 1.2;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-      opacity: 0.95;
-      pointer-events: none;
-    }
-
-    .sketch-arrow-path.ghost {
-      stroke-width: 1.8;
-      opacity: 0.35;
-    }
-
-    /* =========================
-       Center Media
-    ========================= */
-    .center-media {
-      position: absolute;
-      left: 50%;
-      top: 50%;
-      width: 28.5%;
-      height: 28.5%;
-      transform: translate(-50%, -50%);
-      border-radius: 50%;
-      overflow: hidden;
-      background: var(--paper);
-      z-index: 24;
-      transition: opacity 0.3s ease, width 0.45s cubic-bezier(.16, 1, .3, 1), height 0.45s cubic-bezier(.16, 1, .3, 1);
-      pointer-events: none;
-      box-shadow:
-        inset 0 0 0 1px rgba(34, 34, 34, 0.1),
-        0 16px 0 rgba(17, 17, 17, 0.08);
-    }
-
-    .center-media img {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      opacity: 0;
-      transform: scale(1.12);
-      transition:
-        opacity 0.32s ease,
-        transform 0.42s cubic-bezier(.16, 1, .3, 1);
-    }
-
-    .center-media img.active {
-      opacity: 1;
-      transform: scale(1);
-    }
-
-    /* =========================
-       Project Orbit - Flat Patch Style
-    ========================= */
-    .project-orbit {
-      position: absolute;
-      inset: 0;
-      z-index: 16;
-      pointer-events: none;
-      transition:
-        opacity 0.45s ease,
-        transform 0.6s cubic-bezier(.16, 1, .3, 1);
-    }
-
-    .index-mode .project-orbit {
-      opacity: 0;
-      transform: scale(0.92);
-      pointer-events: none;
-    }
-
-    .orbit-line {
-      position: absolute;
-      left: 50%;
-      top: 50%;
-      width: min(101vmin, 1010px);
-      height: min(101vmin, 1010px);
-      transform: translate(-50%, -50%);
-      border: 1px solid rgba(34, 34, 34, 0.13);
-      border-radius: 50%;
-      pointer-events: none;
-    }
-
-    .orbit-line:nth-child(2) {
-      width: min(77vmin, 770px);
-      height: min(77vmin, 770px);
-      border-style: dashed;
-      opacity: 0.55;
-    }
-
-    .project-card {
-      --x: 0%;
-      --y: 0%;
-      --rot: 0deg;
-      --accent: var(--blue);
-
-      position: absolute;
-      left: 50%;
-      top: 50%;
-      width: clamp(150px, 13vw, 230px);
-      min-height: 138px;
-
-      transform:
-        translate(-50%, -50%)
-        translate(var(--x), var(--y))
-        rotate(var(--rot))
-        scale(var(--card-scale));
-
+      position: absolute; inset: 0; z-index: 50;
+      display: flex; align-items: center; justify-content: center;
+      /* 首屏消隐：更长的时长 + 极缓曲线，弱化为近乎不可察觉的溶解 */
+      transition: opacity 1.5s var(--fade), transform 1.5s var(--fade);
       pointer-events: auto;
-      cursor: pointer;
+    }
+    .hero-intro {
+      position: absolute; top: clamp(56px, 7.5vh, 92px); left: 50%; z-index: 2;
+      width: min(860px, 86vw); margin: 0; transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: 10px;
+      /* 消隐与罗盘弧线同拍：同起点（is-morphing）、同时长（1.3s）、同曲线（--fade） */
+      transition: opacity 1.3s var(--fade);
+    }
+    .hero-role {
+      font-size: clamp(24px, 2.8vw, 42px); line-height: 1.08;
+      font-weight: 950; letter-spacing: -0.05em; color: var(--ink);
+    }
+    /* 矮视口下罗盘缩放与标题收紧规则统一放在文件末尾响应式区
+       （必须位于所有宽度断点之后，否则会被 66vh/50vh 的断点值覆盖） */
+    .portfolio-thesis {
+      width: min(720px, 100%); margin: 0;
+      color: var(--muted); font-size: clamp(12px, 1vw, 15px); font-weight: 720;
+      line-height: 1.55; letter-spacing: .02em; text-align: center;
+    }
+    /* 回场（项目 → 首屏）稍快，避免返回时拖沓 */
+    body:not(.is-morphing):not(.in-portfolio) .compass-stage {
+      transition: opacity 0.9s var(--cubic), transform 0.9s var(--cubic);
+    }
+    /* 回场时标题+论文句同样用 0.9s 加速档，与罗盘同拍淡入 */
+    body:not(.is-morphing):not(.in-portfolio) .hero-intro {
+      transition: opacity 0.9s var(--cubic);
+    }
 
-      background: var(--paper);
-      color: var(--fg);
+    /* 正圆形罗盘容器 (正方形防压扁，尺寸随视口自适应) */
+    .compass-box {
+      position: relative; width: var(--compass-size); height: var(--compass-size);
+      flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+    }
 
-      border: 2px solid var(--fg);
-      border-radius: 0;
+    /* SVG 弧线 (保持 stroke-width: 42) */
+    .compass-svg {
+      position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible;
+      transition: transform 1.3s var(--fade), opacity 1.3s var(--fade);
+    }
+    body:not(.is-morphing):not(.in-portfolio) .compass-svg {
+      transition: transform 0.9s var(--cubic), opacity 0.9s var(--cubic);
+    }
+    /* 黑白方案：弧线 = 极暗金属灰渐变（#1e1e22→#333338，见 defs 内 arcG0/1/2）；
+       hover 切换为亮金属渐变（arcG*h）并叠加沿弧流动的柔化白光（.arc-sheen），
+       即「暗光流转」的悬停反馈。 */
+    .arc-segment {
+      cursor: pointer; fill: none; stroke-width: 42;
+      opacity: 0.97; transition: opacity 0.3s ease, stroke-width 0.3s ease;
+    }
+    #arc0 { stroke: url(#arcG0); }
+    #arc1 { stroke: url(#arcG1); }
+    #arc2 { stroke: url(#arcG2); }
+    #arc0:hover, #arc0.active { stroke: url(#arcG0h); }
+    #arc1:hover, #arc1.active { stroke: url(#arcG1h); }
+    #arc2:hover, #arc2.active { stroke: url(#arcG2h); }
+    .arc-segment:hover, .arc-segment.active {
+      opacity: 1; stroke-width: 46;
+    }
+    /* 暗光流转：hover 时一段柔化白光沿弧线循环滑过（低透明度，克制） */
+    .arc-sheen {
+      fill: none; stroke: #ffffff; stroke-width: 42; pointer-events: none;
+      stroke-dasharray: 90 700; opacity: 0;
+      transition: opacity 0.35s ease;
+    }
+    @keyframes sheenFlow {
+      from { stroke-dashoffset: 0; }
+      to { stroke-dashoffset: -790; }
+    }
+    #arc0:hover + .arc-sheen, #arc0.active + .arc-sheen,
+    #arc1:hover + .arc-sheen, #arc1.active + .arc-sheen,
+    #arc2:hover + .arc-sheen, #arc2.active + .arc-sheen {
+      opacity: 0.16; animation: sheenFlow 2.6s linear infinite;
+    }
 
-      clip-path: polygon(
-        0 0,
-        calc(100% - 18px) 0,
-        100% 18px,
-        100% 100%,
-        18px 100%,
-        0 calc(100% - 18px)
-      );
+    /* 延伸引线与文字标注 */
+    .pointer-line {
+      fill: none; stroke: var(--muted); stroke-width: 1.5;
+      stroke-dasharray: 3 3; opacity: 0.6;
+    }
+    .annotation-text {
+      font-size: 11px; font-weight: 850; fill: var(--ink);
+      letter-spacing: 0.06em; text-transform: uppercase;
+      opacity: 0.72; transition: opacity 0.3s ease, letter-spacing 0.3s ease;
+    }
+    .annotation-text.lit { opacity: 1; letter-spacing: 0.09em; }
 
-      box-shadow: 9px 9px 0 rgba(17, 17, 17, 0.22);
-
+    /* 中心“圆变方”形变 Portal */
+    .morph-portal {
+      position: absolute; width: var(--portal-size); height: var(--portal-size);
+      border-radius: 50%; overflow: hidden;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.15), 0 0 0 1px rgba(255,255,255,0.4) inset;
+      z-index: 20; cursor: pointer; background: #e0e0e0;
       transition:
-        transform 0.34s cubic-bezier(.16, 1, .3, 1),
-        opacity 0.25s ease,
-        filter 0.25s ease,
-        background 0.18s ease,
-        color 0.18s ease,
-        box-shadow 0.25s ease;
+        width 1.2s var(--cubic),
+        height 1.2s var(--cubic),
+        border-radius 1.2s var(--cubic),
+        transform 1.2s var(--cubic),
+        box-shadow 1.2s var(--cubic),
+        opacity 0.8s var(--fade);
+    }
+    .morph-portal img, .morph-portal video {
+      width: 100%; height: 100%; object-fit: cover;
+      transition: transform 0.8s var(--cubic);
+    }
+    .morph-portal:hover img { transform: scale(1.08); }
+
+    /* Hover HUD：从中心 Portal 向所悬停弧区切线方向延伸的半透明玻璃切片。
+       面板本体可交互（列表行 hover 切中间图、点击进入项目）；
+       隐藏态用 visibility 关闭命中，避免透明面板挡住弧区的 hover。 */
+    .hud-panel {
+      position: absolute; left: 50%; top: 50%; z-index: 25;
+      width: min(300px, 30vw); padding: 14px; border-radius: 8px;
+      background: rgba(255, 255, 255, 0.42);
+      backdrop-filter: blur(20px) saturate(1.5); -webkit-backdrop-filter: blur(20px) saturate(1.5);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      box-shadow: 0 24px 60px rgba(17, 17, 19, 0.12);
+      opacity: 0; visibility: hidden;
+      transform: translate(-50%, -50%)
+        translate(calc(var(--compass-size) * var(--hud-x, 0) * 0.55),
+                  calc(var(--compass-size) * var(--hud-y, 0) * 0.55)) scale(0.92);
+      transition: opacity 0.4s var(--fade), transform 0.55s var(--cubic),
+        visibility 0s linear 0.45s;
+    }
+    /* 隐藏态偏移为 0.55 倍：展开时面板像从 Portal 内部“生长”到弧区方向 */
+    .hud-panel.show {
+      opacity: 1; visibility: visible;
+      transform: translate(-50%, -50%)
+        translate(calc(var(--compass-size) * var(--hud-x, 0)),
+                  calc(var(--compass-size) * var(--hud-y, 0))) scale(1);
+      transition: opacity 0.4s var(--fade), transform 0.55s var(--cubic), visibility 0s;
+    }
+    /* 三个弧区的延伸方向（与标注引线方向一致，弧2 避开左上标注放左下） */
+    .hud-dir-0 { --hud-x: 0.28; --hud-y: -0.21; }  /* 弧0 右上 */
+    .hud-dir-1 { --hud-x: 0.28; --hud-y: 0.21; }   /* 弧1 右下 */
+    .hud-dir-2 { --hud-x: -0.28; --hud-y: 0.21; }  /* 弧2 左下 */
+
+    /* 组头：TYPE 编号 + TYPE 名 */
+    .hud-group { display: flex; align-items: baseline; gap: 8px; }
+    .hud-group-no {
+      font-size: 12px; font-weight: 950; letter-spacing: 0.12em;
+      color: rgba(17, 17, 19, 0.38);
+    }
+    .hud-group-name { font-size: 15px; font-weight: 950; color: var(--ink); }
+    /* 组内项目竖排：行 = 小缩略图 + 名称 + 年份（可 hover 预览、点击进入） */
+    .hud-list { margin-top: 18px; display: flex; flex-direction: column; }
+    .hud-row {
+      appearance: none; border: 0; background: transparent; font-family: inherit;
+      display: flex; align-items: center; gap: 12px; width: calc(100% + 12px);
+      margin: 0 -6px; padding: 8px 6px; border-radius: 8px;
+      cursor: pointer; text-align: left;
+      transition: background 0.2s ease;
+    }
+    .hud-row + .hud-row { border-top: 1px solid rgba(17, 17, 19, 0.07); }
+    .hud-row:hover { background: rgba(255, 255, 255, 0.6); }
+    .hud-row-img, .hud-row video {
+      width: 60px; height: 60px; border-radius: 6px; object-fit: cover; flex-shrink: 0;
+      box-shadow: 0 4px 10px rgba(17, 17, 19, 0.12);
+    }
+    .hud-row-name {
+      flex: 1; min-width: 0; font-size: 14px; font-weight: 950; color: var(--ink);
+      letter-spacing: -0.01em;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .hud-row-year {
+      font-size: 12px; font-weight: 850; letter-spacing: 0.06em;
+      color: rgba(17, 17, 19, 0.38); flex-shrink: 0;
     }
 
-    .project-card:hover {
-      transform:
-        translate(-50%, -50%)
-        translate(var(--x), var(--y))
-        rotate(0deg)
-        scale(calc(var(--card-scale) * 1.075));
-      z-index: 50;
-      background: var(--accent);
-      color: #ffffff;
-      box-shadow: 14px 14px 0 rgba(17, 17, 17, 0.34);
+    /* 底部引导（竖向引导线 + 中文 + 英文，全部尺寸居中） */
+    .scroll-hint {
+      position: absolute; bottom: 26px; left: 50%; transform: translateX(-50%);
+      z-index: 45; display: flex; flex-direction: column; align-items: center;
+      gap: 8px; width: max-content; pointer-events: none;
+    }
+    .scroll-hint i {
+      display: block; width: 1px; height: 30px;
+      background: rgba(17, 17, 19, 0.18);
+      position: relative; overflow: hidden;
+    }
+    .scroll-hint i::after {
+      content: ""; position: absolute; left: 0; top: 0;
+      width: 100%; height: 40%;
+      background: var(--ink);
+      animation: hintDrop 1.5s ease-in-out infinite;
+    }
+    @keyframes hintDrop {
+      0% { transform: translateY(-110%); }
+      100% { transform: translateY(260%); }
+    }
+    .scroll-hint-cn {
+      font-size: 13px; font-weight: 850; letter-spacing: 0.28em;
+      padding-left: 0.28em; /* 平衡末字符字距，保证视觉居中 */
+      color: var(--ink);
+    }
+    .scroll-hint-en {
+      font-size: 10px; font-weight: 850; letter-spacing: 0.16em;
+      padding-left: 0.16em; text-transform: uppercase;
+      color: var(--muted); white-space: nowrap;
     }
 
+    /* 圆变方 形变动画类 (Morphing State)
+       罗盘只做极轻微的漂移与溶解，取消原来的 2.2x 缩放 + 10° 旋转 */
+    body.is-morphing .compass-svg,
+    body.in-portfolio .compass-svg {
+      transform: scale(1.15) rotate(3deg); opacity: 0;
+    }
+    /* 标题+论文句与罗盘弧线同时消隐：原先它没有独立淡出规则，
+       只能等 in-portfolio 后随 compass-stage 的 1.5s 后置淡出，比弧线慢约 1.15s */
+    body.is-morphing .hero-intro,
+    body.in-portfolio .hero-intro { opacity: 0; }
+    body.is-morphing .hud-panel { opacity: 0; }
+    /* 圆变方 → 直接对齐目标 card 的方形（同宽高、同圆角、同投影），
+       并在 card 淡入时原地交叉溶解，不再回缩成圆形 */
+    body.is-morphing .morph-portal,
+    body.in-portfolio .morph-portal {
+      width: var(--card-w);
+      height: var(--card-h);       /* 16:10，与 .card 完全一致 */
+      border-radius: var(--radius); /* 50% 变成 36px 圆角 */
+      box-shadow: 0 30px 80px rgba(17, 17, 17, 0.18), 0 0 0 1px rgba(255, 255, 255, 0.35) inset;
+    }
+    body.in-portfolio .morph-portal { opacity: 0; }
 
-    .project-card::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      z-index: 5;
+    /* 回场时的瞬时复位：隐藏首屏并让 portal 直接回到圆形，避免方形反向缩回
+       （!important 用于压过下面的“回场加速”规则，保证复位是瞬时的） */
+    body.hero-snap .compass-stage { transition: none !important; opacity: 0; }
+    body.hero-snap .compass-svg { transition: none !important; opacity: 0; }
+    body.portal-reset .morph-portal { transition: none; }
+
+    /* =========================
+       3. STAGE 2: J 方案作品集中枢 (Portfolio Stage)
+    ========================= */
+    .goo-filter { position: absolute; width: 0; height: 0; pointer-events: none; }
+
+    .portfolio-stage {
+      position: absolute; inset: 0; z-index: 10;
+      display: grid; place-items: center; overflow: hidden; touch-action: none;
+      opacity: 0; transition: opacity 0.8s var(--cubic); pointer-events: none;
+    }
+    body.in-portfolio .portfolio-stage { opacity: 1; pointer-events: auto; }
+    body.in-portfolio .compass-stage { opacity: 0; pointer-events: none; }
+
+    .ring {
+      position: relative; width: min(84vw, 1100px); height: min(72vh, 640px);
+      display: flex; align-items: center; justify-content: center;
+      filter: url(#liquid); transform: translateZ(0);
+    }
+
+    .card {
+      position: absolute; width: var(--card-w); height: var(--card-h); aspect-ratio: 16 / 10;
+      border-radius: var(--radius); overflow: hidden; background: #e0e0e0;
+      box-shadow: 0 30px 80px rgba(17, 17, 17, 0.18), 0 0 0 1px rgba(255, 255, 255, 0.35) inset;
+      transform-origin: center center;
+      transition: transform 0.9s var(--cubic), filter 0.9s var(--cubic), opacity 0.9s var(--cubic);
+      will-change: transform, filter, opacity; cursor: grab;
+    }
+    .card:active { cursor: grabbing; }
+    .card img, .card video { width: 100%; height: 100%; object-fit: cover; }
+    .card::after {
+      content: ""; position: absolute; inset: 0;
+      background: linear-gradient(180deg, rgba(0,0,0,0) 60%, rgba(0,0,0,0.42) 100%);
       pointer-events: none;
-      border: 2px solid var(--fg);
-      clip-path: polygon(
-        0 0,
-        calc(100% - 18px) 0,
-        100% 18px,
-        100% 100%,
-        18px 100%,
-        0 calc(100% - 18px)
-      );
     }
 
-    .project-card::after {
-      content: "";
-      position: absolute;
-      right: -1px;
-      top: -1px;
-      width: 34px;
-      height: 34px;
-      background: var(--accent);
-      border-left: 2px solid var(--fg);
-      border-bottom: 2px solid var(--fg);
-      clip-path: polygon(100% 0, 100% 100%, 0 0);
-      z-index: 6;
-      pointer-events: none;
+    .card.active { z-index: 10; transform: translateY(0) scale(1); filter: grayscale(0); opacity: 1; }
+    .card.prev {
+      z-index: 5; transform: translateY(calc(-50% - var(--stack-gap))) scale(0.78) rotateX(8deg);
+      filter: grayscale(1) brightness(0.9); opacity: 0.55;
+    }
+    .card.next {
+      z-index: 5; transform: translateY(calc(50% + var(--stack-gap))) scale(0.78) rotateX(-8deg);
+      filter: grayscale(1) brightness(0.9); opacity: 0.55;
+    }
+    .card.far {
+      z-index: 1; transform: translateY(var(--dir, 120%)) scale(0.6);
+      filter: grayscale(1) brightness(0.8); opacity: 0;
     }
 
-    .project-card:hover::after {
-      background: var(--paper);
+    /* Meta / Controls */
+    .meta {
+      position: absolute; left: var(--pad); top: 50%; z-index: 20; transform: translateY(-50%);
+      display: flex; flex-direction: column; gap: 8px; pointer-events: none;
+    }
+    .meta-name { font-size: clamp(22px, 3vw, 42px); font-weight: 950; line-height: 0.98; letter-spacing: -0.05em; max-width: 28vw; }
+    .meta-type { font-size: 13px; font-weight: 700; color: var(--muted); }
+
+    .index-col {
+      position: fixed; right: calc(var(--pad) + 30px); top: 50%; z-index: 100;
+      transform: translateY(-50%); display: flex; flex-direction: column; align-items: flex-end; gap: 10px;
+    }
+    .index-col button {
+      appearance: none; background: none; border: 0;
+      font-size: 12px; font-weight: 850; color: var(--muted);
+      cursor: pointer; transition: color 0.25s ease; text-transform: uppercase;
+    }
+    .index-col button.active, .index-col button:hover { color: var(--ink); }
+
+    /* =========================
+       4. STAGE 3: 轻量页尾 (Footer)
+    ========================= */
+    .footer-stage {
+      position: absolute; inset: 0; z-index: 30;
+      background: linear-gradient(135deg, #101014 0%, #1b1b21 100%); color: #fff;
+      display: flex; flex-direction: column; justify-content: space-between;
+      padding: var(--pad); opacity: 0; transform: translateY(100%);
+      transition: all 0.8s var(--cubic); pointer-events: none;
+    }
+    body.in-footer .footer-stage { opacity: 1; transform: translateY(0); pointer-events: auto; }
+
+    /* 首屏「直达页尾」（点 ABOUT）：跳过「圆→方」形变，罗盘整体溶解的同时页尾滑入。
+       页尾常态 z-index 30 低于罗盘 50，故这里临时抬层；about-direct 仅在直达路径上出现，
+       回作品集或回首屏时会被清掉。特异度写成 (0,4,1) 以压过「回场加速」规则。 */
+    body.about-direct .footer-stage { z-index: 60; }
+    body.about-direct:not(.is-morphing):not(.in-portfolio) .compass-stage {
+      opacity: 0; pointer-events: none; transform: scale(1.03);
+      transition: opacity 0.6s var(--fade), transform 0.6s var(--fade);
     }
 
-    .project-orbit.has-focus .project-card {
-      opacity: 0.18;
-      filter: grayscale(1);
-    }
-
-    .project-orbit.has-focus .project-card.is-related {
-      opacity: 1;
-      filter: none;
-      background: var(--accent);
-      color: #ffffff;
-      box-shadow: 14px 14px 0 rgba(17, 17, 17, 0.34);
-    }
-
-    .project-orbit.has-focus .project-card.is-related::after {
-      background: var(--paper);
-    }
-
-    .project-thumb {
-      position: relative;
-      height: 82px;
-      margin: 10px 10px 0;
-      background: var(--fg);
-      border: 2px solid var(--fg);
-      overflow: hidden;
-      clip-path: polygon(
-        0 0,
-        calc(100% - 10px) 0,
-        100% 10px,
-        100% 100%,
-        0 100%
-      );
-    }
-
-    .project-thumb img {
+    .footer-mount {
+      flex: 1 1 auto;
+      min-height: 0;
       width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-      filter: saturate(0.95) contrast(1.04);
-      transform: scale(1.02);
-      transition:
-        transform 0.35s cubic-bezier(.16, 1, .3, 1),
-        filter 0.25s ease;
+      overflow-y: auto;
+      overflow-x: hidden;
+      overscroll-behavior: contain;
+      -webkit-overflow-scrolling: touch;
     }
-
-    .project-card:hover .project-thumb img,
-    .project-card.is-related .project-thumb img {
-      transform: scale(1.1);
-      filter: saturate(1.15) contrast(1.08);
-    }
-
-    .project-meta {
-      position: relative;
-      padding: 11px 12px 14px;
-      z-index: 10;
-    }
-
-    .project-kicker {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      margin-bottom: 8px;
-      font-size: 9px;
-      line-height: 1;
-      font-weight: 950;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: rgba(34, 34, 34, 0.58);
-    }
-
-    .project-card:hover .project-kicker,
-    .project-card.is-related .project-kicker {
-      color: rgba(255, 255, 255, 0.75);
-    }
-
-    .project-dot {
-      width: 18px;
-      height: 8px;
-      background: var(--accent);
-      border: 1.5px solid var(--fg);
-      border-radius: 999px;
+    .footer-mount::-webkit-scrollbar { width: 8px; }
+    .footer-mount::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.16); border-radius: 8px; }
+    .footer-copyright {
       flex: 0 0 auto;
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.36);
+      padding-top: 14px;
     }
-
-    .project-card:hover .project-dot,
-    .project-card.is-related .project-dot {
-      background: var(--paper);
+    /* footer-stage 内 About 内容微调：避免与 footer-stage 自身的 padding 叠加 */
+    .footer-stage .about-inner { padding-top: clamp(80px, 12vh, 132px); }
+    .footer-stage .about-path {
+      /* footer-stage 本身就是滚动容器，sticky 失效反而避免布局问题 */
+      position: static;
+      max-height: none;
+      overflow: visible;
+      padding-right: 0;
     }
-
-    .project-title {
-      font-size: clamp(15px, 1.18vw, 22px);
-      line-height: 0.92;
-      font-weight: 950;
-      letter-spacing: -0.075em;
-      text-transform: uppercase;
-      margin-bottom: 8px;
-    }
-
-    .project-desc {
-      font-size: 11px;
-      line-height: 1.35;
-      font-weight: 750;
-      letter-spacing: -0.03em;
-      color: rgba(34, 34, 34, 0.62);
-    }
-
-    .project-card:hover .project-desc,
-    .project-card.is-related .project-desc {
-      color: rgba(255, 255, 255, 0.82);
+    @media (max-width: 680px) {
+      .footer-stage .about-inner { padding-top: 72px; }
     }
 
     /* =========================
-      Category Focus Panel
+       5. INDEX 目录层
+       动画与层级关系保持不变：内容层之上、顶栏之下
     ========================= */
-    .category-panel {
-      position: absolute;
-      right: var(--pad);
-      top: 50%;
-      z-index: 60;
-
-      width: min(420px, 34vw);
-      min-height: 420px;
-
-      transform: translateY(-50%) translateX(28px);
-      opacity: 0;
-      pointer-events: none;
-
-      background: var(--paper);
-      border: 2px solid var(--fg);
-      color: var(--fg);
-
-      clip-path: polygon(
-        0 0,
-        calc(100% - 28px) 0,
-        100% 28px,
-        100% 100%,
-        28px 100%,
-        0 calc(100% - 28px)
-      );
-
-      box-shadow: 14px 14px 0 rgba(17, 17, 17, 0.24);
-
-      padding: 28px 28px 30px;
-
-      transition:
-        opacity 0.38s ease,
-        transform 0.46s cubic-bezier(.16, 1, .3, 1);
+    .index-scrim {
+      position: absolute; inset: 0; z-index: 880;
+      background: rgba(247, 247, 247, 0.82);
+      backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.45s ease;
     }
+    body.index-open .index-scrim { opacity: 1; pointer-events: auto; }
 
-    .category-panel::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      border: 2px solid var(--fg);
-      pointer-events: none;
-
-      clip-path: polygon(
-        0 0,
-        calc(100% - 28px) 0,
-        100% 28px,
-        100% 100%,
-        28px 100%,
-        0 calc(100% - 28px)
-      );
-    }
-
-    .category-panel::after {
-      content: "";
-      position: absolute;
-      right: -1px;
-      top: -1px;
-      width: 52px;
-      height: 52px;
-      background: var(--category-color, var(--yellow));
-      border-left: 2px solid var(--fg);
-      border-bottom: 2px solid var(--fg);
-      clip-path: polygon(100% 0, 100% 100%, 0 0);
-      pointer-events: none;
-    }
-
-    .category-mode .category-panel {
-      opacity: 1;
-      pointer-events: auto;
-      transform: translateY(-50%) translateX(0);
-    }
-
-    .category-close {
-      position: absolute;
-      right: 20px;
-      bottom: 18px;
-
-      z-index: 5;
-
-      width: 64px;
-      height: 34px;
-
-      border: 2px solid var(--fg);
-      background: var(--fg);
-      color: var(--bg);
-
-      font-size: 10px;
-      font-weight: 950;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-
-      cursor: pointer;
-      box-shadow: 4px 4px 0 rgba(17, 17, 17, 0.2);
-    }
-
-    .category-close:hover {
-      background: var(--category-color, var(--yellow));
-      color: var(--fg);
-    }
-
-    .category-kicker {
-      margin-bottom: 16px;
-
-      font-size: 11px;
-      font-weight: 950;
-      line-height: 1;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-
-      color: rgba(34, 34, 34, 0.52);
-    }
-
-    .category-title {
-      margin-bottom: 18px;
-
-      font-size: clamp(48px, 3.4vw, 72px);
-      line-height: 1;
-      font-weight: 990;
-      letter-spacing: -0.08em;
-      text-transform: uppercase;
-    }
-
-    .category-desc {
-      max-width: 340px;
-      margin-bottom: 26px;
-
-      font-size: 15px;
-      line-height: 1.55;
-      font-weight: 720;
-      letter-spacing: -0.035em;
-
-      color: rgba(34, 34, 34, 0.64);
-    }
-
-    .category-works {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      padding-bottom: 48px;
-    }
-
-    .category-work {
-      position: relative;
-
-      display: grid;
-      grid-template-columns: 42px 1fr 54px;
-      align-items: center;
-      gap: 12px;
-
-      padding: 12px 0;
-
-      border-top: 2px solid var(--fg);
-
-      cursor: pointer;
-
-      transition:
-        transform 0.24s cubic-bezier(.16, 1, .3, 1),
-        background 0.2s ease;
-    }
-
-    .category-work:last-child {
-      border-bottom: 2px solid var(--fg);
-    }
-
-    .category-work:hover {
-      transform: translateX(8px);
-      background: color-mix(in srgb, var(--category-color, var(--yellow)) 16%, transparent);
-    }
-
-    .category-work-no {
-      font-size: 11px;
-      font-weight: 950;
-      letter-spacing: 0.12em;
-      color: rgba(34, 34, 34, 0.5);
-    }
-
-    .category-work-main {
-      min-width: 0;
-    }
-
-    .category-work-title {
-      font-size: 18px;
-      line-height: 0.98;
-      font-weight: 950;
-      letter-spacing: -0.06em;
-      text-transform: uppercase;
-    }
-
-    .category-work-meta {
-      margin-top: 5px;
-      font-size: 10px;
-      line-height: 1.25;
-      font-weight: 850;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      color: rgba(34, 34, 34, 0.48);
-    }
-
-    .category-work-view {
-      justify-self: end;
-
-      width: 48px;
-      height: 28px;
-
-      display: grid;
-      place-items: center;
-
-      border: 2px solid var(--fg);
-      background: var(--paper);
-
-      font-size: 9px;
-      font-weight: 950;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-
-      box-shadow: 3px 3px 0 rgba(17, 17, 17, 0.18);
-    }
-
-    .category-work:hover .category-work-view {
-      background: var(--fg);
-      color: var(--bg);
-    }
-
-    .category-mode .project-orbit.has-focus .project-card:not(.is-related) {
-      opacity: 0.12;
-    }
-
-    .category-mode .slogan {
-      max-width: 540px;
-    }
-
-    @media (max-width: 768px) {
-      .category-panel {
-        left: var(--pad);
-        right: var(--pad);
-        top: auto;
-        bottom: max(22px, env(safe-area-inset-bottom));
-
-        width: auto;
-        min-height: auto;
-        max-height: 58svh;
-        overflow-y: auto;
-
-        transform: translateY(24px);
-        padding: 22px 22px 26px;
-      }
-
-      .category-mode .category-panel {
-        transform: translateY(0);
-      }
-
-      .category-mode .compass-stage {
-        transform: translate(-50%, -50%) scale(0.72);
-        opacity: 0.18;
-      }
-
-      .category-title {
-        font-size: clamp(34px, 11vw, 64px);
-      }
-
-      .category-desc {
-        font-size: 13px;
-      }
-
-      .category-work {
-        grid-template-columns: 36px 1fr 46px;
-      }
-
-      .category-work-title {
-        font-size: 16px;
-      }
-
-      .category-close {
-        position: relative;
-        right: auto;
-        bottom: auto;
-        margin-top: 16px;
-      }
-    }
-
-
-    /* =========================
-       Index View
-    ========================= */
     .index-panel {
-      position: absolute;
-      z-index: 35;
-
-      left: calc(50% + var(--stage-x));
-      top: 50%;
-
+      position: absolute; z-index: 900;
+      left: 50%; top: 50%;
       width: min(1080px, 82vw);
       max-height: min(70vh, 960px);
       overflow-y: auto;
-
       transform: translate(-50%, -45%) scale(0.96);
-
-      opacity: 0;
-      pointer-events: none;
-
+      opacity: 0; pointer-events: none;
       transition:
         opacity 0.45s ease,
         transform 0.55s cubic-bezier(.16, 1, .3, 1);
     }
-
-
-    .index-mode .index-panel {
+    body.index-open .index-panel {
       opacity: 1;
       transform: translate(-50%, -50%) scale(1);
       pointer-events: auto;
     }
 
     .index-head {
-      display: flex;
-      align-items: flex-end;
-      justify-content: space-between;
-      gap: 24px;
-      margin-bottom: 28px;
-      padding-bottom: 18px;
-      border-bottom: 2px solid var(--fg);
+      display: flex; align-items: flex-end; justify-content: space-between;
+      gap: 24px; margin-bottom: 28px; padding-bottom: 18px;
+      border-bottom: 2px solid var(--ink);
     }
-
     .index-title {
       font-size: clamp(40px, 6vw, 96px);
-      line-height: 0.88;
-      font-weight: 950;
-      letter-spacing: -0.085em;
-      text-transform: uppercase;
+      line-height: 0.88; font-weight: 950;
+      letter-spacing: -0.085em; text-transform: uppercase;
     }
-
     .index-desc {
-      max-width: 330px;
-      font-size: 14px;
-      line-height: 1.45;
-      font-weight: 750;
-      letter-spacing: -0.035em;
-      color: rgba(34, 34, 34, 0.58);
+      max-width: 330px; font-size: 14px; line-height: 1.45;
+      font-weight: 750; letter-spacing: -0.035em;
+      color: rgba(17, 17, 19, 0.58);
     }
 
     .work-grid {
@@ -1068,2057 +496,683 @@
       grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
       gap: 16px;
     }
-
     .work-row {
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-      background: var(--paper);
-      cursor: pointer;
+      display: flex; flex-direction: column; overflow: hidden;
+      background: var(--paper); cursor: pointer;
       transition:
         transform 0.25s cubic-bezier(.16, 1, .3, 1),
         box-shadow 0.2s ease;
     }
-
     .work-row:hover {
       transform: translateY(-4px);
       box-shadow: 10px 10px 0 rgba(17, 17, 17, 0.18);
     }
-
     .work-thumb {
-      display: block;
-      width: 100%;
-      aspect-ratio: 4 / 3;
-      object-fit: cover;
-      background: #ddd;
+      display: block; width: 100%; aspect-ratio: 4 / 3;
+      object-fit: cover; background: #ddd;
     }
-
     .work-body {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
+      display: flex; flex-direction: column; gap: 6px;
       padding: 14px 14px 16px;
     }
-
     .work-no {
-      font-size: 11px;
-      font-weight: 950;
-      letter-spacing: 0.14em;
-      opacity: 0.52;
+      font-size: 11px; font-weight: 950;
+      letter-spacing: 0.14em; opacity: 0.52;
     }
-
     .work-name {
-      font-size: 17px;
-      line-height: 1.05;
-      font-weight: 950;
-      letter-spacing: -0.05em;
-      text-transform: uppercase;
+      font-size: 17px; line-height: 1.05; font-weight: 950;
+      letter-spacing: -0.05em; text-transform: uppercase;
     }
-
     .work-tags {
-      font-size: 10px;
-      line-height: 1.35;
-      font-weight: 850;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      color: rgba(34, 34, 34, 0.48);
-    }
-
-    .hover-badge {
-      position: fixed;
-      left: 50%;
-      top: 50%;
-      z-index: 80;
-      pointer-events: none;
-      width: 78px;
-      height: 78px;
-      border-radius: 50%;
-      background: var(--fg);
-      color: var(--bg);
-      display: grid;
-      place-items: center;
-      font-size: 14px;
-      font-weight: 950;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      transform: translate(-50%, -50%) scale(0);
-      transition: transform 0.18s ease;
-      mix-blend-mode: difference;
-    }
-
-    .hover-badge.visible {
-      transform: translate(-50%, -50%) scale(1);
+      font-size: 10px; line-height: 1.35; font-weight: 850;
+      letter-spacing: 0.04em; text-transform: uppercase;
+      color: rgba(17, 17, 19, 0.48);
     }
 
     /* =========================
-       Responsive
+       6. 响应式：宽屏 / 笔电 / 平板 / 手机
     ========================= */
-    @media (max-width: 1180px) {
-      .project-card {
-        width: 170px;
-      }
 
-      .project-card:nth-of-type(3),
-      .project-card:nth-of-type(6) {
-        display: none;
-      }
+    /* 笔电：罗盘略缩 */
+    @media (max-width: 1400px) {
+      :root { --compass-size: min(440px, 60vw, 66vh); }
     }
 
-    @media (max-width: 1024px) {
-      .compass-stage {
-        width: min(96vmin, 760px);
-        height: min(96vmin, 760px);
-      }
-
-      .compass-wrap {
-        width: min(86vmin, 720px);
-        height: min(86vmin, 720px);
-      }
-
-      .slogan {
-        max-width: 420px;
-      }
-
-      .slogan-title {
-        font-size: clamp(34px, 8vw, 72px);
-      }
-
-      .project-card {
-        width: 150px;
-      }
-
-      .project-desc {
-        display: none;
-      }
-
-      .project-thumb {
-        height: 74px;
-      }
+    /* 触摸设备与窄屏：无 hover 语义，HUD 切片直接隐藏 */
+    @media (hover: none), (max-width: 900px) {
+      .hud-panel { display: none; }
     }
 
-    @media (max-width: 768px) {
+    /* 平板 / 小笔电：项目信息移到卡片下方居中，避免压在卡面上 */
+    @media (max-width: 1200px) {
+      .meta {
+        top: auto; bottom: 8vh; left: var(--pad); right: var(--pad);
+        transform: none; align-items: center; text-align: center;
+      }
+      .meta-name { max-width: none; font-size: clamp(22px, 4.4vw, 34px); }
+    }
+
+    /* 罗盘外置标注（引线 + 文字）在窄屏会超出画面，罗盘随之收窄（标注跨度约为罗盘的 1.78 倍） */
+    @media (max-width: 1000px) {
+      :root { --compass-size: min(440px, 51vw, 50vh); }
+    }
+
+    /* 平板 / 手机：卡片略收，堆叠更紧凑 */
+    @media (max-width: 900px) {
       :root {
-        --pad: 22px;
+        --card-w: min(74vw, 820px);
+        --card-h: min(46.25vw, 512.5px);
+        --stack-gap: 16vh;
       }
+      .index-col { display: none; }
+      .scroll-hint { bottom: 22px; }
+      .hero-intro { top: 70px; width: min(440px, 84vw); }
+      .portfolio-thesis { width: min(420px, 100%); }
+    }
 
-      html,
-      body {
-        width: 100%;
-        height: 100%;
-        overflow: hidden;
-        letter-spacing: -0.03em;
+    /* 手机 */
+    @media (max-width: 700px) {
+      .topbar { font-size: 11px; padding: 14px var(--pad); }
+      .brand { font-size: 13px; }
+      .topbar-actions { gap: 12px; }
+      .view-toggle { font-size: 12px; gap: 6px; }
+
+      .index-panel { width: calc(100vw - 44px); max-height: 64vh; }
+      .index-head { display: block; margin-bottom: 16px; }
+      .index-title { font-size: clamp(34px, 12vw, 62px); margin-bottom: 14px; }
+      .index-desc { font-size: 12px; }
+      .work-grid { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; }
+      .work-body { padding: 10px 10px 12px; }
+      .work-name { font-size: 15px; }
+      .work-tags { font-size: 9px; }
+    }
+
+    /* 手机：图片系统整体收小，上下留白，文字与卡片之间留出间隙 */
+    @media (max-width: 560px) {
+      :root {
+        --card-w: min(70vw, 820px);
+        --card-h: min(43.75vw, 512.5px);
+        --stack-gap: 15vh;
       }
-
-      .page {
-        width: 100vw;
-        height: 100svh;
-        min-height: 100svh;
-      }
-
-      .main-content {
-        display: block;
-        height: 100svh;
-        overflow: hidden;
-      }
-
-      .topbar {
-        top: 18px;
-        left: var(--pad);
-        right: var(--pad);
-        font-size: 11px;
-      }
-
-      .brand {
-        font-size: 15px;
-      }
-
-      .topbar-actions {
-        gap: 12px;
-      }
-
-      .view-toggle {
-        font-size: 10px;
-        gap: 5px;
-      }
-
-      .compass-stage {
-        position: absolute;
-        left: 50%;
-        top: 39%;
-        width: min(112vw, 520px);
-        height: min(112vw, 520px);
-        transform: translate(-50%, -50%);
-      }
-
-      .index-mode .compass-stage {
-        transform: translate(-50%, -50%) scale(0.7);
-      }
-
-      .compass-wrap {
-        width: 92vw;
-        height: 92vw;
-      }
-
-      .center-media {
-        width: 26%;
-        height: 26%;
-      }
-
-      .project-orbit {
-        display: none;
-      }
-
-      .slogan {
-        left: var(--pad);
-        right: var(--pad);
-        bottom: max(28px, env(safe-area-inset-bottom));
-        max-width: none;
-        z-index: 45;
-      }
-
-      .index-mode .slogan {
-        opacity: 0;
-        pointer-events: none;
-      }
-
-      .slogan-kicker {
-        font-size: 10px;
-        margin-bottom: 10px;
-        letter-spacing: 0.12em;
-      }
-
-      .slogan-title {
-        font-size: clamp(34px, 12vw, 54px);
-        line-height: 0.9;
-        max-width: 320px;
-        letter-spacing: -0.095em;
-      }
-
-      .slogan-desc {
-        margin-top: 14px;
-        max-width: 330px;
-        font-size: 13px;
-        line-height: 1.5;
-        letter-spacing: -0.02em;
-        opacity: 0.68;
-      }
-
-      .ring-label {
-        font-size: 30px;
-        letter-spacing: 0.1em;
-      }
-
-      .hover-badge {
-        display: none;
-      }
-
-
-      .hero-actions {
-        margin-top: 16px;
-        gap: 8px;
-      }
-
-      .hero-btn {
-        min-height: 34px;
-        padding: 9px 13px;
-        font-size: 11px;
-        border-width: 1.4px;
-        box-shadow: 0 3px 0 rgba(17, 17, 17, 0.08);
-      }
-
-      .index-panel {
-        left: 50%;
-        top: 53%;
-        width: calc(100vw - 44px);
-        max-height: 64svh;
-        overflow-y: auto;
-      }
-
-      .index-head {
-        display: block;
-        margin-bottom: 16px;
-      }
-
-      .index-title {
-        font-size: clamp(42px, 14vw, 70px);
-        margin-bottom: 14px;
-      }
-
-      .index-desc {
-        font-size: 12px;
-      }
-
-      .work-grid {
-        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-        gap: 10px;
-      }
-
-      .work-body {
-        padding: 10px 10px 12px;
-      }
-
-      .work-name {
-        font-size: 15px;
-      }
-
-      .work-tags {
-        font-size: 9px;
-      }
+      .meta { bottom: 7vh; }
     }
 
     @media (max-width: 430px) {
-      :root {
-        --pad: 18px;
-      }
-
-      .topbar {
-        top: 16px;
-      }
-
-      .compass-stage {
-        top: 38%;
-        width: 92vw;
-        height: 92vw;
-      }
-
-      .compass-wrap {
-        width: 92vw;
-        height: 92vw;
-      }
-
-      .slogan {
-        bottom: max(24px, env(safe-area-inset-bottom));
-      }
-
-      .slogan-title {
-        font-size: clamp(31px, 12.5vw, 46px);
-        max-width: 300px;
-      }
-
-      .slogan-desc {
-        max-width: 300px;
-        font-size: 12.5px;
-      }
-
-      .ring-label {
-        font-size: 30px;
-      }
-
-
-      .hero-actions {
-        margin-top: 14px;
-        gap: 7px;
-      }
-
-      .hero-btn {
-        min-height: 32px;
-        padding: 8px 11px;
-        font-size: 10.5px;
-      }
+      :root { --pad: 18px; }
     }
 
-    @supports (height: 100svh) {
-      html,
-      body,
-      .page,
-      .main-content {
-        height: 100svh;
-      }
+    /* 矮视口（笔电小窗）：罗盘缩一档给顶部标题让位 + 标题副标收紧。
+       放在所有宽度断点之后，保证 :root 的 62vh 覆盖断点里的 66vh/50vh。 */
+    @media (max-height: 800px) {
+      :root { --compass-size: min(720px, 78vw, 62vh); }
     }
-
-    @media (hover: none), (pointer: coarse) {
-      .sector-group:hover {
-        transform: none;
-        filter: none;
-      }
-
-      .sector-group:hover .ring-sector {
-        transform: none;
-      }
-    }
-
-    /* ---------- Nest Hub / 1024 × 600 / 矮屏横向 ---------- */
-    @media screen and (min-width: 769px) and (max-width: 1100px) and (max-height: 760px) {
-      :root {
-        --card-scale: 0.78 !important;
-      }
-
-      .compass-stage {
-        position: absolute !important;
-        left: 63% !important;
-        top: 47% !important;
-
-        width: 560px !important;
-        height: 560px !important;
-
-        transform: translate(-50%, -50%) scale(0.86) !important;
-      }
-
-      .compass-wrap {
-        width: 480px !important;
-        height: 480px !important;
-      }
-
-      .project-card {
-        width: 185px   !important;
-        min-height: 138px !important;
-        transform:
-          translate(-50%, -50%)
-          translate(var(--x), var(--y))
-          rotate(var(--rot))
-          scale(0.78) !important;
-      }
-
-      .project-thumb {
-        height: 52px !important;
-        margin: 7px 7px 0 !important;
-      }
-
-      .project-meta {
-        padding: 8px 9px 10px !important;
-      }
-
-      .project-kicker {
-        font-size: 7px !important;
-        margin-bottom: 5px !important;
-      }
-
-      .project-title {
-        font-size: 13px !important;
-        line-height: 0.95 !important;
-      }
-
-      .project-desc {
-        display: none !important;
-      }
-
-      .slogan {
-        left: 38px !important;
-        bottom: 34px !important;
-        max-width: 390px !important;
-      }
-
-      .slogan-kicker {
-        font-size: 13px !important;
-        margin-bottom: 10px !important;
-      }
-
-      .slogan-title {
-        font-size: 52px !important;
-        line-height: 0.88 !important;
-        max-width: 390px !important;
-      }
-
-      .slogan-desc {
-        max-width: 360px !important;
-        margin-top: 14px !important;
-        font-size: 13px !important;
-        line-height: 1.42 !important;
-      }
-
-      .hero-actions {
-        margin-top: 16px !important;
-      }
-
-      .hero-btn {
-        min-height: 34px !important;
-        padding: 8px 12px !important;
-        font-size: 11px !important;
-      }
-
-      .ring-label {
-        font-size: 18px !important;
-        letter-spacing: 0.1em !important;
-      }
-    }
-
-    /* ---------- iPad Pro / 1024 × 1366 / 竖屏平板 ---------- */
-    @media screen and (min-width: 769px) and (max-width: 1100px) and (min-height: 900px) and (orientation: portrait) {
-      :root {
-        --card-scale: 1 !important;
-      }
-
-      .compass-stage {
-        position: absolute !important;
-        left: 50% !important;
-        top: 34% !important;
-
-        width: 760px !important;
-        height: 760px !important;
-
-        transform: translate(-50%, -50%) scale(0.92) !important;
-      }
-
-      .compass-wrap {
-        width: 620px !important;
-        height: 620px !important;
-      }
-
-      .project-card {
-        width: 185px   !important;
-        min-height: 138px !important;
-
-        transform:
-          translate(-50%, -50%)
-          translate(var(--x), var(--y))
-          rotate(var(--rot))
-          scale(1) !important;
-      }
-
-      .project-thumb {
-        height: 78px !important;
-        margin: 10px 10px 0 !important;
-      }
-
-      .project-meta {
-        padding: 10px 12px 13px !important;
-      }
-
-      .project-kicker {
-        font-size: 8px !important;
-        margin-bottom: 7px !important;
-      }
-
-      .project-title {
-        font-size: 17px !important;
-        line-height: 0.95 !important;
-      }
-
-      .project-desc {
-        display: none !important;
-      }
-
-      .project-card:nth-of-type(1) {
-        --x: -330px !important;
-        --y: -205px !important;
-      }
-
-      .project-card:nth-of-type(2) {
-        --x: 330px !important;
-        --y: -205px !important;
-      }
-
-      .project-card:nth-of-type(3) {
-        --x: 360px !important;
-        --y: 30px !important;
-      }
-
-      .project-card:nth-of-type(4) {
-        --x: 170px !important;
-        --y: 305px !important;
-      }
-
-      .project-card:nth-of-type(5) {
-        --x: -170px !important;
-        --y: 305px !important;
-      }
-
-      .project-card:nth-of-type(6) {
-        --x: -360px !important;
-        --y: 30px !important;
-      }
-
-      .slogan {
-        left: 56px !important;
-        bottom: 70px !important;
-        max-width: 580px !important;
-      }
-
-      .slogan-title {
-        font-size: 70px !important;
-        line-height: 0.9 !important;
-        max-width: 580px !important;
-      }
-
-      .slogan-desc {
-        max-width: 560px !important;
-        font-size: 15px !important;
-        line-height: 1.5 !important;
-      }
-
-      .ring-label {
-        font-size: 17px !important;
-        letter-spacing: 0.08em !important;
-      }
-    }
-
-
-  
-    /* =========================
-       Scroll Journey (desktop)
-    ========================= */
-    html.journey-on,
-    html.journey-on body {
-      height: auto;
-      overflow: visible;
-    }
-
-    html.journey-on .page {
-      position: fixed;
-      inset: 0;
-      width: 100vw;
-      height: 100vh;
-      height: 100svh;
-    }
-
-    html.journey-on .compass-stage {
-      position: absolute;
-      left: 50%;
-      top: 50%;
-      width: min(112vmin, 1120px, calc(100vw - 2 * var(--pad)));
-      height: min(112vmin, 1120px, calc(100vw - 2 * var(--pad)));
-      transition: none;
-    }
-
-    /* ---------- Tablet (769–1100px): circle top-right, title below-left ---------- */
-    @media (min-width: 769px) and (max-width: 1100px) {
-      html.journey-on .compass-stage {
-        width: min(56vmin, 470px, calc(100vw - 2 * var(--pad)));
-        height: min(56vmin, 470px, calc(100vw - 2 * var(--pad)));
-      }
-
-      .slogan.journey-mid {
-        top: 52%;
-        max-width: 460px;
-      }
-    }
-
-    .compass {
-      transform-origin: 50% 50%;
-    }
-
-    .sector-group.is-live[data-id="spatial"] .ring-sector {
-      fill: var(--pink);
-    }
-
-    .sector-group.is-live[data-id="robotics"] .ring-sector {
-      fill: var(--green);
-    }
-
-    .sector-group.is-live[data-id="product"] .ring-sector {
-      fill: var(--blue);
-    }
-
-    .sector-group.is-live[data-id="about"] .ring-sector {
-      fill: var(--yellow);
-    }
-
-    .sector-group.is-live .ring-label {
-      fill: #ffffff;
-    }
-
-    .sector-group.is-live[data-id="about"] .ring-label {
-      fill: var(--fg);
-    }
-
-    .scroll-hint {
-      position: absolute;
-      left: 50%;
-      bottom: 26px;
-      z-index: 45;
-      transform: translateX(-50%);
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      gap: 8px;
-      font-size: 20px;
-      font-weight: 950;
-      letter-spacing: 0.28em;
-      text-transform: uppercase;
-      color: #ffffff;
-      mix-blend-mode: difference;
-      pointer-events: none;
-      transition: opacity 0.3s ease;
-    }
-
-    html.journey-on .scroll-hint {
-      display: flex;
-    }
-
-    .scroll-hint i {
-      display: block;
-      width: 1px;
-      height: 30px;
-      background: rgba(255, 255, 255, 0.35);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .scroll-hint i::after {
-      content: "";
-      position: absolute;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 40%;
-      background: #ffffff;
-      animation: hintDrop 1.5s ease-in-out infinite;
-    }
-
-    @keyframes hintDrop {
-      0% { transform: translateY(-110%); }
-      100% { transform: translateY(260%); }
-    }
-
-    .journey-cta {
-      display: inline-flex;
-      align-items: center;
-      padding: 2px 0;
-      border: 0;
-      border-bottom: 2px solid var(--fg);
-      background: none;
-      color: var(--fg);
-      font-size: 24px;
-      font-weight: 950;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      opacity: 0;
-      pointer-events: none;
-      transform: translateY(4px);
-      transition: opacity 0.3s ease, transform 0.3s ease, background 0.2s ease, color 0.2s ease;
-    }
-
-    .journey-cta.show {
-      opacity: 1;
-      pointer-events: auto;
-      transform: none;
-    }
-
-    .journey-cta:hover {
-      background: var(--fg);
-      color: var(--bg);
-    }
-  
-    .journeying .sector-group:hover,
-    .journeying .sector-group:hover .ring-sector {
-      transform: none;
-      filter: none;
-    }
-  
-    .sector-group.is-dim .ring-sector {
-      fill: #b0aa9f;
-    }
-
-    .slogan.journey-mid {
-      top: 46%;
-      bottom: auto;
-      transform: translateY(-50%);
-      max-width: 640px;
-    }
-
-    .slogan.journey-mid .slogan-title {
-      max-width: 900px;
-      font-size: clamp(30px, 3.2vw, 52px);
-      letter-spacing: -0.06em;
-    }
-
-
-    .bg-tint {
-      position: absolute;
-      inset: 0;
-      z-index: 0;
-      pointer-events: none;
-      transition: background 0.6s ease;
-    }
-  
-    .journey-rail {
-      position: absolute;
-      left: 16px;
-      top: 50%;
-      z-index: 46;
-      transform: translateY(-50%);
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-      font-size: 9px;
-      font-weight: 950;
-      letter-spacing: 0.12em;
-      color: rgba(34, 34, 34, 0.4);
-      opacity: 0;
-      transition: opacity 0.3s ease;
-      pointer-events: none;
-    }
-
-    .journey-rail span {
-      display: flex;
-      align-items: center;
-      gap: 7px;
-      transition: color 0.25s ease;
-    }
-
-    .journey-rail span::before {
-      content: "";
-      width: 5px;
-      height: 5px;
-      background: currentColor;
-      transition: transform 0.25s ease;
-    }
-
-    .journey-rail span.on {
-      color: var(--fg);
-    }
-
-    .journey-rail span.on::before {
-      transform: scale(1.6) rotate(45deg);
-    }
-
-    .journey-next {
-      position: absolute;
-      left: 50%;
-      bottom: 24px;
-      z-index: 46;
-      transform: translateX(-50%);
-      font-size: 10px;
-      font-weight: 950;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      color: rgba(34, 34, 34, 0.55);
-      opacity: 0;
-      transition: opacity 0.3s ease;
-      pointer-events: none;
-      white-space: nowrap;
-    }
-  
-    .topbar-cta {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .topbar-btn {
-      padding: 6px 0;
-      color: var(--fg);
-      font-size: inherit;
-      font-weight: 950;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      white-space: nowrap;
-      opacity: 0.88;
-      transition: opacity 0.2s ease, transform 0.2s ease;
-    }
-
-    .topbar-btn:hover {
-      opacity: 1;
-      transform: translateY(-1px);
-    }
-
-
-
-    .sector-group.is-dim .ring-label {
-      fill: rgba(34, 34, 34, 0.55);
-    }
-  
-    .hero-actions .end-link {
-      display: none;
-    }
-
-    .slogan.end-mode {
-      left: 50%;
-      right: auto;
-      top: auto;
-      bottom: 150px;
-      transform: translateX(-50%);
-      max-width: 560px;
-      text-align: center;
-      display: grid;
-      justify-items: center;
-      gap: 8px;
-    }
-
-    .slogan.end-mode .slogan-kicker {
-      margin-bottom: 0;
-      font-size: 18px;
-      opacity: 0.6;
-    }
-
-    .slogan.end-mode .slogan-title {
-      max-width: none;
-      font-size: clamp(32px, 2.6vw, 40px);
-      letter-spacing: -0.04em;
-      white-space: nowrap;
-    }
-
-    .slogan.end-mode .slogan-title br {
-      display: none;
-    }
-
-    .slogan.end-mode .slogan-desc {
-      margin-top: 0;
-      max-width: 480px;
-      font-size: 14px;
-      line-height: 1.5;
-      opacity: 0.68;
-    }
-
-    .slogan.end-mode .hero-actions {
-      margin-top: 6px;
-      justify-content: center;
-      gap: 22px;
-    }
-
-    .slogan.end-mode .hero-actions .end-link {
-      display: inline-flex;
-      opacity: 1;
-      pointer-events: auto;
-      transform: none;
-    }
-
-    .slogan.end-mode #journeyCta {
-      display: none;
-    }
-  
-    @media (max-width: 768px) {
-      .slogan.journey-mid {
-        left: 50%;
-        top: 64%;
-        right: auto;
-        bottom: auto;
-        transform: translate(-50%, -50%);
-        max-width: calc(100vw - 44px);
-        text-align: center;
-      }
-
-      .slogan.journey-mid .slogan-title {
-        font-size: clamp(24px, 7vw, 34px);
-        white-space: normal;
-      }
-
-      .slogan.end-mode {
-        max-width: calc(100vw - 44px);
-      }
-
-      .slogan.end-mode .slogan-title {
-        white-space: normal;
-        font-size: clamp(22px, 7vw, 30px);
-      }
-
-      .journey-rail {
-        display: none;
-      }
-
-      .journey-cta {
-        font-size: 16px;
-      }
-
-      .journey-next {
-        font-size: 9px;
-        max-width: calc(100vw - 32px);
-        white-space: normal;
-        text-align: center;
-      }
-    }
-  
-    .journey-rail span.on {
-      color: var(--fg);
+    @media (max-height: 720px) {
+      .hero-intro { gap: 8px; }
+      .hero-role { font-size: clamp(22px, 2.4vw, 28px); }
+      .portfolio-thesis { line-height: 1.45; }
     }
   </style>
 </head>
-
 <body>
-  <div class="page" id="pageContainer">
-    <div class="bg-tint" id="bgTint"></div>
-    <div class="grid-lines"></div>
-    <div class="noise"></div>
 
-    <div class="main-content" id="mainContent">
-      <header class="topbar">
-        <div class="brand" id="brand">周子恒 · 设计智能</div>
+  <!-- Topbar -->
+  <header class="topbar">
+    <div class="brand" id="brand">周子恒</div>
 
-        <div class="topbar-actions">
-          <div class="topbar-cta">
-            <a id="resumeBtnTop" class="topbar-btn" href="doc/简历.pdf" target="_blank" rel="noopener">查看简历</a>
-            <span class="view-dot"></span>
-            <a id="contactBtnTop" class="topbar-btn" href="mailto:zhou_ziheng1@outlook.com">联系我</a>
-          </div>
-          <div class="view-toggle" aria-label="视图切换">
-            <button id="mapViewBtn" class="active" type="button">Map</button>
-            <span class="view-dot"></span>
-            <button id="indexViewBtn" type="button">Index</button>
-          </div>
-        </div>
-      </header>
-
-      <section class="slogan">
-        <div class="slogan-kicker" id="sloganKicker">设计智能 / DESIGN INTELLIGENCE</div>
-
-        <h1 class="slogan-title" id="sloganTitle">空间智能与<br>人机协同工作流设计者</h1>
-
-        <p class="slogan-desc" id="sloganDesc">
-          我设计 AI 驱动的产品系统、空间生成工作流与智能体仿真工具。将专业判断转化为可计算、可评估、可落地的设计智能系统。
-        </p>
-
-        <div class="hero-actions" aria-label="主要操作">
-          <a id="resumeBtn" class="journey-cta end-link" href="doc/简历.pdf" target="_blank" rel="noopener">查看简历 ↗</a>
-          <a id="contactBtn" class="journey-cta end-link" href="mailto:zhou_ziheng1@outlook.com">联系我 ↗</a>
-          <a id="journeyCta" class="journey-cta" href="#">查看项目 ↗</a>
-        </div>
-      </section>
-
-      <section class="compass-stage" id="compassStage">
-        <section class="compass-wrap">
-          <svg class="compass" viewBox="0 0 1000 1000">
-            <defs id="defs">
-              <filter id="flat-shadow-initial" x="-20%" y="-20%" width="140%" height="150%">
-                <feDropShadow dx="0" dy="15" stdDeviation="0" flood-color="#111111" flood-opacity="0.4" />
-              </filter>
-
-              <filter id="flat-shadow-active" x="-30%" y="-30%" width="160%" height="170%">
-                <feDropShadow dx="0" dy="20" stdDeviation="0" flood-color="#111111" flood-opacity="0.6" />
-              </filter>
-            </defs>
-
-            <g id="bg-decorations">
-              <circle cx="500" cy="500" r="475" class="bg-deco-ring" stroke-dasharray="2200 800" transform="rotate(-45 500 500)" />
-              <circle cx="500" cy="500" r="302.5" class="bg-deco-ring" stroke-dasharray="950 950" transform="rotate(30 500 500)" />
-              <circle cx="500" cy="500" r="195" class="bg-deco-ring" stroke-dasharray="900 300" transform="rotate(-120 500 500)" />
-              <circle cx="500" cy="500" r="460" class="bg-deco-ring" stroke-dasharray="4 12" style="opacity: 0.05;" />
-            </g>
-
-            <g id="rings"></g>
-            <g id="sketch-arrows"></g>
-          </svg>
-
-          <div class="center-media">
-            <img class="active" id="center-default" src="images/portrait.jpg" alt="">
-            <img id="center-product" src="images/EC/0.jpg" alt="">
-            <img id="center-spatial" src="images/AGR/City-NY.jpg" alt="空间智能仿真">
-            <img id="center-robotics" src="images/UCL/STIG_01.jpg" alt="极端环境下的无人建造">
-            <img id="center-about" src="images/portrait.jpg" alt="">
-            <img id="center-logo" src="images/logo.png" alt="">
-            <img id="center-j1" src="images/AGR/City-NY.jpg" alt="">
-            <img id="center-j2" src="images/ARC/1.jpg" alt="">
-            <img id="center-j3" src="images/llmToConstruction/BRIDGE_00.jpg" alt="">
-            <img id="center-j4" src="images/UCL/STIG_00.jpg" alt="">
-            <img id="center-j5" src="images/EC/0.jpg" alt="">
-          </div>
-        </section>
-      </section>
-
-      <section class="index-panel" id="indexPanel" aria-label="作品索引">
-        <div class="index-head">
-          <h2 class="index-title">项目经历</h2>
-          <p class="index-desc">
-            5 个项目对应 3 种能力维度：空间意图生成、空间智能仿真、生成能力产品化。
-          </p>
-        </div>
-          <div class="work-grid">
-            <article class="work-row" data-link="work-global-relay-conference.html">
-              <img class="work-thumb" src="images/AGR/City-NY.jpg" alt="AI GLOBAL RELAY会议" loading="lazy" />
-              <div class="work-body">
-                <div class="work-no">01</div>
-                <h3 class="work-name">AI GLOBAL RELAY会议</h3>
-                <div class="work-tags">Spatial AIGC / Sketch / Reference / Prompt</div>
-              </div>
-            </article>
-
-            <article class="work-row" data-link="work-interior-ai.html">
-              <img class="work-thumb" src="images/ARC/1.jpg" alt="商业空间视觉设计" loading="lazy" />
-              <div class="work-body">
-                <div class="work-no">02</div>
-                <h3 class="work-name">商业空间视觉设计</h3>
-                <div class="work-tags">AIGC工作流落地 · Prompt体系沉淀 · 流程标准化</div>
-              </div>
-            </article>
-
-            <article class="work-row" data-link="work-LLM_to_Construction.html">
-              <img class="work-thumb" src="images/llmToConstruction/BRIDGE_00.jpg" alt="自然语言需求转化" loading="lazy" />
-              <div class="work-body">
-                <div class="work-no">03</div>
-                <h3 class="work-name">自然语言需求转化</h3>
-                <div class="work-tags">TEXT-TO-3D × 模块化建造 × 跨团队协作</div>
-              </div>
-            </article>
-
-            <article class="work-row" data-link="work-ucl.html">
-              <img class="work-thumb" src="images/UCL/STIG_00.jpg" alt="极端环境下的无人建造" loading="lazy" />
-              <div class="work-body">
-                <div class="work-no">04</div>
-                <h3 class="work-name">极端环境下的无人建造</h3>
-                <div class="work-tags">空间设计 × 机器人控制 × 交互仿真 × 智能建造</div>
-              </div>
-            </article>
-
-            <article class="work-row" data-link="work-ai-commerce.html">
-              <img class="work-thumb" src="images/EC/0.jpg" alt="AI 电商素材生成平台" loading="lazy" />
-              <div class="work-body">
-                <div class="work-no">05</div>
-                <h3 class="work-name">AI 电商素材生成平台</h3>
-                <div class="work-tags">PRD文档 · 竞品分析报告 · 多模型Benchmark评测报告</div>
-              </div>
-            </article>
-          </div>
-      </section>
-      
-      <section class="category-panel" id="categoryPanel" aria-label="主题聚焦">
-        <button class="category-close" id="categoryClose" type="button">CLOSE</button>
-
-        <div class="category-kicker" id="categoryKicker">01 / SPATIAL GENERATION</div>
-        <h2 class="category-title" id="categoryTitle">空间意图如何<br>被生成？</h2>
-        <p class="category-desc" id="categoryDesc">
-          从自然语言、草图、模型与空间参考出发，构建可控的 AIGC 工作流，将模糊设计意图转化为可讨论、可迭代的空间视觉方案。
-        </p>
-
-        <div class="category-works" id="categoryWorks"></div>
-      </section>
+    <div class="topbar-actions">
+      <!-- 右侧唯一入口：Projects • Index • 关于我（view-toggle 模式）；简历/联系入口不再出现在顶栏 -->
+      <div class="view-toggle" aria-label="视图切换">
+        <button id="projectsViewBtn" type="button">Projects</button>
+        <span class="view-dot"></span>
+        <button id="indexViewBtn" type="button">Index</button>
+        <span class="view-dot"></span>
+        <button id="aboutBtnTop" type="button">关于我</button>
+      </div>
     </div>
+  </header>
 
+  <div class="viewport">
 
-    </div>
-    <div class="hover-badge" id="hoverBadge">点击查看 </div>
-    <div class="scroll-hint" id="scrollHint">向下滑动<i></i></div>
-    <div class="journey-rail" id="journeyRail" aria-hidden="true"><span>01</span><span>02</span><span>03</span><span>04</span><span>05</span></div>
-    <div class="journey-next" id="journeyNext" aria-hidden="true"></div>
+    <!-- SVG 液态滤镜 -->
+    <svg class="goo-filter" aria-hidden="true">
+      <defs>
+        <filter id="liquid">
+          <feGaussianBlur in="SourceGraphic" stdDeviation="12" result="blur" />
+          <feColorMatrix in="blur" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 24 -10" result="goo" />
+          <feComposite in="SourceGraphic" in2="goo" operator="atop" />
+        </filter>
+      </defs>
+    </svg>
+
+    <!-- =======================================
+         STAGE 1: 首页罗盘 (Hero)
+    ======================================== -->
+    <section class="compass-stage" id="compassStage">
+      <div class="hero-intro">
+        <h2 class="hero-role">空间智能与人机协同工作流设计者</h2>
+        <p class="portfolio-thesis">从空间设计问题出发，把 AIGC、交互与评测转成可控制、可验证的工具原型。</p>
+      </div>
+      <div class="compass-box">
+        
+        <!-- 正圆形 SVG (保持 stroke-width: 42) -->
+        <svg class="compass-svg" viewBox="0 0 300 300">
+          <!-- 黑白方案：弧线用极暗金属灰渐变（#1e1e22→#333338），hover 切换亮金属渐变 -->
+          <defs>
+            <!-- 渐变一律 userSpaceOnUse：坐标基于整圆用户坐标系（viewBox 0 0 300 300），
+                 向量 = 弧弦向两端各延伸 50%，每条弧只落渐变全程的 25%~75%。
+                 之前默认 objectBoundingBox 按弧自身包围盒映射（arc2 包围盒仅 10px 宽），
+                 渐变被压扁并与包围盒边缘耦合，视觉上出现方形色块。 -->
+            <linearGradient id="arcG0" gradientUnits="userSpaceOnUse" x1="90" y1="-20" x2="330" y2="140">
+              <stop offset="0" stop-color="#1e1e22" /><stop offset="1" stop-color="#333338" />
+            </linearGradient>
+            <linearGradient id="arcG1" gradientUnits="userSpaceOnUse" x1="330" y1="160" x2="90" y2="320">
+              <stop offset="0" stop-color="#1e1e22" /><stop offset="1" stop-color="#333338" />
+            </linearGradient>
+            <linearGradient id="arcG2" gradientUnits="userSpaceOnUse" x1="30" y1="250" x2="30" y2="50">
+              <stop offset="0" stop-color="#1e1e22" /><stop offset="1" stop-color="#333338" />
+            </linearGradient>
+            <linearGradient id="arcG0h" gradientUnits="userSpaceOnUse" x1="90" y1="-20" x2="330" y2="140">
+              <stop offset="0" stop-color="#333338" /><stop offset="1" stop-color="#6e6e6e" />
+            </linearGradient>
+            <linearGradient id="arcG1h" gradientUnits="userSpaceOnUse" x1="330" y1="160" x2="90" y2="320">
+              <stop offset="0" stop-color="#333338" /><stop offset="1" stop-color="#6e6e6e" />
+            </linearGradient>
+            <linearGradient id="arcG2h" gradientUnits="userSpaceOnUse" x1="30" y1="250" x2="30" y2="50">
+              <stop offset="0" stop-color="#333338" /><stop offset="1" stop-color="#6e6e6e" />
+            </linearGradient>
+            <!-- 滤镜区域固定 userSpaceOnUse、大于整圆（含 42px 描边与模糊外溢）：
+                 百分比区域在窄包围盒弧段上会把白光硬裁成方形亮条 -->
+            <filter id="sheenBlur" filterUnits="userSpaceOnUse" x="-40" y="-40" width="380" height="380">
+              <feGaussianBlur stdDeviation="4" />
+            </filter>
+          </defs>
+
+          <!-- 引线起点统一取弧线外缘（r = 130 + 42/2 = 151），与圆环边缘齐平 -->
+          <!-- 弧线 0: 01 / AI 集群建造 -->
+          <path class="arc-segment" id="arc0" d="M 150,20 A 130,130 0 0,1 270,100" />
+          <path class="arc-sheen" d="M 150,20 A 130,130 0 0,1 270,100" filter="url(#sheenBlur)" />
+          <path class="pointer-line" d="M 289.4,91.9 L 306.8,82" />
+          <text x="310" y="78" class="annotation-text">01 / AI 集群建造</text>
+
+          <!-- 弧线 1: 02 / AIGC 视觉设计 -->
+          <path class="arc-segment" id="arc1" d="M 270,200 A 130,130 0 0,1 150,280" />
+          <path class="arc-sheen" d="M 270,200 A 130,130 0 0,1 150,280" filter="url(#sheenBlur)" />
+          <path class="pointer-line" d="M 289.4,208.1 L 306.8,218" />
+          <text x="310" y="225" class="annotation-text">02 / AIGC 视觉设计</text>
+
+          <!-- 弧线 2: 03 / AIGC 产品化 -->
+          <path class="arc-segment" id="arc2" d="M 30,200 A 130,130 0 0,1 30,100" />
+          <path class="arc-sheen" d="M 30,200 A 130,130 0 0,1 30,100" filter="url(#sheenBlur)" />
+          <path class="pointer-line" d="M 10.6,91.9 L -6.8,82" />
+          <text x="-120" y="78" class="annotation-text">03 / AIGC 产品化 </text>
+        </svg>
+
+        <!-- 中心圆变方变形 Portal -->
+        <div class="morph-portal" id="morphPortal">
+          <img id="portalImg" src="images/UCL/STIG_00.jpg" alt="极端环境无人建造" />
+        </div>
+
+        <!-- Hover HUD：中心 Portal 向弧区切线方向延伸的玻璃切片（TYPE 组头 + 组内项目竖排） -->
+        <div class="hud-panel" id="hudPanel" aria-hidden="true">
+          <div class="hud-group">
+            <span class="hud-group-no" id="hudNo">01</span>
+            <span class="hud-group-name" id="hudGroupName">AI 集群建造</span>
+          </div>
+          <div class="hud-list" id="hudList"></div>
+        </div>
+
+      </div>
+
+      <!-- 底部引导：竖线 + 中文 + 英文（所有尺寸居中） -->
+      <div class="scroll-hint">
+        <i></i>
+        <span class="scroll-hint-cn">向下滑动</span>
+        <span class="scroll-hint-en">Scroll down to unlock portfolio</span>
+      </div>
+    </section>
+
+    <!-- =======================================
+         STAGE 2: J 方案作品集中枢 (Portfolio Stage)
+    ======================================== -->
+    <main class="portfolio-stage" id="portfolioStage">
+      <div class="ring" id="ring">
+        <article class="card" data-index="0" data-href="work-ucl.html">
+          <img src="images/UCL/STIG_00.jpg" alt="极端环境无人建造" />
+        </article>
+        <article class="card" data-index="1" data-href="work-ai-commerce.html">
+          <img src="images/EC/0.jpg" alt="AI 电商素材生成" />
+        </article>
+        <article class="card" data-index="2" data-href="work-LLM_to_Construction.html">
+          <img src="images/llmToConstruction/BRIDGE_00.jpg" alt="自然语言需求转化" />
+        </article>
+        <article class="card" data-index="3" data-href="work-interior-ai.html">
+          <img src="images/ARC/0.png" alt="MixC" />
+        </article>
+        <article class="card" data-index="4" data-href="work-global-relay-conference.html">
+          <img src="images/AGR/Final Assets/2100s_2.jpg" alt="AI Global Relay" />
+        </article>
+      </div>
+
+      <div class="meta">
+        <h2 class="meta-name" id="metaName">极端环境无人建造</h2>
+        <span class="meta-type" id="metaType">Robotic Fabrication · 2025</span>
+      </div>
+
+      <nav class="index-col" id="indexCol">
+        <button data-goto="0">01 无人建造</button>
+        <button data-goto="1">02 AI 电商</button>
+        <button data-goto="2">03 Text-to-3D</button>
+        <button data-goto="3">04 商业空间</button>
+        <button data-goto="4">05 AI Global Relay</button>
+      </nav>
+    </main>
+
+    <!-- =======================================
+         STAGE 3: 页尾关于我 (Footer Stage)
+    ======================================== -->
+    <footer class="footer-stage" id="footerStage">
+      <!-- 全站统一的「关于我」完整内容：直接渲染在首页页尾，不依赖浮层 -->
+      <div class="footer-mount about-scroll"></div>
+      <div class="footer-copyright">© 2026 周子恒. All rights reserved.</div>
+    </footer>
+
+    <!-- =======================================
+         INDEX 目录层
+    ======================================== -->
+    <div class="index-scrim" id="indexScrim"></div>
+
+    <section class="index-panel" id="indexPanel" aria-label="作品索引">
+      <div class="index-head">
+        <h2 class="index-title">项目经历</h2>
+        <p class="index-desc">
+          5 个项目对应 3 种能力维度：空间意图生成、空间智能仿真、生成能力产品化。
+        </p>
+      </div>
+      <div class="work-grid">
+        <article class="work-row" data-link="work-ucl.html">
+          <img class="work-thumb" src="images/UCL/STIG_00.jpg" alt="极端环境下的无人建造" loading="lazy" />
+          <div class="work-body">
+            <h3 class="work-name">极端环境下的无人建造</h3>
+            <div class="work-tags">空间设计 × 机器人控制 × 交互仿真 × 智能建造</div>
+          </div>
+        </article>
+
+        <article class="work-row" data-link="work-ai-commerce.html">
+          <img class="work-thumb" src="images/EC/0.jpg" alt="AI 电商素材生成平台" loading="lazy" />
+          <div class="work-body">
+            <h3 class="work-name">AI 电商素材生成平台</h3>
+            <div class="work-tags">PRD · 多模型 Benchmark · 高保真工作台</div>
+          </div>
+        </article>
+
+        <article class="work-row" data-link="work-LLM_to_Construction.html">
+          <img class="work-thumb" src="images/llmToConstruction/BRIDGE_00.jpg" alt="自然语言需求转化" loading="lazy" />
+          <div class="work-body">
+            <h3 class="work-name">自然语言需求转化</h3>
+            <div class="work-tags">TEXT-TO-3D × 模块化建造 × 跨团队协作</div>
+          </div>
+        </article>
+
+        <article class="work-row" data-link="work-interior-ai.html">
+          <img class="work-thumb" src="images/ARC/0.png" alt="商业空间视觉设计" loading="lazy" />
+          <div class="work-body">
+            <h3 class="work-name">商业空间视觉设计</h3>
+            <div class="work-tags">AIGC工作流落地 · Prompt体系沉淀 · 流程标准化</div>
+          </div>
+        </article>
+
+        <article class="work-row" data-link="work-global-relay-conference.html">
+          <img class="work-thumb" src="images/AGR/Final Assets/2100s_2.jpg" alt="AI GLOBAL RELAY会议" loading="lazy" />
+          <div class="work-body">
+            <h3 class="work-name">AI GLOBAL RELAY会议</h3>
+            <div class="work-tags">Spatial AIGC · 四地同步叙事 · 视觉系统</div>
+          </div>
+        </article>
+      </div>
+    </section>
+
   </div>
 
   <script>
-    /* =========================
-      Basic Constants
-    ========================= */
-    const CX = 500;
-    const CY = 500;
-
-    const INNER_RING_START = 205;
-    const INNER_RING_WIDTH = 85;
-    const OUTER_RING_START = 315;
-    const OUTER_RING_WIDTH = 130;
-
-    const isTouchDevice = window.matchMedia("(hover: none), (pointer: coarse)").matches;
-
-    /* =========================
-      DOM
-    ========================= */
-    const defs = document.getElementById("defs");
-    const rings = document.getElementById("rings");
-    const sketchArrows = document.getElementById("sketch-arrows");
-
-    const pageContainer = document.getElementById("pageContainer");
-    const brand = document.getElementById("brand");
-
-    const sloganKicker = document.getElementById("sloganKicker");
-    const sloganTitle = document.getElementById("sloganTitle");
-    const sloganDesc = document.getElementById("sloganDesc");
-
-    const hoverBadge = document.getElementById("hoverBadge");
-
-    const mapViewBtn = document.getElementById("mapViewBtn");
-    const indexViewBtn = document.getElementById("indexViewBtn");
-
-    const categoryPanel = document.getElementById("categoryPanel");
-    const categoryClose = document.getElementById("categoryClose");
-    const categoryKicker = document.getElementById("categoryKicker");
-    const categoryTitle = document.getElementById("categoryTitle");
-    const categoryDesc = document.getElementById("categoryDesc");
-    const categoryWorks = document.getElementById("categoryWorks");
-
-    /* =========================
-      Data
-    ========================= */
-    const defaultCopy = {
-      kicker: "设计智能 / DESIGN INTELLIGENCE",
-      title: "空间智能与人机协同工作流设计者",
-      desc: "我设计 AI 驱动的产品系统、空间生成工作流与智能体仿真工具。将专业判断转化为可计算、可评估、可落地的设计智能系统。"
-    };
-
-    const sectors = [
-      {
-        id: "spatial",
-        label: "空间意图如何生成？",
-        start: -30,
-        end: 90,
-        inner: OUTER_RING_START,
-        outer: OUTER_RING_START + OUTER_RING_WIDTH,
-        textRadius: OUTER_RING_START + OUTER_RING_WIDTH / 2,
-        reverseText: false,
-        color: "var(--pink)",
-        kicker: "01 / SPATIAL GENERATION",
-        title: "空间意图如何被生成？",
-        desc: "从自然语言、草图、模型与空间参考出发，构建可控的 AIGC 工作流，将模糊设计意图转化为可讨论、可迭代的空间视觉方案。",
-        works: [
-          {
-            no: "01",
-            title: "AI GLOBAL RELAY会议",
-            meta: "Spatial AIGC / Sketch / Reference / Prompt",
-            link: "work-global-relay-conference.html"
-          },
-          {
-            no: "02",
-            title: "商业空间视觉设计",
-            meta: "AIGC工作流落地 · Prompt体系沉淀 · 流程标准化",
-            link: "work-interior-ai.html"
-          }
-        ]
-      },
-      {
-        id: "robotics",
-        label: "空间智能如何行动？",
-        start: 90,
-        end: 210,
-        inner: OUTER_RING_START,
-        outer: OUTER_RING_START + OUTER_RING_WIDTH,
-        textRadius: OUTER_RING_START + OUTER_RING_WIDTH / 2,
-        reverseText: true,
-        color: "var(--green)",
-        kicker: "02 / SPATIAL INTELLIGENCE",
-        title: "空间智能如何行动？",
-        desc: "基于 Unity3D、ML-Agents 强化学习与 A* 算法，在虚拟仿真环境中训练智能体与机器人，探索空间中的自主路径规划与建造逻辑。",
-        works: [
-          {
-            no: "03",
-            title: "自然语言需求转化",
-            meta: "TEXT-TO-3D × 模块化建造 × 跨团队协作",
-            link: "work-LLM_to_Construction.html"
-          },
-          {
-            no: "04",
-            title: "极端环境下的无人建造",
-            meta: "空间设计 × 机器人控制 × 交互仿真 × 智能建造",
-            link: "work-ucl.html"
-          }
-        ]
-      },
-      {
-        id: "about",
-        label: "关于我",
-        isFullRing: true,
-        inner: INNER_RING_START,
-        outer: INNER_RING_START + INNER_RING_WIDTH,
-        textRadius: INNER_RING_START + INNER_RING_WIDTH / 2,
-        color: "var(--yellow)",
-        kicker: "根目录 / THE ROOT QUESTION",
-        title: "设计智能",
-        desc: "我连接产品需求、生成模型与行业场景。不追逐瞬息万变的 AI 工具，只专注于将专业领域的隐性判断转化为可复用的设计智能系统。",
-        works: [
-          {
-            no: "CV",
-            title: "About / Resume",
-            meta: "Profile / Experience / Contact",
-            link: "about.html"
-          }
-        ]
-      },
-      {
-        id: "product",
-        label: "生成能力如何产品化？",
-        start: -150,
-        end: -30,
-        inner: OUTER_RING_START,
-        outer: OUTER_RING_START + OUTER_RING_WIDTH,
-        textRadius: OUTER_RING_START + OUTER_RING_WIDTH / 2,
-        reverseText: false,
-        color: "var(--blue)",
-        kicker: "03 / PRODUCTIZED AIGC",
-        title: "生成能力如何产品化？",
-        desc: "将 AIGC 图像、视频生成能力封装为可控的商业生产系统：模型 Benchmark、任务路由、质量评估、成本控制与数据反馈。",
-        works: [
-          {
-            no: "05",
-            title: "AI 电商素材生成平台",
-            meta: "PRD文档 · 竞品分析报告 · 多模型Benchmark评测报告",
-            link: "work-ai-commerce.html"
-          }
-        ]
-      }
-    ];
-
-    /* =========================
-      SVG Helpers
-    ========================= */
-    function createSvg(tag, attrs = {}) {
-      const el = document.createElementNS("http://www.w3.org/2000/svg", tag);
-      Object.entries(attrs).forEach(([key, value]) => el.setAttribute(key, value));
-      return el;
-    }
-
-    function polarToCartesian(cx, cy, r, angleDeg) {
-      const angleRad = (angleDeg - 90) * Math.PI / 180;
-      return {
-        x: cx + r * Math.cos(angleRad),
-        y: cy + r * Math.sin(angleRad)
-      };
-    }
-
-    function ringSectorPath(cx, cy, innerR, outerR, startAngle, endAngle) {
-      const largeArcFlag = Math.abs(endAngle - startAngle) > 180 ? 1 : 0;
-
-      const outerStart = polarToCartesian(cx, cy, outerR, startAngle);
-      const outerEnd = polarToCartesian(cx, cy, outerR, endAngle);
-      const innerEnd = polarToCartesian(cx, cy, innerR, endAngle);
-      const innerStart = polarToCartesian(cx, cy, innerR, startAngle);
-
-      return [
-        "M", outerStart.x, outerStart.y,
-        "A", outerR, outerR, 0, largeArcFlag, 1, outerEnd.x, outerEnd.y,
-        "L", innerEnd.x, innerEnd.y,
-        "A", innerR, innerR, 0, largeArcFlag, 0, innerStart.x, innerStart.y,
-        "Z"
-      ].join(" ");
-    }
-
-    function textArcPath(cx, cy, r, startAngle, endAngle, reverse = false) {
-      const largeArcFlag = Math.abs(endAngle - startAngle) > 180 ? 1 : 0;
-
-      const start = reverse
-        ? polarToCartesian(cx, cy, r, endAngle)
-        : polarToCartesian(cx, cy, r, startAngle);
-
-      const end = reverse
-        ? polarToCartesian(cx, cy, r, startAngle)
-        : polarToCartesian(cx, cy, r, endAngle);
-
-      const sweep = reverse ? 0 : 1;
-
-      return [
-        "M", start.x, start.y,
-        "A", r, r, 0, largeArcFlag, sweep, end.x, end.y
-      ].join(" ");
-    }
-
-    function fullRingPath(item) {
-      const outerStart = polarToCartesian(CX, CY, item.outer, -180);
-      const outerMid = polarToCartesian(CX, CY, item.outer, 0);
-      const innerStart = polarToCartesian(CX, CY, item.inner, -180);
-      const innerMid = polarToCartesian(CX, CY, item.inner, 0);
-
-      return [
-        "M", outerStart.x, outerStart.y,
-        "A", item.outer, item.outer, 0, 1, 1, outerMid.x, outerMid.y,
-        "A", item.outer, item.outer, 0, 1, 1, outerStart.x, outerStart.y,
-        "M", innerStart.x, innerStart.y,
-        "A", item.inner, item.inner, 0, 1, 0, innerMid.x, innerMid.y,
-        "A", item.inner, item.inner, 0, 1, 0, innerStart.x, innerStart.y,
-        "Z"
-      ].join(" ");
-    }
-
-    /* =========================
-      UI State
-    ========================= */
-    function navigateTo(link) {
-      document.body.style.background = "#111111";
-      setTimeout(() => {
-        window.location.href = link;
-      }, 220);
-    }
-
-    function setCenterImage(id = "default") {
-      document.querySelectorAll(".center-media img").forEach(img => {
-        img.classList.remove("active");
-      });
-
-      const target = document.getElementById(`center-${id}`) || document.getElementById("center-default");
-      target.classList.add("active");
-    }
-
-    function setCopy(copy = defaultCopy) {
-      sloganKicker.textContent = copy.kicker;
-      sloganTitle.innerHTML = copy.title;
-      sloganDesc.textContent = copy.desc;
-    }
-
-    function focusProjects(tag) {}
-
-    function clearProjectFocus() {}
-
-    function resetHero() {
-      if (journeyLock) return;
-      setCopy(defaultCopy);
-      setCenterImage("default");
-      clearProjectFocus();
-
-      document.querySelectorAll(".sector-group").forEach(group => {
-        group.classList.remove("touch-active");
-      });
-    }
-
-    function previewItem(item) {
-      if (journeyLock) return;
-      setCenterImage(item.id);
-      setCopy(item);
-
-      if (item.id === "about") {
-        clearProjectFocus();
-      } else {
-        focusProjects(item.id);
-      }
-    }
-
-    /* =========================
-      Category Panel
-    ========================= */
-    function openCategory(item) {
-      if (journeyLock) return;
-      if (item.id === "about") {
-        navigateTo("about.html");
-        return;
-      }
-
-      pageContainer.classList.remove("index-mode");
-      pageContainer.classList.add("category-mode");
-
-      mapViewBtn.classList.add("active");
-      indexViewBtn.classList.remove("active");
-
-      hoverBadge.classList.remove("visible");
-
-      previewItem(item);
-
-      categoryPanel.style.setProperty("--category-color", item.color);
-      categoryKicker.textContent = item.kicker;
-      categoryTitle.innerHTML = item.title;
-      categoryDesc.textContent = item.desc;
-
-      categoryWorks.innerHTML = "";
-
-      item.works.forEach(work => {
-        const row = document.createElement("article");
-        row.className = "category-work";
-        row.dataset.link = work.link;
-
-        row.innerHTML = `
-          <div class="category-work-no">${work.no}</div>
-          <div class="category-work-main">
-            <div class="category-work-title">${work.title}</div>
-            <div class="category-work-meta">${work.meta}</div>
-          </div>
-          <div class="category-work-view">View</div>
-        `;
-
-        row.addEventListener("click", () => navigateTo(work.link));
-        categoryWorks.appendChild(row);
-      });
-    }
-
-    function closeCategory() {
-      pageContainer.classList.remove("category-mode");
-      pageContainer.classList.remove("index-mode");
-
-      mapViewBtn.classList.add("active");
-      indexViewBtn.classList.remove("active");
-
-      hoverBadge.classList.remove("visible");
-      resetHero();
-    }
-
-    function setViewMode(mode) {
-      if (mode === "index") {
-        pageContainer.classList.remove("category-mode");
-        pageContainer.classList.add("index-mode");
-
-        mapViewBtn.classList.remove("active");
-        indexViewBtn.classList.add("active");
-
-        hoverBadge.classList.remove("visible");
-        resetHero();
-        return;
-      }
-
-      closeCategory();
-    }
-
-    /* =========================
-      Build Compass
-    ========================= */
-    function addLabelToGroup(group, pathId, label, dy = "-6") {
-      const text = createSvg("text", {
-        class: "ring-label",
-        dy
-      });
-
-      const textPath = createSvg("textPath", {
-        href: `#${pathId}`,
-        startOffset: "50%",
-        "text-anchor": "middle"
-      });
-
-      textPath.textContent = label.toUpperCase();
-      text.appendChild(textPath);
-      group.appendChild(text);
-    }
-
-    function bindSector(group, item) {
-      group.addEventListener("mouseenter", () => {
-        if (isTouchDevice || journeyLock || pageContainer.classList.contains("category-mode")) return;
-
-        previewItem(item);
-        hoverBadge.classList.add("visible");
-      });
-
-      group.addEventListener("mouseleave", () => {
-        if (isTouchDevice || pageContainer.classList.contains("category-mode")) return;
-
-        resetHero();
-        hoverBadge.classList.remove("visible");
-      });
-
-      group.addEventListener("click", event => {
-        event.stopPropagation();
-        openCategory(item);
-      });
-
-      group.addEventListener("keydown", event => {
-        if (event.key !== "Enter" && event.key !== " ") return;
-
-        event.preventDefault();
-        openCategory(item);
-      });
-    }
-
-    function buildCompass() {
-      sectors.forEach(item => {
-        const group = createSvg("g", {
-          class: "sector-group",
-          "data-id": item.id,
-          role: "link",
-          tabindex: "0",
-          "aria-label": item.label
-        });
-
-        const sectorPath = createSvg("path", {
-          class: "ring-sector",
-          d: item.isFullRing
-            ? fullRingPath(item)
-            : ringSectorPath(CX, CY, item.inner, item.outer, item.start, item.end)
-        });
-
-        group.appendChild(sectorPath);
-
-        if (item.isFullRing) {
-          const topPathId = `text-path-${item.id}-top`;
-          const bottomPathId = `text-path-${item.id}-bottom`;
-
-          defs.appendChild(createSvg("path", {
-            id: topPathId,
-            class: "guide-path",
-            d: textArcPath(CX, CY, item.textRadius, -90, 90, false)
-          }));
-
-          defs.appendChild(createSvg("path", {
-            id: bottomPathId,
-            class: "guide-path",
-            d: textArcPath(CX, CY, item.textRadius, 90, 270, true)
-          }));
-
-          addLabelToGroup(group, topPathId, item.label, "-6");
-          addLabelToGroup(group, bottomPathId, item.label, "16");
-        } else {
-          const pathId = `text-path-${item.id}`;
-
-          defs.appendChild(createSvg("path", {
-            id: pathId,
-            class: "guide-path",
-            d: textArcPath(
-              CX,
-              CY,
-              item.textRadius,
-              item.start + 8,
-              item.end - 8,
-              item.reverseText
-            )
-          }));
-
-          addLabelToGroup(group, pathId, item.label, item.reverseText ? "16" : "-6");
-        }
-
-        rings.appendChild(group);
-        bindSector(group, item);
-      });
-    }
-
-    /* =========================
-      Sketch Arrows
-    ========================= */
-    function arcPath(cx, cy, r, startAngle, endAngle) {
-      const start = polarToCartesian(cx, cy, r, startAngle);
-      const end = polarToCartesian(cx, cy, r, endAngle);
-      const largeArcFlag = Math.abs(endAngle - startAngle) > 180 ? 1 : 0;
-
-      return [
-        "M", start.x, start.y,
-        "A", r, r, 0, largeArcFlag, 1, end.x, end.y
-      ].join(" ");
-    }
-
-    function addSketchArrow(startAngle, endAngle, r) {
-      sketchArrows.appendChild(createSvg("path", {
-        class: "sketch-arrow-path",
-        d: arcPath(CX, CY, r, startAngle, endAngle)
-      }));
-
-      sketchArrows.appendChild(createSvg("path", {
-        class: "sketch-arrow-path ghost",
-        d: arcPath(CX, CY, r + 2, startAngle + 1.8, endAngle - 1.8)
-      }));
-
-      const tip = polarToCartesian(CX, CY, r, endAngle);
-      const angleRad = (endAngle - 90) * Math.PI / 180;
-
-      const tangent = {
-        x: -Math.sin(angleRad),
-        y: Math.cos(angleRad)
-      };
-
-      const normal = {
-        x: -tangent.y,
-        y: tangent.x
-      };
-
-      const back = {
-        x: tip.x - tangent.x * 24,
-        y: tip.y - tangent.y * 24
-      };
-
-      const wingA = {
-        x: back.x + normal.x * 12,
-        y: back.y + normal.y * 12
-      };
-
-      const wingB = {
-        x: back.x - normal.x * 12,
-        y: back.y - normal.y * 12
-      };
-
-      sketchArrows.appendChild(createSvg("path", {
-        class: "sketch-arrow-path",
-        d: `M ${wingA.x} ${wingA.y} L ${tip.x} ${tip.y}`
-      }));
-
-      sketchArrows.appendChild(createSvg("path", {
-        class: "sketch-arrow-path",
-        d: `M ${wingB.x} ${wingB.y} L ${tip.x} ${tip.y}`
-      }));
-    }
-
-    function buildSketchArrows() {
-      sketchArrows.innerHTML = "";
-
-      const r = 395;
-      addSketchArrow(-55, -15, r);
-      addSketchArrow(65, 110, r);
-      addSketchArrow(190, 230, r);
-    }
-
-    /* =========================
-      Project / Index Events
-    ========================= */
-    function bindProjectCards() {
-      document.querySelectorAll(".project-card").forEach(card => {
-        const link = card.dataset.link;
-        const tag = (card.dataset.tags || "").split(/\s+/)[0];
-
-        card.addEventListener("mouseenter", () => {
-          if (isTouchDevice) return;
-
-          if (!pageContainer.classList.contains("category-mode")) {
-            const item = sectors.find(sector => sector.id === tag);
-            if (item) previewItem(item);
-          }
-
-          hoverBadge.classList.add("visible");
-        });
-
-        card.addEventListener("mouseleave", () => {
-          if (isTouchDevice) return;
-
-          if (!pageContainer.classList.contains("category-mode")) {
-            resetHero();
-          }
-
-          hoverBadge.classList.remove("visible");
-        });
-
-        card.addEventListener("click", event => {
-          event.stopPropagation();
-
-          if (typeof gtag === "function") {
-            gtag("event", "click_project_card", {
-              event_category: "project",
-              event_label: card.dataset.project || "unknown",
-              project_link: link || ""
-            });
-          }
-
-          if (link) navigateTo(link);
-        });
-      });
-    }
-
-    function bindWorkRows() {
-      document.querySelectorAll(".work-row").forEach(row => {
-        row.addEventListener("click", () => {
-          const workName = row.querySelector(".work-name")?.textContent?.trim() || "unknown";
-
-          if (typeof gtag === "function") {
-            gtag("event", "click_work_row", {
-              event_category: "project",
-              event_label: workName,
-              project_link: row.dataset.link || ""
-            });
-          }
-
-          if (row.dataset.link) navigateTo(row.dataset.link);
-        });
-      });
-    }
-
-    /* =========================
-      Global Events
-    ========================= */
-    function bindGlobalEvents() {
-      brand.addEventListener("click", () => window.location.reload());
-
-      mapViewBtn.addEventListener("click", event => {
-        event.stopPropagation();
-        setViewMode("map");
-      });
-
-      indexViewBtn.addEventListener("click", event => {
-        event.stopPropagation();
-        setViewMode("index");
-      });
-
-      categoryClose.addEventListener("click", event => {
-        event.stopPropagation();
-        closeCategory();
-      });
-
-      window.addEventListener("mousemove", event => {
-        if (isTouchDevice) return;
-
-        hoverBadge.style.left = `${event.clientX}px`;
-        hoverBadge.style.top = `${event.clientY}px`;
-      });
-
-      window.addEventListener("keydown", event => {
-        if (event.key === "Escape") closeCategory();
-      });
-
-      document.addEventListener("click", event => {
-        const clickedInteractive = event.target.closest(
-          ".sector-group, .topbar, .project-card, .index-panel, .category-panel, .hero-actions"
-        );
-
-        if (!clickedInteractive && pageContainer.classList.contains("category-mode")) {
-          closeCategory();
-        }
-      });
-    }
-
-    function bindAnalyticsEvents() {
-      const resumeBtn = document.getElementById("resumeBtnTop");
-      const contactBtn = document.getElementById("contactBtnTop");
-      const resumeBtnEnd = document.getElementById("resumeBtn");
-      const contactBtnEnd = document.getElementById("contactBtn");
-
-      [[resumeBtnEnd, "click_resume", "查看简历"], [contactBtnEnd, "click_contact", "联系我"]].forEach(pair => {
-        const el = pair[0];
-        if (el) {
-          el.addEventListener("click", () => {
-            if (typeof gtag === "function") {
-              gtag("event", pair[1], { event_category: "engagement", event_label: pair[2] });
-            }
+    (function () {
+      // 项目池（顺序即作品集顺序：机器人 / AI 电商 / Text-to-3D / 商业空间 / 全球接力）
+      const projectData = [
+        { name: '极端环境无人建造', type: 'Robotic Fabrication', year: '2025', tag: 'AI 集群建造', desc: 'UCL 经典项目：基于蜂群算法与力反馈的无人机器人搭建。', img: 'images/UCL/STIG_00.jpg' },
+        { name: 'AI 电商素材生成', type: 'Product Benchmark', year: '2025', tag: 'AIGC 产品化', desc: '从 PRD、Benchmark 到高保真工作台，验证可控生成的产品路径。', img: 'images/EC/0.jpg' },
+        { name: '自然语言需求转化', type: 'Text-to-3D', year: '2025', tag: 'AI 集群建造', desc: '从 Text-to-3D 到模块化、可建造的施工需求转化。', img: 'images/llmToConstruction/BRIDGE_00.jpg' },
+        { name: '商业空间视觉设计', type: 'AIGC Workflow', year: '2024', tag: '视觉设计', desc: '将传统设计工作流转化为可二次迭代的商业空间解决方案。', img: 'images/ARC/0.png' },
+        { name: 'AI Global Relay', type: 'Spatial AIGC', year: '2024', tag: '视觉设计', desc: '以同一未来叙事连接四个时区的活动体验。', img: 'images/AGR/Final Assets/2100s_2.jpg' }
+      ];
+
+      // TYPE 分组：首屏三个弧区各对应一组，HUD 按组展示（编号 + 组名 + 组内项目索引）
+      const typeGroups = [
+        { no: '01', label: 'AI 集群建造', items: [0, 2] },
+        { no: '02', label: '视觉设计', items: [3, 4] },
+        { no: '03', label: 'AIGC 产品化', items: [1] }
+      ];
+
+      let currentState = 'hero'; // 'hero' | 'portfolio' | 'footer'
+      let isTransitioning = false;
+
+      // Stage 1 DOM
+      const hudPanel = document.getElementById('hudPanel');
+      const hudNo = document.getElementById('hudNo');
+      const hudGroupName = document.getElementById('hudGroupName');
+      const hudList = document.getElementById('hudList');
+      const portalImg = document.getElementById('portalImg');
+      const morphPortal = document.getElementById('morphPortal');
+
+      // Stage 2 DOM
+      const ring = document.getElementById('ring');
+      const cards = [...ring.querySelectorAll('.card')];
+      const metaName = document.getElementById('metaName');
+      const metaType = document.getElementById('metaType');
+      const indexBtns = [...document.querySelectorAll('#indexCol button')];
+
+      let activeIndex = 0;
+      let previewIndex = 0; // 首屏中间图片当前对应的项目（随 hover 的弧区同步）
+      const cardCount = cards.length;
+
+      // Hover HUD：显示悬停弧区对应的 TYPE 分组（组头 + 组内项目竖向排列，全部出现）
+      function showPreview(gi, arcIdx) {
+        const group = typeGroups[gi];
+        if (!group) return;
+        const first = projectData[group.items[0]];
+        previewIndex = group.items[0]; // 中间图片切到组内第一个项目，下滑即进入它
+        hudNo.textContent = group.no;
+        hudGroupName.textContent = group.label;
+        if (!first.img.endsWith('.mp4')) portalImg.src = first.img;
+        // 组内项目竖排渲染：hover 行预览中间图，点击行直接进入该项目
+        hudList.innerHTML = '';
+        group.items.forEach((pi) => {
+          const p = projectData[pi];
+          const row = document.createElement('button');
+          row.type = 'button';
+          row.className = 'hud-row';
+          const media = p.img.endsWith('.mp4')
+            ? '<video class="hud-row-img" src="' + p.img + '" muted loop autoplay playsinline></video>'
+            : '<img class="hud-row-img" src="' + p.img + '" alt="">';
+          row.innerHTML = media +
+            '<span class="hud-row-name">' + p.name + '</span>' +
+            '<span class="hud-row-year">' + p.year + '</span>';
+          row.addEventListener('mouseenter', () => {
+            previewIndex = pi; // 悬停某行：中间图与下滑目标切到该项目
+            if (!p.img.endsWith('.mp4')) portalImg.src = p.img;
           });
-        }
+          row.addEventListener('click', (e) => {
+            e.stopPropagation();
+            activeIndex = pi;
+            triggerMorph();
+          });
+          hudList.appendChild(row);
+        });
+        // 切换方向类：已显示时面板会平滑“滑移”到新弧区方向
+        hudPanel.classList.remove('hud-dir-0', 'hud-dir-1', 'hud-dir-2');
+        hudPanel.classList.add(`hud-dir-${arcIdx}`);
+        hudPanel.classList.add('show');
+      }
+
+      // 鼠标从弧区移向 HUD 需要缓冲：离开弧区不立即隐藏，进入 HUD 则取消隐藏
+      let hideTimer = null;
+      function scheduleHide() {
+        clearTimeout(hideTimer);
+        hideTimer = setTimeout(hidePreview, 180);
+      }
+      function cancelHide() { clearTimeout(hideTimer); }
+
+      function hidePreview() {
+        clearTimeout(hideTimer);
+        hudPanel.classList.remove('show');
+      }
+
+      hudPanel.addEventListener('mouseenter', cancelHide);
+      hudPanel.addEventListener('mouseleave', scheduleHide);
+
+      // 三个弧区各对应一个 TYPE 分组（01 集群建造 / 02 视觉设计 / 03 AIGC 产品化）
+      const arcLabels = [...document.querySelectorAll('.annotation-text')];
+      typeGroups.forEach((group, gi) => {
+        const arc = document.getElementById(`arc${gi}`);
+        if (!arc) return;
+        arc.addEventListener('mouseenter', () => {
+          cancelHide(); showPreview(gi, gi);
+          arcLabels[gi] && arcLabels[gi].classList.add('lit'); // 标注文字同步点亮
+        });
+        arc.addEventListener('mouseleave', () => {
+          scheduleHide();
+          arcLabels[gi] && arcLabels[gi].classList.remove('lit');
+        });
+        arc.addEventListener('click', () => {
+          showPreview(gi, gi); // 触摸设备无 hover，点击也要同步 HUD 与中间图
+          activeIndex = group.items[0];
+          previewIndex = group.items[0];
+          triggerMorph();
+        });
       });
 
-      if (resumeBtn) {
-        resumeBtn.addEventListener("click", () => {
-          if (typeof gtag === "function") {
-            gtag("event", "click_resume", {
-              event_category: "engagement",
-              event_label: "查看简历"
-            });
-          }
-        });
+      morphPortal.addEventListener('click', () => triggerMorph());
+
+      // 核心 transition: 圆变方慢速展开 (1.2s)
+      // onDone：形变完成后追加执行（点 ABOUT 时继续滑入页尾）
+      function triggerMorph(onDone) {
+        if (currentState !== 'hero' || isTransitioning) return;
+        isTransitioning = true;
+
+        // 进入与首屏中间图片（当前 section）对应的项目页，而不是固定停在第一个
+        activeIndex = previewIndex;
+        hidePreview(); // HUD 切片随首屏一起退场，避免残留 .show
+        document.body.classList.add('is-morphing');
+
+        setTimeout(() => {
+          document.body.classList.remove('is-morphing');
+          document.body.classList.add('in-portfolio');
+          document.body.classList.remove('in-footer');
+          currentState = 'portfolio';
+          updateJStage();
+          isTransitioning = false;
+          if (typeof onDone === 'function') onDone();
+        }, 1150);
       }
 
-      if (contactBtn) {
-        contactBtn.addEventListener("click", () => {
-          if (typeof gtag === "function") {
-            gtag("event", "click_contact", {
-              event_category: "engagement",
-              event_label: "联系我"
-            });
-          }
-        });
-      }
-    }
+      // 回到首屏：先把首屏与 portal 瞬时复位（无过渡），再淡入，
+      // 避免已对齐卡片的方形 portal 反向缩回圆形
+      function returnToHero() {
+        document.body.classList.add('hero-snap', 'portal-reset');
+        document.body.classList.remove('in-portfolio', 'in-footer', 'is-morphing', 'about-direct');
+        currentState = 'hero';
 
-    /* =========================
-    /* =========================
-      Scroll Journey (desktop)
-    ========================= */
-    let journeyLock = false;
-
-    const journeyProjects = [
-      { sector: "spatial", tint: "rgba(255, 92, 154, 0.15)", kicker: "01 / SPATIAL", title: "AI GLOBAL RELAY会议", desc: "从语言、草图、参考图到可迭代空间视觉方案。", link: "work-global-relay-conference.html" },
-      { sector: "spatial", tint: "rgba(255, 92, 154, 0.15)", kicker: "02 / SPATIAL", title: "商业空间视觉设计", desc: "室内场景的风格控制、参考约束与视觉生成流程。", link: "work-interior-ai.html" },
-      { sector: "robotics", tint: "rgba(18, 168, 137, 0.15)", kicker: "03 / ROBOTICS", title: "自然语言需求转化", desc: "Unity3D、ML-Agents 与智能体空间行为模拟。", link: "work-LLM_to_Construction.html" },
-      { sector: "robotics", tint: "rgba(18, 168, 137, 0.15)", kicker: "04 / SYSTEMS", title: "极端环境下的无人建造", desc: "基于 A* 与空间约束的路径规划和建造逻辑实验。", link: "work-ucl.html" },
-      { sector: "product", tint: "rgba(47, 107, 255, 0.15)", kicker: "05 / PRODUCT", title: "AI 电商素材生成平台", desc: "模型 Benchmark、任务路由与数据埋点驱动的素材生产系统。", link: "work-ai-commerce.html" }
-    ];
-
-    function journeyEase(t) {
-      return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
-    }
-
-    function initJourney() {
-      const isDesktop = window.matchMedia("(min-width: 1101px) and (hover: hover) and (pointer: fine)").matches;
-      const isPortrait = window.matchMedia("(max-width: 768px) and (orientation: portrait)").matches;
-      const isTablet = window.matchMedia("(min-width: 769px) and (max-width: 1100px)").matches;
-      if (!isDesktop && !isPortrait && !isTablet) return;
-
-      const LAY = isPortrait
-        ? { ix: 0, iy: -7, is: 1.05, rx: 22, ry: -35, rs: 1.35, ex: 0, ey: -12, es: 0.6 }
-        : isTablet
-          ? { ix: 0, iy: -7, is: 1.0, rx: 22, ry: -30, rs: 1.05, ex: 0, ey: -8, es: 0.62 }
-          : { ix: 0, iy: -7, is: 1.16, rx: 32, ry: 2, rs: 1.78, ex: 0, ey: -6, es: 0.78 };
-
-      document.documentElement.classList.add("journey-on");
-      document.body.style.minHeight = "700vh";
-
-      const stage = document.getElementById("compassStage");
-      const compassSvg = document.querySelector(".compass");
-      const slogan = document.querySelector(".slogan");
-      const hint = document.getElementById("scrollHint");
-      const cta = document.getElementById("journeyCta");
-      const aboutGroup = document.querySelector('.sector-group[data-id="about"]');
-      const outerGroups = document.querySelectorAll('.sector-group[data-id="spatial"], .sector-group[data-id="robotics"], .sector-group[data-id="product"]');
-      const centerMedia = document.querySelector(".center-media");
-
-      const bgTint = document.getElementById("bgTint");
-      const rail = document.getElementById("journeyRail");
-      const nextEl = document.getElementById("journeyNext");
-      const sectorGroups = document.querySelectorAll(".sector-group");
-
-      const ZI = [0.05, 0.17];
-      const RO = [0.17, 0.86];
-      const ZO = [0.86, 0.96];
-      const MAX_SCALE = 1.78;
-
-      let smoothP = -1;
-      let prevTarget = -1;
-      let currentIdx = -1;
-      let mode = "hero";
-      let aboutCopySet = false;
-
-      function setSectorLive(id) {
-        sectorGroups.forEach(group => {
-          group.classList.toggle("is-live", group.dataset.id === id);
-        });
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+          document.body.classList.remove('hero-snap', 'portal-reset');
+        }));
       }
 
-      function applyProject(idx) {
-        if (idx === currentIdx) return;
-        currentIdx = idx;
-        const pj = journeyProjects[idx];
-        setCopy({ kicker: pj.kicker, title: pj.title, desc: pj.desc });
-        setCenterImage("j" + (idx + 1));
-        setSectorLive(pj.sector);
-        cta.dataset.link = pj.link;
-        bgTint.style.background = pj.tint;
-        rail.querySelectorAll("span").forEach((s, i) => s.classList.toggle("on", i === idx));
-        sectorGroups.forEach(g => {
-          const isActive = g.dataset.id === pj.sector;
-          g.style.pointerEvents = isActive ? "auto" : "none";
-          g.style.cursor = isActive ? "pointer" : "";
-        });
-        nextEl.textContent = idx < 4 ? "NEXT · " + journeyProjects[idx + 1].kicker + " · " + journeyProjects[idx + 1].title + " ↓" : "END · 回到关于我 ↓";
-
-      }
-
-      function applyJourney(p) {
-        if (pageContainer.classList.contains("index-mode") || pageContainer.classList.contains("category-mode")) {
-          if (stage.style.transform) {
-            stage.style.transform = "";
-            compassSvg.style.transform = "";
-          }
+      function switchState(targetState) {
+        if (currentState === targetState || isTransitioning) return;
+        if (currentState === 'hero' && targetState === 'portfolio') {
+          triggerMorph();
           return;
         }
 
-        journeyLock = p > 0.035;
-        pageContainer.classList.toggle("journeying", p > 0.035 && p < ZO[1]);
-
-        let zoomP;
-        if (p < ZI[0]) zoomP = 0;
-        else if (p < ZI[1]) zoomP = journeyEase((p - ZI[0]) / (ZI[1] - ZI[0]));
-        else if (p < ZO[0]) zoomP = 1;
-        else if (p < ZO[1]) zoomP = 1 - journeyEase((p - ZO[0]) / (ZO[1] - ZO[0]));
-        else zoomP = 0;
-
-        const endEase = p < ZO[0] ? 0 : p < ZO[1] ? journeyEase((p - ZO[0]) / (ZO[1] - ZO[0])) : 1;
-        const scale = LAY.is + (LAY.rs - LAY.is) * zoomP + (LAY.es - LAY.is) * endEase;
-        const jx = LAY.ix + (LAY.rx - LAY.ix) * zoomP + (LAY.ex - LAY.ix) * endEase;
-        const jy = LAY.iy + (LAY.ry - LAY.iy) * zoomP + (LAY.ey - LAY.iy) * endEase;
-        stage.style.transform = "translate(-50%, -50%) translate(" + jx.toFixed(2) + "vw, " + jy.toFixed(2) + "vh) scale(" + scale.toFixed(4) + ")";
-
-        const rotP = Math.min(1, Math.max(0, (p - RO[0]) / (RO[1] - RO[0])));
-        let rot;
-        if (p < 0.17) rot = -102 * journeyEase(p / 0.17);
-        else if (p < ZO[0]) rot = -102 - 350 * (p - 0.17);
-        else if (p < ZO[1]) rot = -343.5 - 16.5 * journeyEase((p - ZO[0]) / (ZO[1] - ZO[0]));
-        else rot = -360;
-        compassSvg.style.transform = "rotate(" + rot.toFixed(3) + "deg)";
-
-        const innerO = p < 0.08 ? 1 : p < RO[0] ? 1 - (p - 0.08) / (RO[0] - 0.08) : p < ZO[0] ? 0 : p < 0.92 ? (p - ZO[0]) / (0.92 - ZO[0]) : 1;
-        aboutGroup.style.opacity = innerO.toFixed(3);
-        aboutGroup.classList.toggle("is-dim", p >= 0.08 && p < ZO[0]);
-        aboutGroup.querySelectorAll(".ring-label").forEach(lab => {
-          lab.style.opacity = p < 0.08 || p >= ZO[0] ? "1" : "0";
-        });
-
-        const projectPhase = p >= RO[0] && p < ZO[0];
-        centerMedia.style.width = projectPhase ? "60.5%" : "";
-        centerMedia.style.height = projectPhase ? "60.5%" : "";
-
-        const outerO = p < ZO[0] ? 1 : p < 0.92 ? 1 - (p - ZO[0]) / 0.06 : 0;
-        outerGroups.forEach(group => {
-          group.style.opacity = outerO.toFixed(3);
-          group.classList.toggle("is-dim", p >= ZO[0]);
-        });
-
-
-
-        if (p >= RO[0] && p < ZO[0]) {
-          const idx = Math.min(4, Math.floor(rotP * 5));
-          applyProject(idx);
-          mode = "projects";
-          aboutCopySet = false;
-        } else if (p >= ZO[0]) {
-          if (mode !== "about") {
-            mode = "about";
-            currentIdx = -1;
-            setCenterImage("default");
-            setSectorLive("about");
-            bgTint.style.background = "transparent";
-            sectorGroups.forEach(g => {
-              const isAbout = g.dataset.id === "about";
-              g.style.pointerEvents = isAbout ? "auto" : "none";
-              g.style.cursor = isAbout ? "pointer" : "";
-            });
+        isTransitioning = true;
+        if (currentState === 'portfolio' && targetState === 'hero') {
+          returnToHero();
+        } else if (currentState === 'portfolio' && targetState === 'footer') {
+          document.body.classList.add('in-footer');
+          currentState = 'footer';
+        } else if (currentState === 'footer' && targetState === 'portfolio') {
+          // 首屏直达页尾时作品集从未初始化过，这里补上 in-portfolio 并落到对应项目
+          const fromAbout = document.body.classList.contains('about-direct');
+          document.body.classList.remove('in-footer', 'about-direct');
+          if (fromAbout) {
+            activeIndex = previewIndex;
+            document.body.classList.add('in-portfolio');
+            updateJStage();
           }
-          if (!aboutCopySet && p >= 0.90) {
-            aboutCopySet = true;
-            setCopy(defaultCopy);
-          }
-        } else if (p < RO[0] && mode !== "hero") {
-          mode = "hero";
-          aboutCopySet = false;
-          currentIdx = -1;
-          setCopy(defaultCopy);
-          setCenterImage("default");
-          setSectorLive(null);
-          bgTint.style.background = "transparent";
-          sectorGroups.forEach(g => {
-            g.style.pointerEvents = "";
-            g.style.cursor = "";
-          });
+          currentState = 'portfolio';
+        } else if (currentState === 'footer' && targetState === 'hero') {
+          returnToHero(); // 页尾也能一键回首屏（returnToHero 会一并清掉 in-footer）
         }
-
-        let so;
-        if (p < RO[0]) so = 0;
-        else if (p < 0.21) so = (p - RO[0]) / 0.04;
-        else if (p < ZO[0]) so = 1;
-        else if (p < 0.895) so = 1 - (p - ZO[0]) / 0.035;
-        else if (p < 0.925) so = 0;
-        else if (p < 0.965) so = (p - 0.925) / 0.04;
-        else so = 1;
-        slogan.style.opacity = so.toFixed(3);
-        slogan.style.pointerEvents = so < 0.5 ? "none" : "";
-
-        cta.classList.toggle("show", p >= RO[0] && p < ZO[0]);
-        rail.style.opacity = p >= RO[0] && p < ZO[0] ? "1" : "0";
-        nextEl.style.opacity = p >= RO[0] && p < ZO[0] ? "1" : "0";
-        centerMedia.style.pointerEvents = p >= ZO[1] ? "auto" : "none";
-        centerMedia.style.cursor = p >= ZO[1] ? "pointer" : "";
-        slogan.classList.toggle("journey-mid", p >= RO[0] && p < 0.895);
-        slogan.classList.toggle("end-mode", p >= 0.90);
-
-        if (isPortrait && p >= RO[0] && p < 0.895) {
-          const rect = stage.getBoundingClientRect();
-          const radiusVh = (rect.width * scale / 2) / window.innerHeight * 100;
-          const centerVh = 50 + jy;
-          slogan.style.top = (centerVh + radiusVh - 4).toFixed(1) + "vh";
-          slogan.style.transform = "translate(-50%, 0)";
-        } else {
-          slogan.style.top = "";
-          slogan.style.transform = "";
-        }
-
-        hint.style.opacity = p < 0.02 ? "1" : "0";
-        sketchArrows.style.opacity = p > 0.92 ? "0" : "1";        
+        setTimeout(() => { isTransitioning = false; }, 600);
       }
-      function frame() {
-        const max = document.documentElement.scrollHeight - window.innerHeight;
-        let target = max > 0 ? window.scrollY / max : 0;
-        target = Math.min(1, Math.max(0, target));
-        if (typeof window.__forceP === "number") target = window.__forceP;
 
-        if (
-          prevTarget >= 0 &&
-          target - prevTarget > 0.001 &&
-          (pageContainer.classList.contains("category-mode") || pageContainer.classList.contains("index-mode"))
-        ) {
-          closeCategory();
-        }
-        prevTarget = target;
-
-        const next = smoothP < 0 ? target : smoothP + (target - smoothP) * 0.14;
-        if (smoothP < 0 || Math.abs(next - smoothP) > 0.00015) {
-          smoothP = next;
-          applyJourney(next);
-        }
-        requestAnimationFrame(frame);
-      }
-      requestAnimationFrame(frame);
-
-      sectorGroups.forEach(group => {
-        group.addEventListener("click", () => {
-          if (!journeyLock) return;
-          if (smoothP >= ZO[1] && group.dataset.id === "about") {
-            navigateTo("about.html");
-            return;
+      // 更新舞台卡片
+      function updateJStage() {
+        cards.forEach((card, i) => {
+          card.classList.remove('active', 'prev', 'next', 'far');
+          if (i === activeIndex) card.classList.add('active');
+          else if (i === activeIndex - 1) card.classList.add('prev');
+          else if (i === activeIndex + 1) card.classList.add('next');
+          else {
+            card.classList.add('far');
+            card.style.setProperty('--dir', i < activeIndex ? '-120%' : '120%');
           }
-          if (currentIdx >= 0 && group.dataset.id === journeyProjects[currentIdx].sector) {
-            navigateTo(journeyProjects[currentIdx].link);
+        });
+
+        const cur = projectData[activeIndex];
+        metaName.textContent = cur.name;
+        metaType.textContent = `${cur.type} · ${cur.year}`;
+
+        indexBtns.forEach((btn, i) => btn.classList.toggle('active', i === activeIndex));
+      }
+
+      function goToCard(i) {
+        if (i < 0) { switchState('hero'); return; }
+        if (i >= cardCount) { switchState('footer'); return; }
+        activeIndex = i;
+        updateJStage();
+      }
+
+      // 统一的方向导航（滚轮 / 触摸共用）
+      function navigate(d) {
+        if (Math.abs(d) < 20) return;
+        if (currentState === 'hero') {
+          if (d > 0) triggerMorph();
+        } else if (currentState === 'portfolio') {
+          if (d > 0) goToCard(activeIndex + 1);
+          else goToCard(activeIndex - 1);
+        } else if (currentState === 'footer') {
+          if (d < 0) switchState('portfolio');
+        }
+      }
+
+      // 滚轮事件接管（INDEX 目录层打开时不响应）
+      let wheelLock = false;
+      window.addEventListener('wheel', (e) => {
+        if (wheelLock || isTransitioning || isIndexOpen()) return;
+        wheelLock = true;
+        setTimeout(() => (wheelLock = false), 600);
+
+        navigate(e.deltaY);
+      }, { passive: true });
+
+      // 触摸滑动：移动端等同滚轮操作
+      let touchStartY = null;
+      window.addEventListener('touchstart', (e) => {
+        touchStartY = e.touches[0].clientY;
+      }, { passive: true });
+      window.addEventListener('touchend', (e) => {
+        const start = touchStartY;
+        touchStartY = null;
+        if (start === null || isTransitioning || isIndexOpen()) return;
+
+        const dy = start - e.changedTouches[0].clientY;
+        if (Math.abs(dy) < 40) return;
+        navigate(dy > 0 ? 30 : -30);
+      }, { passive: true });
+
+      // 点击卡片跳转与索引响应
+      cards.forEach((card) => {
+        card.addEventListener('click', () => {
+          const i = Number(card.dataset.index);
+          if (i === activeIndex && card.dataset.href) {
+            window.location.href = card.dataset.href;
+          } else {
+            activeIndex = i;
+            updateJStage();
           }
         });
       });
 
-      centerMedia.addEventListener("click", () => {
-        if (smoothP >= ZO[1]) navigateTo("about.html");
+      indexBtns.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          activeIndex = Number(btn.dataset.goto);
+          updateJStage();
+        });
       });
 
-      cta.addEventListener("click", event => {
-        event.preventDefault();
-        const link = cta.dataset.link;
-        if (!link) return;
-        if (typeof gtag === "function") {
-          const pj = journeyProjects[Math.max(0, currentIdx)];
-          gtag("event", "click_journey_cta", {
-            event_category: "project",
-            event_label: pj ? pj.title : "unknown",
-            project_link: link
-          });
+      // Brand 回首屏 / INDEX 打开目录层（任意页面均可触发）
+      const brand = document.getElementById('brand');
+      const indexViewBtn = document.getElementById('indexViewBtn');
+      const indexScrim = document.getElementById('indexScrim');
+
+      brand.addEventListener('click', () => switchState('hero'));
+
+      // ABOUT：从顶栏进入 footer stage，由 about-overlay.js 在 #footerStage .footer-mount 注入统一内容。
+      const aboutBtnTop = document.getElementById('aboutBtnTop');
+      aboutBtnTop.addEventListener('click', () => {
+        if (isIndexOpen()) setIndex(false);
+        if (currentState === 'hero') {
+          if (isTransitioning) return;
+          isTransitioning = true;
+          hidePreview();
+          document.body.classList.add('about-direct', 'in-footer');
+          currentState = 'footer';
+          setTimeout(() => { isTransitioning = false; }, 800);
+        } else if (currentState === 'portfolio') {
+          switchState('footer');
         }
-        navigateTo(link);
       });
-    }
 
-    /* =========================
-      Init
-    ========================= */
-    function init() {
-      buildCompass();
-      buildSketchArrows();
-      bindProjectCards();
-      bindWorkRows();
-      bindGlobalEvents();
-      bindAnalyticsEvents();
-      initJourney();
-    }
+      // #about 直达：从项目页或 about.html 返回首页时自动展示 About 内容
+      if (location.hash === '#about') {
+        if (isIndexOpen()) setIndex(false);
+        document.body.classList.add('about-direct', 'in-footer');
+        currentState = 'footer';
+        try { history.replaceState(null, '', location.pathname + location.search); } catch (e) {}
+      }
 
-    init();
+      // PROJECTS：进入作品集并停在第一个项目（任意页面均可触发）
+      const projectsViewBtn = document.getElementById('projectsViewBtn');
+      projectsViewBtn.addEventListener('click', () => {
+        if (isIndexOpen()) setIndex(false); // 避免被目录层遮住
+        activeIndex = 0;                    // 始终回第一个项目
+        previewIndex = 0;                   // 首屏中间图片同步复位
+        if (currentState === 'hero') {
+          triggerMorph();                   // 走正常的「圆→方」形变进入作品集
+          return;
+        }
+        if (currentState === 'footer') switchState('portfolio');
+        updateJStage();
+      });
+
+      function isIndexOpen() {
+        return document.body.classList.contains('index-open');
+      }
+
+      function setIndex(open) {
+        document.body.classList.toggle('index-open', open);
+        indexViewBtn.classList.toggle('active', open);
+      }
+
+      indexViewBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        setIndex(!isIndexOpen());
+      });
+
+      indexScrim.addEventListener('click', () => setIndex(false));
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') setIndex(false);
+      });
+
+      document.querySelectorAll('.work-row').forEach((row) => {
+        row.addEventListener('click', () => {
+          if (row.dataset.link) window.location.href = row.dataset.link;
+        });
+      });
+
+      updateJStage();
+    })();
   </script>
-
+  <script src="about-overlay.js"></script>
 </body>
 </html>

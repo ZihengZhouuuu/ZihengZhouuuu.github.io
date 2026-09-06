@@ -1,0 +1,382 @@
+/* =========================================================
+   About Overlay —— 全站统一的「关于我」个人定位层
+   黑底白字 · 左：个人定位与工作方法 / 右：SELECTED PATH
+   右侧时间轴 = lieflat-charts L11 Trend Lineage 的纵向转写
+   结构由 about-overlay.js 注入，六份页面共用同一份文案
+   ========================================================= */
+
+.about-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 3000;
+  background: #0b0b0d;
+  color: #ffffff;
+  opacity: 0;
+  visibility: hidden;
+  overflow: hidden;
+  font-family: Inter, Arial, "PingFang SC", "Microsoft YaHei", sans-serif;
+  letter-spacing: -0.01em;
+  -webkit-font-smoothing: antialiased;
+  transition: opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1), visibility 0s linear 0.45s;
+}
+.about-overlay.is-open {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1), visibility 0s;
+}
+
+/* 背景滚动锁定 */
+html.about-lock,
+body.about-lock { overflow: hidden; }
+
+.about-scroll {
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+.about-scroll::-webkit-scrollbar { width: 8px; }
+.about-scroll::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.16); border-radius: 8px; }
+
+.about-inner {
+  --about-pad: clamp(20px, 4vw, 64px);
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: clamp(76px, 11vh, 132px) var(--about-pad) clamp(56px, 9vh, 104px);
+}
+
+/* ── 关闭按钮 ───────────────────────────── */
+.about-close {
+  position: absolute;
+  top: clamp(14px, 2.2vw, 30px);
+  right: clamp(14px, 2.2vw, 30px);
+  z-index: 3;
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  appearance: none;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 8px;
+  color: #ffffff;
+  cursor: pointer;
+  transition: background 0.25s ease, border-color 0.25s ease, transform 0.25s ease;
+}
+.about-close:hover,
+.about-close:focus-visible {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-1px);
+  outline: none;
+}
+.about-close:focus-visible { outline: 2px solid #ffffff; outline-offset: 3px; }
+
+/* ── 双栏骨架 ───────────────────────────── */
+.about-grid {
+  display: grid;
+  grid-template-columns: 58% 34%;
+  column-gap: 8%;
+  align-items: start;
+}
+
+/* ── 左栏：个人定位 ─────────────────────── */
+.about-kicker {
+  margin: 0 0 clamp(18px, 2.4vw, 30px);
+  font-size: 11px;
+  font-weight: 850;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.5);
+}
+.about-title {
+  margin: 0 0 clamp(22px, 2.6vw, 34px);
+  font-size: clamp(34px, 4.6vw, 72px);
+  line-height: 1.02;
+  font-weight: 950;
+  letter-spacing: -0.05em;
+}
+.about-lede {
+  margin: 0;
+  max-width: 54ch;
+  font-size: clamp(14px, 1.05vw, 17px);
+  line-height: 1.8;
+  color: rgba(255, 255, 255, 0.72);
+}
+.about-lede span { display: block; }
+
+.about-sub {
+  margin: clamp(44px, 6vw, 78px) 0 clamp(22px, 2.4vw, 32px);
+  font-size: clamp(18px, 1.5vw, 24px);
+  font-weight: 950;
+  letter-spacing: -0.03em;
+}
+
+.about-caps { display: grid; gap: clamp(22px, 2.4vw, 32px); max-width: 720px; }
+.cap { display: grid; grid-template-columns: 46px minmax(0, 1fr); column-gap: 14px; }
+.cap-no {
+  font-size: 12px;
+  font-weight: 950;
+  letter-spacing: 0.12em;
+  color: rgba(255, 255, 255, 0.42);
+  padding-top: 4px;
+}
+.cap-head {
+  margin: 0 0 8px;
+  font-size: clamp(15px, 1.15vw, 18px);
+  font-weight: 950;
+  letter-spacing: -0.02em;
+}
+.cap-head i {
+  font-style: normal;
+  color: rgba(255, 255, 255, 0.42);
+  margin: 0 6px;
+  font-weight: 700;
+}
+.cap-body {
+  margin: 0;
+  font-size: clamp(13px, 0.95vw, 15px);
+  line-height: 1.75;
+  color: rgba(255, 255, 255, 0.62);
+}
+
+/* ── 联系区 ─────────────────────────────── */
+.about-contact {
+  margin-top: clamp(44px, 6vw, 78px);
+  padding-top: clamp(22px, 2.6vw, 32px);
+  border-top: 1px solid rgba(255, 255, 255, 0.14);
+}
+.contact-kicker {
+  margin: 0 0 14px;
+  font-size: 12px;
+  font-weight: 850;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.5);
+}
+.contact-mail {
+  margin: 0 0 22px;
+  font-size: clamp(15px, 1.4vw, 22px);
+  font-weight: 950;
+  letter-spacing: -0.02em;
+  word-break: break-all;
+}
+.contact-mail a { color: #ffffff; text-decoration: none; border-bottom: 1px solid rgba(255, 255, 255, 0.3); }
+.contact-mail a:hover { border-color: #ffffff; }
+.contact-actions { display: flex; flex-wrap: wrap; gap: 12px; }
+.contact-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 13px 22px;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 900;
+  letter-spacing: 0.02em;
+  color: #ffffff;
+  text-decoration: none;
+  transition: background 0.25s ease, border-color 0.25s ease;
+}
+.contact-btn:hover { background: rgba(255, 255, 255, 0.1); border-color: rgba(255, 255, 255, 0.6); }
+
+/* ── 右栏：SELECTED PATH ────────────────── */
+.about-path { min-width: 0; }
+.path-head { margin-bottom: clamp(18px, 2vw, 26px); }
+.path-kicker {
+  margin: 0 0 6px;
+  font-size: 11px;
+  font-weight: 850;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.5);
+}
+.path-range {
+  margin: 0;
+  font-size: clamp(20px, 1.8vw, 28px);
+  font-weight: 950;
+  letter-spacing: -0.03em;
+}
+
+.path-chart { width: 100%; height: auto; display: block; margin-bottom: clamp(18px, 2vw, 26px); }
+.path-chart text { font-family: Inter, Arial, "PingFang SC", "Microsoft YaHei", sans-serif; }
+
+/* L11 语法：网格淡入 / 节点弹出 / 轨迹生长
+   .about-overlay 用于浮层；body.in-footer .footer-stage 用于首页页尾内嵌展示。
+   内嵌动画绑定到 body.in-footer，确保进入页尾时才开始播放，而不是在首屏隐藏阶段跑完。 */
+.about-overlay .ln-grid,
+.about-overlay .ln-label,
+body.in-footer .footer-stage .ln-grid,
+body.in-footer .footer-stage .ln-label { opacity: 0; animation: aboutFade 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) forwards; }
+@keyframes aboutFade { to { opacity: 1; } }
+.about-overlay .ln-lane,
+body.in-footer .footer-stage .ln-lane { animation: aboutDraw 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) forwards; }
+@keyframes aboutDraw { to { stroke-dashoffset: 0; } }
+.about-overlay .ln-sq,
+body.in-footer .footer-stage .ln-sq {
+  transform-box: fill-box;
+  transform-origin: center;
+  opacity: 0;
+  animation: aboutPop 0.45s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+}
+@keyframes aboutPop { from { transform: scale(0.2); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+.ln-node { cursor: pointer; }
+.ln-sq { fill: rgba(255, 255, 255, 0.5); transition: fill 0.25s ease; }
+.ln-halo { fill: none; stroke: rgba(255, 255, 255, 0.55); stroke-width: 1; opacity: 0; transition: opacity 0.2s ease; }
+.ln-node.is-active .ln-sq { fill: #ffffff; }
+.ln-node.is-active .ln-halo { opacity: 1; }
+
+/* 节点列表 */
+.path-list { list-style: none; margin: 0; padding: 0; }
+.path-item { border-top: 1px solid rgba(255, 255, 255, 0.12); }
+.path-item:first-child { border-top: 0; }
+.path-item-btn {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  width: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas: "time track" "name track";
+  column-gap: 12px;
+  row-gap: 4px;
+  align-items: center;
+  padding: 12px 8px 12px 0;
+  text-align: left;
+  font-family: inherit;
+  color: inherit;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+.path-time {
+  grid-area: time;
+  font-size: 11px;
+  font-weight: 850;
+  letter-spacing: 0.1em;
+  color: rgba(255, 255, 255, 0.45);
+}
+.path-name {
+  grid-area: name;
+  font-size: clamp(14px, 1.05vw, 16px);
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  color: rgba(255, 255, 255, 0.78);
+  transition: color 0.2s ease;
+}
+.path-track {
+  grid-area: track;
+  font-size: 9.5px;
+  font-weight: 850;
+  letter-spacing: 0.12em;
+  color: rgba(255, 255, 255, 0.42);
+  text-align: right;
+  white-space: nowrap;
+}
+.path-item:hover .path-name,
+.path-item.is-active .path-name { color: #ffffff; }
+.path-item.is-active .path-time { color: rgba(255, 255, 255, 0.72); }
+.path-item-btn:focus-visible { outline: 2px solid #ffffff; outline-offset: 2px; }
+
+.path-detail { padding: 2px 0 18px; }
+.path-detail p {
+  margin: 0 0 8px;
+  display: grid;
+  grid-template-columns: 38px minmax(0, 1fr);
+  column-gap: 10px;
+  font-size: 12.5px;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.62);
+}
+.path-detail p:last-child { margin-bottom: 0; }
+.path-detail b {
+  font-size: 10px;
+  font-weight: 850;
+  letter-spacing: 0.12em;
+  color: rgba(255, 255, 255, 0.4);
+  padding-top: 3px;
+}
+
+.path-hint {
+  margin: 14px 0 0;
+  font-size: 11.5px;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.38);
+}
+.about-path.has-active .path-hint { display: none; }
+
+.path-foot {
+  margin: clamp(20px, 2.4vw, 30px) 0 0;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.14);
+  font-size: 10px;
+  font-weight: 850;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.42);
+}
+
+/* ── 桌面：右栏 sticky + 单节点展开 ─────── */
+@media (min-width: 1101px) {
+  .about-path {
+    position: sticky;
+    top: clamp(24px, 4vh, 44px);
+    max-height: calc(100vh - clamp(48px, 8vh, 88px));
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding-right: 6px;
+  }
+  .about-path::-webkit-scrollbar { width: 6px; }
+  .about-path::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.14); border-radius: 8px; }
+  .path-item .path-detail { display: none; }
+  .path-item.is-active .path-detail { display: block; }
+}
+
+/* ── 平板 / 手机：单列正常流，全部展开 ──── */
+@media (max-width: 1100px) {
+  .about-grid { grid-template-columns: minmax(0, 1fr); row-gap: clamp(48px, 8vw, 72px); }
+  .about-path { position: static; max-height: none; overflow: visible; }
+  .path-detail { display: block !important; }
+  .path-hint { display: none; }
+  .path-item-btn { cursor: default; }
+}
+
+@media (max-width: 680px) {
+  .about-inner { padding-top: 72px; }
+  .cap { grid-template-columns: minmax(0, 1fr); row-gap: 6px; }
+  .cap-no { padding-top: 0; }
+  .contact-actions { flex-direction: column; align-items: stretch; }
+  .contact-btn { justify-content: space-between; }
+  .path-item-btn { grid-template-columns: minmax(0, 1fr); grid-template-areas: "time" "name" "track"; row-gap: 5px; }
+  .path-track { text-align: left; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .about-overlay { transition: opacity 0.01s linear, visibility 0s linear 0.01s; }
+  .about-overlay .ln-grid,
+  .about-overlay .ln-label,
+  .about-overlay .ln-sq,
+  body.in-footer .footer-stage .ln-grid,
+  body.in-footer .footer-stage .ln-label,
+  body.in-footer .footer-stage .ln-sq { animation: none; opacity: 1; transform: none; }
+  .about-overlay .ln-lane,
+  body.in-footer .footer-stage .ln-lane { animation: none; stroke-dasharray: none; stroke-dashoffset: 0; }
+  .about-close, .contact-btn, .ln-sq, .ln-halo { transition: none; }
+}
+
+/* ── 顶栏触发按钮（作品详情页）───────────── */
+.view-link[data-about-open] {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  color: inherit;
+  cursor: pointer;
+  padding: 6px 0;
+  transition: color 0.2s ease;
+}

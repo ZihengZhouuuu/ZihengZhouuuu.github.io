@@ -1,0 +1,540 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Robot Action Console — Playback Prototype</title>
+  <style>
+    :root {
+      --ink: #161816;
+      --muted: #676b67;
+      --paper: #f5f5f1;
+      --white: #fff;
+      --line: #d4d7d1;
+      --green: #138a72;
+      --green-soft: #dcebe6;
+      --danger: #c74b3e;
+      --mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      --sans: Inter, "Noto Sans SC", "Microsoft YaHei", Arial, sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html { background: var(--paper); scroll-behavior: smooth; }
+    body { margin: 0; color: var(--ink); background: var(--paper); font-family: var(--sans); letter-spacing: 0; }
+    button, input { font: inherit; }
+    button, a { color: inherit; }
+    button { cursor: pointer; }
+    a { text-decoration: none; }
+    :focus-visible { outline: 2px solid var(--green); outline-offset: 3px; }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      min-height: 64px;
+      padding: 0 clamp(18px, 3vw, 46px);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(245, 245, 241, 0.94);
+      backdrop-filter: blur(12px);
+    }
+    .brand { font-weight: 850; }
+    .brand small { margin-left: 10px; color: var(--muted); font-family: var(--mono); font-size: 10px; font-weight: 700; }
+    .back-link { font-size: 13px; font-weight: 800; }
+    .back-link:hover { text-decoration: underline; text-underline-offset: 4px; }
+
+    main { padding: 28px clamp(18px, 3vw, 46px) 48px; }
+    .shell { width: min(1500px, 100%); margin: 0 auto; }
+    .intro {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 30px;
+      align-items: end;
+      margin-bottom: 24px;
+    }
+    .eyebrow { margin: 0 0 10px; color: var(--green); font-family: var(--mono); font-size: 10px; font-weight: 800; }
+    h1 { max-width: 850px; margin: 0; font-size: clamp(38px, 5vw, 72px); line-height: 0.96; text-wrap: balance; }
+    .prototype-note { max-width: 390px; margin: 0; color: var(--muted); font-size: 13px; line-height: 1.65; }
+    .prototype-note b { color: var(--ink); }
+
+    .workspace {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 340px;
+      min-height: 690px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--white);
+    }
+    .stage { min-width: 0; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; background: #101210; }
+    .stage-toolbar {
+      min-height: 56px;
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      color: #fff;
+      border-bottom: 1px solid rgba(255,255,255,.14);
+    }
+    .segmented { display: inline-flex; padding: 3px; border: 1px solid currentColor; border-radius: 6px; }
+    .segmented button { min-height: 32px; padding: 0 11px; border: 0; border-radius: 3px; color: inherit; background: transparent; font-size: 11px; font-weight: 800; }
+    .segmented button.is-active { color: var(--ink); background: #fff; }
+    .playback-badge { color: rgba(255,255,255,.65); font-family: var(--mono); font-size: 9px; }
+
+    .viewer { position: relative; min-height: 520px; overflow: hidden; }
+    .viewer video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; background: #101210; }
+    .viewer-meta {
+      position: absolute;
+      left: 18px;
+      right: 18px;
+      bottom: 18px;
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 18px;
+      pointer-events: none;
+    }
+    .viewer-title { max-width: 480px; padding: 12px 14px; color: #fff; background: rgba(0,0,0,.72); border: 1px solid rgba(255,255,255,.35); border-radius: 6px; }
+    .viewer-title b { display: block; margin-bottom: 4px; font-size: 15px; }
+    .viewer-title span { color: rgba(255,255,255,.65); font-size: 11px; }
+    .state-chip { padding: 9px 11px; color: #fff; background: rgba(0,0,0,.72); border: 1px solid rgba(255,255,255,.35); border-radius: 6px; font-family: var(--mono); font-size: 10px; }
+    .state-chip i { display: inline-block; width: 7px; height: 7px; margin-right: 7px; border-radius: 50%; background: #fff; }
+    .state-chip.is-running i { background: #43d8aa; }
+
+    .compare-view { position: relative; display: grid; grid-template-columns: 1fr; background: #101210; }
+    .compare-view[hidden], .action-view[hidden] { display: none; }
+    .compare-panel { position: relative; min-width: 0; aspect-ratio: 16 / 9; overflow: hidden; }
+    .compare-panel + .compare-panel { border-top: 1px solid rgba(255,255,255,.26); }
+    .compare-panel video { object-fit: contain; }
+    .compare-label { position: absolute; top: 14px; left: 14px; z-index: 2; padding: 7px 9px; color: #fff; background: rgba(0,0,0,.72); border: 1px solid rgba(255,255,255,.32); border-radius: 5px; font-family: var(--mono); font-size: 9px; }
+    .compare-label.fail { border-color: var(--danger); }
+    .compare-label.success { border-color: #43d8aa; }
+
+    .timeline { min-height: 72px; padding: 14px 18px; color: #fff; border-top: 1px solid rgba(255,255,255,.14); }
+    .timeline-track { position: relative; height: 2px; margin: 8px 0 14px; background: rgba(255,255,255,.22); }
+    .timeline-progress { display: block; width: 0; height: 100%; background: #fff; }
+    .timeline-states { display: grid; grid-template-columns: repeat(4, 1fr); color: rgba(255,255,255,.46); font-family: var(--mono); font-size: 9px; }
+    .timeline-states span.is-active { color: #fff; }
+    .timeline-states span:last-child { text-align: right; }
+
+    .controls { padding: 18px; border-left: 1px solid var(--line); background: #fbfbf8; }
+    .control-section { padding-bottom: 20px; margin-bottom: 20px; border-bottom: 1px solid var(--line); }
+    .control-section:last-child { margin-bottom: 0; border-bottom: 0; }
+    .control-label { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 0 0 12px; font-family: var(--mono); font-size: 9px; font-weight: 800; }
+    .control-label span { color: var(--muted); font-weight: 500; }
+    .input-modes, .action-grid { display: grid; gap: 7px; }
+    .input-modes { grid-template-columns: repeat(3, 1fr); }
+    .action-grid { grid-template-columns: repeat(2, 1fr); }
+    .control-btn { min-height: 40px; padding: 8px 9px; border: 1px solid var(--line); border-radius: 6px; background: #fff; font-size: 11px; font-weight: 800; }
+    .control-btn:hover { border-color: var(--ink); }
+    .control-btn.is-active { color: #fff; border-color: var(--ink); background: var(--ink); }
+    .control-btn small { display: block; margin-top: 3px; color: var(--muted); font-family: var(--mono); font-size: 8px; font-weight: 500; }
+    .control-btn.is-active small { color: rgba(255,255,255,.62); }
+    .mode-note { min-height: 34px; margin: 9px 0 0; color: var(--muted); font-size: 10px; line-height: 1.5; }
+    .failure-grid { display: grid; gap: 6px; }
+    .failure-groups { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; margin-bottom: 10px; }
+    .failure-group { min-height: 40px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 6px; background: #fff; font-size: 11px; font-weight: 800; }
+    .failure-group.is-active { color: #fff; border-color: var(--ink); background: var(--ink); }
+    .failure-btn { min-height: 44px; padding: 8px 10px; display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: center; text-align: left; border: 1px solid var(--line); border-radius: 6px; background: #fff; }
+    .failure-btn[hidden] { display: none; }
+    .failure-btn:hover, .failure-btn.is-active { border-color: var(--ink); }
+    .failure-btn.is-active { color: #fff; background: var(--ink); }
+    .failure-btn strong { font-size: 11px; }
+    .failure-btn span { color: var(--muted); font-family: var(--mono); font-size: 8px; }
+    .failure-btn.is-active span { color: rgba(255,255,255,.62); }
+    .compare-play { width: 100%; min-height: 44px; margin-top: 10px; border: 1px solid var(--ink); border-radius: 6px; color: #fff; background: var(--ink); font-size: 12px; font-weight: 900; }
+    .compare-play:hover { color: var(--ink); background: #fff; }
+
+    .slider-row { display: grid; grid-template-columns: 28px 1fr 45px; gap: 9px; align-items: center; min-height: 38px; }
+    .slider-row[hidden] { display: none; }
+    .slider-row label, .slider-value { font-family: var(--mono); font-size: 10px; }
+    .slider-value { text-align: right; color: var(--muted); }
+    input[type="range"] { width: 100%; accent-color: var(--green); }
+    input[type="range"]:disabled { filter: grayscale(1); opacity: .48; cursor: default; }
+    .slider-row.is-automated label, .slider-row.is-automated .slider-value { color: #979b97; }
+    .command-preview { padding: 12px; border: 1px solid var(--line); border-radius: 6px; background: #fff; font-family: var(--mono); font-size: 10px; line-height: 1.7; overflow-wrap: anywhere; }
+    .command-preview b { color: var(--green); }
+    .execute { width: 100%; min-height: 48px; margin-top: 10px; border: 1px solid var(--ink); border-radius: 6px; color: #fff; background: var(--ink); font-size: 13px; font-weight: 900; }
+    .execute:hover { color: var(--ink); background: #fff; }
+    .microcopy { margin: 9px 0 0; color: var(--muted); font-size: 10px; line-height: 1.5; }
+
+    @media (max-width: 980px) {
+      .intro { grid-template-columns: 1fr; }
+      .workspace { grid-template-columns: 1fr; }
+      .controls { border-left: 0; border-top: 1px solid var(--line); }
+    }
+    @media (max-width: 620px) {
+      .topbar { min-height: 58px; }
+      .brand small { display: none; }
+      main { padding-top: 22px; }
+      .viewer { min-height: 430px; }
+      .stage-toolbar { align-items: flex-start; flex-direction: column; }
+      .compare-view { grid-template-columns: 1fr; }
+      .viewer-meta { align-items: flex-start; flex-direction: column; }
+      .state-chip { order: -1; }
+    }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="work-ucl.html">周子恒 · 设计智能 <small>ROBOT ACTION CONSOLE</small></a>
+    <a class="back-link" href="work-ucl.html#product-logic">返回项目 ↙</a>
+  </header>
+
+  <main>
+    <div class="shell">
+      <header class="intro">
+        <div>
+          <p class="eyebrow">INTERACTION DEMO / PLAYBACK PROTOTYPE</p>
+          <h1>切换交互状态，看见动作如何发生、又在哪里失效。</h1>
+        </div>
+        <p class="prototype-note"><b>范围说明：</b>界面连接项目中的真实动作视频，用于操作逻辑与录屏演示；当前未连接实体机器人，也不代表传感器闭环已经完成。</p>
+      </header>
+
+      <section class="workspace" aria-label="机器人动作控制演示">
+        <div class="stage">
+          <div class="stage-toolbar">
+            <div class="segmented" role="tablist" aria-label="演示视图">
+              <button class="is-active" type="button" data-view="action">动作</button>
+              <button type="button" data-view="compare">失败对照</button>
+            </div>
+            <span class="playback-badge">SIMULATED COMMAND / REAL PROJECT FOOTAGE</span>
+          </div>
+
+          <div class="viewer">
+            <div class="action-view" data-panel="action">
+              <video id="action-video" src="images/UCL/actions/Slide.mp4" muted playsinline preload="metadata"></video>
+              <div class="viewer-meta">
+                <div class="viewer-title"><b id="viewer-title">X 轴滑动</b><span id="viewer-subtitle">单机位移 · 实体动作记录</span></div>
+                <span class="state-chip" id="state-chip"><i></i><span>IDLE / READY</span></span>
+              </div>
+            </div>
+
+            <div class="compare-view" data-panel="compare" hidden>
+              <div class="compare-panel"><span class="compare-label fail" id="fail-label">BEFORE / FAILURE</span><video id="fail-video" src="images/UCL/actions/Fail_Rotate_TwoRobots.mp4" muted playsinline preload="metadata"></video></div>
+              <div class="compare-panel"><span class="compare-label success" id="success-label">AFTER / VERIFIED</span><video id="success-video" src="images/UCL/actions/Rotate_TwoRobots.mp4" muted playsinline preload="metadata"></video></div>
+            </div>
+
+          </div>
+
+          <div class="timeline">
+            <div class="timeline-track"><span class="timeline-progress" id="timeline-progress"></span></div>
+            <div class="timeline-states"><span class="is-active">01 QUEUED</span><span>02 EXECUTING</span><span>03 OBSERVED</span><span>04 DONE</span></div>
+          </div>
+        </div>
+
+        <aside class="controls" aria-label="动作设置">
+          <section class="control-section" id="input-mode-section">
+            <p class="control-label">INPUT MODE <span>交互入口</span></p>
+            <div class="input-modes">
+              <button class="control-btn is-active" type="button" data-mode="Panel">面板控制<small>ACTIVE</small></button>
+              <button class="control-btn" type="button" data-mode="Cardputer">Cardputer<small>CONCEPT</small></button>
+              <button class="control-btn" type="button" data-mode="Gesture">手势触发<small>CONCEPT</small></button>
+            </div>
+            <p class="mode-note" id="mode-note">X 移动整机，Y 移动上部滑台，J 单独控制关节角度。</p>
+          </section>
+
+          <section class="control-section" id="failure-library" hidden>
+            <p class="control-label">FAILURE LIBRARY <span>按已有动作记录筛选</span></p>
+            <div class="failure-groups" aria-label="失败动作分类">
+              <button class="failure-group is-active" type="button" data-failure-group="rotate">旋转 · 4 组</button>
+              <button class="failure-group" type="button" data-failure-group="lift">抬升 · 1 组</button>
+            </div>
+            <div class="failure-grid">
+              <button class="failure-btn" type="button" data-failure="solo-a" data-failure-action="rotate"><strong>单机旋转失稳 A</strong><span>F01</span></button>
+              <button class="failure-btn" type="button" data-failure="solo-b" data-failure-action="rotate"><strong>单机旋转失稳 B</strong><span>F02</span></button>
+              <button class="failure-btn is-active" type="button" data-failure="dual-a" data-failure-action="rotate"><strong>双机旋转失衡 A</strong><span>F03</span></button>
+              <button class="failure-btn" type="button" data-failure="dual-b" data-failure-action="rotate"><strong>双机旋转失衡 B</strong><span>F04</span></button>
+              <button class="failure-btn" type="button" data-failure="vertical" data-failure-action="lift" hidden><strong>垂直动作偏移</strong><span>F05</span></button>
+            </div>
+            <button class="compare-play" id="compare-play" type="button">播放失败 / 成功对照</button>
+          </section>
+
+          <section class="control-section" id="action-library-section">
+            <p class="control-label">ACTION LIBRARY <span>真实视频证据</span></p>
+            <div class="action-grid">
+              <button class="control-btn is-active" type="button" data-action="slide">滑动<small>X AXIS</small></button>
+              <button class="control-btn" type="button" data-action="rotate">旋转<small>J AXIS</small></button>
+              <button class="control-btn" type="button" data-action="lift">抬升<small>Y AXIS</small></button>
+              <button class="control-btn" type="button" data-action="collaboration">协作<small>MULTI AXIS</small></button>
+            </div>
+          </section>
+
+          <section class="control-section" id="scrub-section">
+            <p class="control-label">VIDEO SCRUB <span id="axis-hint">X 轴 · 拖动查看动作帧</span></p>
+            <div class="slider-row" data-axis-row="x"><label for="axis-x">X</label><input id="axis-x" type="range" min="-100" max="100" value="-100" /><output class="slider-value" for="axis-x">-100 mm</output></div>
+            <div class="slider-row" data-axis-row="y" hidden><label for="axis-y">Y</label><input id="axis-y" type="range" min="-60" max="60" value="0" /><output class="slider-value" for="axis-y">0 mm</output></div>
+            <div class="slider-row" data-axis-row="j" hidden><label for="joint-j">J</label><input id="joint-j" type="range" min="-90" max="90" value="0" /><output class="slider-value" for="joint-j">0°</output></div>
+            <div class="slider-row" data-axis-row="g" hidden><label for="grip">G</label><input id="grip" type="range" min="0" max="100" value="68" /><output class="slider-value" for="grip">68%</output></div>
+          </section>
+
+          <section class="control-section" id="command-section">
+            <p class="control-label">COMMAND PREVIEW <span>未发送到硬件</span></p>
+            <div class="command-preview" id="command-preview"><b>PANEL</b> / SLIDE<br />X +42 mm · Y 0 mm · J 0° · GRIP 68%</div>
+            <button class="execute" id="execute" type="button">执行动作回放</button>
+            <p class="microcopy" id="playback-note">拖动 X 滑杆定位真实动作帧；空格可从头播放当前动作。</p>
+          </section>
+        </aside>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    (() => {
+      const actions = {
+        slide: { title: "X 轴滑动", subtitle: "单向位移 · Remotion 裁剪", success: "images/UCL/actions/axis-slide.mp4", values: [-100, 0, 0, 68], axes: ["x"] },
+        rotate: { title: "J 轴旋转", subtitle: "单向旋转 · Remotion 裁剪", success: "images/UCL/actions/axis-rotate.mp4", values: [0, 0, -90, 74], axes: ["j"], failure: "dual-a" },
+        lift: { title: "Y 轴抬升", subtitle: "单向抬升 · Remotion 裁剪", success: "images/UCL/actions/axis-lift.mp4", values: [0, -60, 0, 82], axes: ["y"], failure: "vertical" },
+        collaboration: { title: "双机协作", subtitle: "多轴联动 · 实体动作记录", success: "images/UCL/actions/Pass.mp4", values: [-85, -24, -18, 48], axes: ["x", "y", "j", "g"], automated: true }
+      };
+      const failures = {
+        "solo-a": { action: "rotate", title: "单机旋转失稳 A", fail: "images/UCL/actions/Fail_Rotate01.mp4", success: "images/UCL/actions/Rotate01.mp4" },
+        "solo-b": { action: "rotate", title: "单机旋转失稳 B", fail: "images/UCL/actions/Fail_Rotate02.mp4", success: "images/UCL/actions/Rotate02.mp4" },
+        "dual-a": { action: "rotate", title: "双机旋转失衡 A", fail: "images/UCL/actions/Fail_Rotate_TwoRobots.mp4", success: "images/UCL/actions/Rotate_TwoRobots.mp4" },
+        "dual-b": { action: "rotate", title: "双机旋转失衡 B", fail: "images/UCL/actions/Fail_Rotate_TwoRobots2.mp4", success: "images/UCL/actions/Rotate_TwoRobots.mp4" },
+        "vertical": { action: "lift", title: "垂直动作偏移", fail: "images/UCL/actions/Fail_Vertical.mp4", success: "images/UCL/actions/Vertical_solo.mp4" }
+      };
+      const units = [" mm", " mm", "°", "%"];
+      const sliders = [...document.querySelectorAll('input[type="range"]')];
+      const actionVideo = document.getElementById("action-video");
+      const failVideo = document.getElementById("fail-video");
+      const successVideo = document.getElementById("success-video");
+      const progress = document.getElementById("timeline-progress");
+      const stateChip = document.getElementById("state-chip");
+      const stateText = stateChip.querySelector("span");
+      const commandPreview = document.getElementById("command-preview");
+      const actionView = document.querySelector('[data-panel="action"]');
+      const failureLibrary = document.getElementById("failure-library");
+      const actionOnlySections = ["input-mode-section", "action-library-section", "scrub-section", "command-section"].map((id) => document.getElementById(id));
+      const sliderActions = ["slide", "lift", "rotate", null];
+      const axisRows = [...document.querySelectorAll("[data-axis-row]")];
+      const axisIndex = { x: 0, y: 1, j: 2, g: 3 };
+      let currentAction = "slide";
+      let currentMode = "Panel";
+      let currentView = "action";
+      let currentFailure = "dual-a";
+      let gestureStart = null;
+
+      const syncPreview = () => {
+        sliders.forEach((slider, index) => slider.nextElementSibling.textContent = `${slider.value}${units[index]}`);
+        const values = actions[currentAction].axes.map((axis) => {
+          const index = axisIndex[axis];
+          const label = axis === "g" ? "GRIP" : axis.toUpperCase();
+          const sign = index < 3 && Number(sliders[index].value) >= 0 ? "+" : "";
+          return `${label} ${sign}${sliders[index].value}${units[index]}`;
+        });
+        commandPreview.innerHTML = `<b>${currentMode.toUpperCase()}</b> / ${currentAction.toUpperCase()}<br>${values.join(" · ")}`;
+      };
+
+      const updateAxisControls = (action) => {
+        const automated = Boolean(action.automated);
+        axisRows.forEach((row) => {
+          const visible = action.axes.includes(row.dataset.axisRow);
+          row.hidden = !visible;
+          row.classList.toggle("is-automated", automated);
+          row.querySelector("input").disabled = automated;
+        });
+        const axisText = action.axes.map((axis) => axis.toUpperCase()).join(" / ");
+        document.getElementById("axis-hint").textContent = automated
+          ? `${axisText} · 回放同步`
+          : `${axisText} 轴 · 拖动查看动作帧`;
+        document.getElementById("playback-note").textContent = automated
+          ? "协作包含多轴联动，滑杆为只读状态；执行回放时会随真实视频同步变化。"
+          : `当前动作仅开放 ${axisText} 轴；拖动滑杆可定位真实动作帧。`;
+        document.getElementById("execute").textContent = automated ? "执行协作回放" : "执行动作回放";
+        document.getElementById("mode-note").textContent = automated
+          ? "协作状态由真实视频时间轴驱动，不提供手动改写。"
+          : currentMode === "Panel"
+            ? `当前动作只控制 ${axisText} 轴。`
+            : currentMode === "Cardputer"
+              ? "方向键控制 X / Y，A / D 控制 J；尚未连接实体设备。"
+              : "在真实动作画面上滑动，映射当前单轴动作；尚未连接传感器。";
+      };
+
+      const syncSlidersToPlayback = (ratio) => {
+        if (currentAction === "collaboration") {
+          const wave = Math.sin(Math.PI * ratio);
+          sliders[0].value = Math.round(-85 + 170 * Math.min(1, ratio / .48) - 140 * Math.max(0, (ratio - .48) / .52));
+          sliders[1].value = Math.round(-24 + 70 * wave);
+          sliders[2].value = Math.round(-18 + 88 * wave);
+          sliders[3].value = Math.round(48 + 44 * wave);
+        } else {
+          const axis = actions[currentAction].axes[0];
+          const slider = sliders[axisIndex[axis]];
+          slider.value = Math.round(Number(slider.min) + (Number(slider.max) - Number(slider.min)) * ratio);
+        }
+        syncPreview();
+      };
+
+      const seekVideoFromSlider = (slider) => {
+        const index = sliders.indexOf(slider);
+        const actionKey = sliderActions[index];
+        if (!actionKey) return;
+        if (currentView !== "action") setView("action");
+        if (currentAction !== actionKey) selectAction(actionKey, false);
+        const ratio = (Number(slider.value) - Number(slider.min)) / (Number(slider.max) - Number(slider.min));
+        const seek = () => {
+          actionVideo.pause();
+          actionVideo.currentTime = Math.min(actionVideo.duration * .98, actionVideo.duration * ratio);
+          progress.style.width = `${ratio * 100}%`;
+          setState(`FRAME ${Math.round(ratio * 100)}% / ${slider.id.toUpperCase()}`);
+        };
+        if (actionVideo.readyState >= 1 && Number.isFinite(actionVideo.duration)) seek();
+        else actionVideo.addEventListener("loadedmetadata", seek, { once: true });
+      };
+
+      const setState = (label, running = false) => {
+        stateText.textContent = label;
+        stateChip.classList.toggle("is-running", running);
+      };
+
+      const stopAll = () => [actionVideo, failVideo, successVideo].forEach((video) => video.pause());
+
+      const setView = (view) => {
+        currentView = view;
+        stopAll();
+        document.querySelectorAll("[data-view]").forEach((button) => button.classList.toggle("is-active", button.dataset.view === view));
+        document.querySelectorAll("[data-panel]").forEach((panel) => panel.hidden = panel.dataset.panel !== view);
+        failureLibrary.hidden = view !== "compare";
+        actionOnlySections.forEach((section) => section.hidden = view === "compare");
+        progress.style.width = "0%";
+        if (view === "compare") selectFailure(actions[currentAction].failure || currentFailure);
+      };
+
+      const setFailureGroup = (action, chooseFirst = false) => {
+        document.querySelectorAll("[data-failure-group]").forEach((button) => button.classList.toggle("is-active", button.dataset.failureGroup === action));
+        const matching = [...document.querySelectorAll("[data-failure-action]")].filter((button) => button.dataset.failureAction === action);
+        document.querySelectorAll("[data-failure-action]").forEach((button) => button.hidden = button.dataset.failureAction !== action);
+        if (chooseFirst && matching[0]) selectFailure(matching[0].dataset.failure);
+      };
+
+      const selectAction = (key, applyDefaults = true) => {
+        currentAction = key;
+        const action = actions[key];
+        document.querySelectorAll("[data-action]").forEach((button) => button.classList.toggle("is-active", button.dataset.action === key));
+        document.getElementById("viewer-title").textContent = action.title;
+        document.getElementById("viewer-subtitle").textContent = action.subtitle;
+        if (actionVideo.getAttribute("src") !== action.success) actionVideo.src = action.success;
+        successVideo.src = action.success;
+        if (applyDefaults) action.values.forEach((value, index) => sliders[index].value = value);
+        updateAxisControls(action);
+        syncPreview();
+        setState("IDLE / READY");
+        progress.style.width = "0%";
+      };
+
+      const selectFailure = (key) => {
+        const failure = failures[key];
+        if (!failure) return;
+        currentFailure = key;
+        currentAction = failure.action;
+        setFailureGroup(failure.action);
+        document.querySelectorAll("[data-failure]").forEach((button) => button.classList.toggle("is-active", button.dataset.failure === key));
+        document.querySelectorAll("[data-action]").forEach((button) => button.classList.toggle("is-active", button.dataset.action === failure.action));
+        failVideo.src = failure.fail;
+        successVideo.src = failure.success;
+        document.getElementById("fail-label").textContent = `FAILURE / ${failure.title}`;
+        document.getElementById("success-label").textContent = "VERIFIED / ACTION COMPLETED";
+        actions[failure.action].values.forEach((value, index) => sliders[index].value = value);
+        updateAxisControls(actions[failure.action]);
+        syncPreview();
+        setState("IDLE / COMPARE READY");
+      };
+
+      const playCurrent = () => {
+        if (currentView === "compare") {
+          failVideo.currentTime = 0;
+          successVideo.currentTime = 0;
+          Promise.all([failVideo.play(), successVideo.play()]).catch(() => {});
+          setState("EXECUTING / COMPARE", true);
+          return;
+        }
+        actionVideo.currentTime = 0;
+        syncSlidersToPlayback(0);
+        actionVideo.play().catch(() => {});
+        setState("EXECUTING / PLAYBACK", true);
+      };
+
+      document.querySelectorAll("[data-view]").forEach((button) => button.addEventListener("click", () => setView(button.dataset.view)));
+      document.querySelectorAll("[data-action]").forEach((button) => button.addEventListener("click", () => {
+        selectAction(button.dataset.action);
+        if (currentView === "compare") selectFailure(actions[button.dataset.action].failure || "dual-a");
+      }));
+      document.querySelectorAll("[data-failure]").forEach((button) => button.addEventListener("click", () => selectFailure(button.dataset.failure)));
+      document.querySelectorAll("[data-failure-group]").forEach((button) => button.addEventListener("click", () => setFailureGroup(button.dataset.failureGroup, true)));
+      document.querySelectorAll("[data-mode]").forEach((button) => button.addEventListener("click", () => {
+        currentMode = button.dataset.mode;
+        document.querySelectorAll("[data-mode]").forEach((item) => item.classList.toggle("is-active", item === button));
+        updateAxisControls(actions[currentAction]);
+        syncPreview();
+        button.blur();
+      }));
+      sliders.forEach((slider) => slider.addEventListener("input", () => {
+        syncPreview();
+        seekVideoFromSlider(slider);
+      }));
+      document.getElementById("execute").addEventListener("click", playCurrent);
+      document.getElementById("compare-play").addEventListener("click", playCurrent);
+      actionVideo.addEventListener("timeupdate", () => {
+        const ratio = actionVideo.duration ? actionVideo.currentTime / actionVideo.duration : 0;
+        progress.style.width = `${ratio * 100}%`;
+        syncSlidersToPlayback(ratio);
+        const index = Math.min(3, Math.floor(ratio * 4));
+        document.querySelectorAll(".timeline-states span").forEach((item, itemIndex) => item.classList.toggle("is-active", itemIndex <= index));
+      });
+      actionVideo.addEventListener("ended", () => setState("DONE / OBSERVED"));
+      successVideo.addEventListener("timeupdate", () => {
+        const ratio = successVideo.duration ? successVideo.currentTime / successVideo.duration : 0;
+        progress.style.width = `${ratio * 100}%`;
+      });
+      successVideo.addEventListener("ended", () => setState("DONE / COMPARED"));
+      actionView.addEventListener("pointerdown", (event) => { gestureStart = { x: event.clientX, y: event.clientY }; });
+      actionView.addEventListener("pointerup", (event) => {
+        if (currentMode !== "Gesture" || !gestureStart) return;
+        const dx = event.clientX - gestureStart.x;
+        const dy = event.clientY - gestureStart.y;
+        if (Math.max(Math.abs(dx), Math.abs(dy)) < 20) return;
+        if (Math.abs(dx) > Math.abs(dy)) {
+          selectAction("slide");
+          sliders[0].value = Math.max(-100, Math.min(100, Math.round(dx)));
+        } else if (dy < 0) {
+          selectAction("lift");
+          sliders[1].value = Math.max(10, Math.min(60, Math.round(-dy)));
+        } else {
+          selectAction("rotate");
+          sliders[2].value = Math.max(-90, Math.min(90, Math.round(dy)));
+        }
+        syncPreview();
+        seekVideoFromSlider(sliders[Math.abs(dx) > Math.abs(dy) ? 0 : dy < 0 ? 1 : 2]);
+        setState("GESTURE / MAPPED");
+        gestureStart = null;
+      });
+      window.addEventListener("keydown", (event) => {
+        if (["INPUT", "BUTTON"].includes(document.activeElement.tagName)) return;
+        const keys = { "1": "slide", "2": "rotate", "3": "lift", "4": "collaboration" };
+        if (keys[event.key]) selectAction(keys[event.key]);
+        if (currentMode === "Cardputer") {
+          const step = event.shiftKey ? 10 : 4;
+          let changedSlider = null;
+          if (event.key === "ArrowLeft") { sliders[0].value = Number(sliders[0].value) - step; changedSlider = sliders[0]; }
+          if (event.key === "ArrowRight") { sliders[0].value = Number(sliders[0].value) + step; changedSlider = sliders[0]; }
+          if (event.key === "ArrowUp") { sliders[1].value = Number(sliders[1].value) + step; changedSlider = sliders[1]; }
+          if (event.key === "ArrowDown") { sliders[1].value = Number(sliders[1].value) - step; changedSlider = sliders[1]; }
+          if (event.key.toLowerCase() === "a") { sliders[2].value = Number(sliders[2].value) - step; changedSlider = sliders[2]; }
+          if (event.key.toLowerCase() === "d") { sliders[2].value = Number(sliders[2].value) + step; changedSlider = sliders[2]; }
+          if (changedSlider) {
+            syncPreview();
+            seekVideoFromSlider(changedSlider);
+          }
+        }
+        if (event.code === "Space") { event.preventDefault(); playCurrent(); }
+      });
+      selectAction("slide");
+    })();
+  </script>
+</body>
+</html>
