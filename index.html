@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>周子恒｜设计智能</title>
   <link rel="icon" href="images/icon.png" type="image/png" />
   <link rel="stylesheet" href="about-overlay.css" />
@@ -414,34 +414,15 @@
       transition: opacity 0.6s var(--fade), transform 0.6s var(--fade);
     }
 
-    .footer-mount {
-      flex: 1 1 auto;
-      min-height: 0;
-      width: 100%;
-      overflow-y: auto;
-      overflow-x: hidden;
-      overscroll-behavior: contain;
-      -webkit-overflow-scrolling: touch;
-    }
-    .footer-mount::-webkit-scrollbar { width: 8px; }
-    .footer-mount::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.16); border-radius: 8px; }
-    .footer-copyright {
-      flex: 0 0 auto;
-      font-size: 12px;
-      color: rgba(255, 255, 255, 0.36);
-      padding-top: 14px;
-    }
-    /* footer-stage 内 About 内容微调：避免与 footer-stage 自身的 padding 叠加 */
-    .footer-stage .about-inner { padding-top: clamp(80px, 12vh, 132px); }
-    .footer-stage .about-path {
-      /* footer-stage 本身就是滚动容器，sticky 失效反而避免布局问题 */
-      position: static;
-      max-height: none;
-      overflow: visible;
-      padding-right: 0;
-    }
-    @media (max-width: 680px) {
-      .footer-stage .about-inner { padding-top: 72px; }
+    .footer-content { max-width: 600px; margin: auto 0; }
+    .footer-title { font-size: clamp(32px, 5vw, 64px); font-weight: 950; margin-bottom: 24px; }
+    .footer-desc { font-size: 16px; color: #a0a0a0; line-height: 1.6; margin-bottom: 32px; }
+    .footer-links { display: flex; gap: 24px; font-weight: 850; }
+    .footer-links a { text-decoration: underline; }
+    .footer-links button {
+      appearance: none; border: 0; background: transparent; padding: 0;
+      font-family: inherit; font-size: inherit; font-weight: inherit;
+      color: inherit; text-decoration: underline; cursor: pointer;
     }
 
     /* =========================
@@ -546,7 +527,7 @@
     /* 平板 / 小笔电：项目信息移到卡片下方居中，避免压在卡面上 */
     @media (max-width: 1200px) {
       .meta {
-        top: auto; bottom: 8vh; left: var(--pad); right: var(--pad);
+        top: auto; bottom: calc(8vh + env(safe-area-inset-bottom, 0px)); left: var(--pad); right: var(--pad);
         transform: none; align-items: center; text-align: center;
       }
       .meta-name { max-width: none; font-size: clamp(22px, 4.4vw, 34px); }
@@ -587,14 +568,18 @@
       .work-tags { font-size: 9px; }
     }
 
-    /* 手机：图片系统整体收小，上下留白，文字与卡片之间留出间隙 */
+    /* 手机：图片系统整体收小，上下留白，文字与卡片之间留出间隙。
+       底部 meta 需高于 iPhone 的 Home Indicator / 浏览器工具栏：
+       用 env(safe-area-inset-bottom)（配合 viewport-fit=cover）自动让位；
+       --stack-gap 同步收紧，避免 next 卡片下沿压到抬起的 meta。 */
     @media (max-width: 560px) {
       :root {
         --card-w: min(70vw, 820px);
         --card-h: min(43.75vw, 512.5px);
-        --stack-gap: 15vh;
+        --stack-gap: 11vh;
       }
-      .meta { bottom: 7vh; }
+      .meta { bottom: calc(10vh + env(safe-area-inset-bottom, 0px)); }
+      .footer-links { flex-wrap: wrap; gap: 16px; }
     }
 
     @media (max-width: 430px) {
@@ -610,6 +595,51 @@
       .hero-intro { gap: 8px; }
       .hero-role { font-size: clamp(22px, 2.4vw, 28px); }
       .portfolio-thesis { line-height: 1.45; }
+    }
+
+    /* =========================
+       7. 手机端（≤768px）：引线重置 + 01/02/03 标签改为中央图形下方的纵向列表
+       触发条件：在 iPhone SE / 13 Pro / 16 Pro Max / XR 上，
+       把原本在 viewBox 两侧、x=±310 处溢出屏幕的三条标签，平移到中心 Portal 正下方（x=150），
+       借助 SVG overflow:visible 让标签真正出现在罗盘圆下方；
+       同时把罗盘放大到 ≥1.47x 并加大弧底与首条标签的间距
+    ========================= */
+    @media (max-width: 768px) {
+      /* ① 显式允许 SVG 内容溢出 viewBox 边界（UA 默认 svg 是 overflow:hidden） */
+      .compass-svg { overflow: visible; }
+
+      /* ② 隐藏两侧散布的虚线引线 */
+      .compass-svg .pointer-line { display: none; }
+
+      /* ③ 中央罗盘放大（用户要求 ≥1.35x，这里给到 1.47x，保证可视层级）
+            440px 屏：min(440, 75vw=330, 55vh=…)  = 330px  → 1.47x
+            414px 屏：min(440, 75vw=310, 55vh=…)  = 310px  → 1.47x
+            375px 屏：min(440, 75vw=281, 55vh=…)  = 281px  → 1.47x
+            （原 1000px 断点是 min(440, 51vw, 50vh) ≈ 191-228px） */
+      :root { --compass-size: min(440px, 75vw, 55vh); }
+
+      /* ④ SVG 标签改为居中对齐（围绕平移后的新 x 坐标居中）+ 字号 12px */
+      .compass-svg .annotation-text {
+        text-anchor: middle;
+        font-size: 12px;
+        letter-spacing: 0.04em;
+      }
+
+      /* ⑤ 把三条标签从 viewBox 外侧平移到罗盘正下方（viewBox 之外），纵向堆叠；
+            y 坐标拉到 345/380/415，借助更大的罗盘 + 更高的 y，
+            让「弧底（viewBox y=285）→首条标签」的可视间距 ≈ 50-70px（按当前罗盘尺寸浮动）。
+            原：01(310,78) / 02(310,225) / 03(-120,78)
+            新：01(150,345) / 02(150,380) / 03(150,415)
+            delta = 目标 - 原 */
+      .compass-svg .annotation-text:nth-of-type(1) {
+        transform: translate(-160px, 257px);
+      }
+      .compass-svg .annotation-text:nth-of-type(2) {
+        transform: translate(-160px, 145px);
+      }
+      .compass-svg .annotation-text:nth-of-type(3) {
+        transform: translate(270px, 327px);
+      }
     }
   </style>
 </head>
