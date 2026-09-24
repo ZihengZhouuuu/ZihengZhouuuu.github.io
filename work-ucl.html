@@ -743,6 +743,42 @@
       .story-media, .media-source { transition: none; }
     }
 
+    /* The page introduces the task first, then uses the prototype's own material to explain its operating system. */
+    .operating-system { width: min(1120px, 100%); margin: clamp(70px, 9vw, 124px) auto 0; }
+    .operating-system-head {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(280px, .72fr);
+      gap: clamp(30px, 7vw, 110px);
+      align-items: end;
+      margin-bottom: clamp(34px, 5vw, 58px);
+    }
+    .operating-system-head h3 { max-width: 13ch; margin: 0; font-size: clamp(36px, 4.8vw, 70px); line-height: .96; text-wrap: balance; }
+    .operating-system-head > p { max-width: 42ch; margin: 0; color: #4e5b5b; font-size: 15px; font-weight: 600; line-height: 1.65; }
+    .system-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+    .system-card { min-width: 0; overflow: hidden; border-radius: 8px; background: #fff; }
+    .system-card figure { margin: 0; overflow: hidden; background: #dfe7e8; }
+    .system-card img { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; transition: transform 380ms ease; }
+    .system-card:nth-child(2) img { object-fit: contain; background: #fff; }
+    .system-card:nth-child(3) img { object-position: 79% center; }
+    .system-card:nth-child(4) img { object-fit: contain; background: #fff; }
+    .system-card:hover img { transform: scale(1.025); }
+    .system-card > div { min-height: 160px; padding: 17px 18px 20px; }
+    .system-card b { display: block; margin-bottom: 12px; color: var(--green); font-family: var(--mono); font-size: 9px; font-weight: 800; }
+    .system-card h4 { margin: 0 0 9px; font-size: clamp(21px, 2vw, 31px); line-height: 1; }
+    .system-card p { margin: 0; color: #586464; font-size: 12px; font-weight: 600; line-height: 1.55; }
+    .system-note { max-width: 72ch; margin: 22px 0 0; color: var(--muted); font-family: var(--mono); font-size: 10px; line-height: 1.65; }
+    @media (max-width: 980px) {
+      .operating-system-head { grid-template-columns: 1fr; }
+      .system-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 680px) {
+      .operating-system { margin-top: 58px; }
+      .operating-system-head { margin-bottom: 30px; }
+      .system-grid { grid-template-columns: 1fr; gap: 10px; }
+      .system-card img { aspect-ratio: 4 / 3; }
+      .system-card > div { min-height: 0; padding: 15px 16px 18px; }
+    }
+
     /* Project framing: explain the problem and the validation order before the scroll story begins. */
     .product-layer {
       padding: clamp(86px, 10vw, 154px) var(--pad) clamp(96px, 11vw, 164px);
@@ -1168,10 +1204,10 @@
 
       <div class="case-footer">
         <h1 class="case-title" id="hero-title">
-          无人建造<br>
-          <span>SWARM INTELLIGENCE</span>
+          空间机器人<br>
+          <span>ROBOTIC CONSTRUCTION</span>
         </h1>
-        <p class="case-summary">把不可进入区域的模块化搭建任务，拆成可控制、可验证并可继续训练的机器人动作。</p>
+        <p class="case-summary">在难以进入的环境中，将模块化搭建任务转成可控制、可验证的双机动作。</p>
       </div>
     </section>
 
@@ -1179,51 +1215,44 @@
       <div class="product-layer-inner">
         <header class="product-layer-head">
           <div>
-            <p class="product-kicker">PRODUCT QUESTION</p>
+            <p class="product-kicker">TASK DEFINITION</p>
             <h2 id="product-title">面向人类难以进入的环境，如何组织快速搭建空间？</h2>
           </div>
-          <p>操作者定义模块、目标落位与动作顺序；系统将这些目标映射为可执行的关节动作。双机用于扩大可覆盖的搭建范围，把重复动作组织为能够形成空间的连续过程。</p>
+          <p>建造系统操作者定义模块目标、目标落位与动作顺序；两台机器人将这些输入转成可观察的空间搭建动作，并扩大可覆盖的建造范围。</p>
           <div class="hero-quicknav" aria-label="项目入口">
             <a href="#motion"><span>01</span>查看研发过程</a>
             <a href="#validation-reel"><span>02</span>查看动作验证</a>
           </div>
         </header>
 
-        <div class="product-principles" aria-label="产品逻辑">
-          <p><strong>操作者</strong>建造系统操作者远程定义工作区域、搭建任务与目标位置。</p>
-          <p><strong>动作输入</strong>模块化构件与落位目标，映射为 X 轴滑动、Y 轴抬升、J 关节旋转与夹持。</p>
-          <p><strong> 群体智能</strong>扩大可覆盖的搭建范围，让多个动作能够连续组织为可使用的空间。</p>
-        </div>
+        <section class="operating-system" aria-labelledby="operating-system-title">
+          <header class="operating-system-head">
+            <div>
+              <p class="product-kicker">EXECUTION SYSTEM / FOUR LAYERS</p>
+              <h3 id="operating-system-title">建造机器人作为一套操作系统运行。</h3>
+            </div>
+            <p>构件和场地提供工作位置，动作和路径完成抵达与操作，双机协作延展任务范围，状态记录用于判断每一步是否成立。</p>
+          </header>
 
-        <figure class="mission-frame">
-          <img src="images/UCL/Spatial_Collective.jpg" alt="机器人在模块化空间结构中执行集体建造的目标场景" />
-          <figcaption>
-            <span>任务输入</span>
-            <strong>让操作者将模块、落位和动作顺序，带入人类难以进入的建造环境。</strong>
-          </figcaption>
-        </figure>
-
-        <article class="case-split research-context">
-          <figure class="case-split-visual">
-            <img src="images/UCL/Case_02.jpg" alt="从机器人基础动作、实体模型、双机协作到建造框架的研究路径" />
-          </figure>
-          <div class="case-split-copy">
-            <p class="product-kicker">ACTION MODEL</p>
-            <h3>建造动作步骤拆分。</h3>
-            <p>先验证滑动、旋转、抬升与夹持，再验证定位和双机顺序配合。复杂建造任务由这些可观察的动作逐步组成。</p>
+          <div class="system-grid" aria-label="空间机器人四层执行系统">
+            <article class="system-card">
+              <figure><img src="images/UCL/Spatial_Collective.webp" alt="机器人在模块化空间结构中执行集体建造的目标场景" /></figure>
+              <div><b>01 / MATERIAL + SITE</b><h4>构件与场地</h4><p>模块连接关系与建造环境定义机器人工作的区域和目标位置。</p></div>
+            </article>
+            <article class="system-card">
+              <figure><img src="images/UCL/prototype_1.webp" alt="两版实体机器人原型及 X、Y、J 与夹持机构示意" /></figure>
+              <div><b>02 / ACTION + PATH</b><h4>动作与路径</h4><p>X 轴滑动、Y 轴抬升、J 关节旋转与夹持组成抵达和操作的动作语言。</p></div>
+            </article>
+            <article class="system-card">
+              <figure><img src="images/UCL/Case_01.webp" alt="两台实体机器人共同执行动作与协作验证的过程" /></figure>
+              <div><b>03 / COORDINATION + ROLE</b><h4>协作与分工</h4><p>两台机器人按任务顺序移动、定位和传递，让搭建过程在更大范围内持续推进。</p></div>
+            </article>
+            <article class="system-card">
+              <figure><img src="images/UCL/prototype_2.webp" alt="Unity、树莓派、U2D2 与 DXL 关节组成的实体机器人控制链" /></figure>
+              <div><b>04 / STATE + FEEDBACK</b><h4>状态与反馈</h4><p>目标命令经控制链到达实体关节，动作记录与失败对照帮助操作者判断执行状态。</p></div>
+            </article>
           </div>
-        </article>
-
-        <section class="case-split validation-frame" aria-labelledby="validation-title">
-          <div class="case-split-copy">
-            <p class="product-kicker">OUTPUT STANDARD</p>
-            <h3 id="validation-title">建立可控的指令到执行链，再用训练持续优化建造动作。</h3>
-            <p>Unity 中的目标命令经 Raspberry Pi、U2D2 与 DXL 总线到达实体关节。单机、双机与训练过程共同服务于可复查的实体建造动作。</p>
-          </div>
-          <figure class="case-split-visual">
-            <img src="images/UCL/prototype_2.jpg" alt="Unity、树莓派、U2D2 与 DXL 关节组成的实体机器人控制链" />
-            <figcaption><strong>指令到关节</strong><span>UNITY → RPI → U2D2 → DXL</span></figcaption>
-          </figure>
+          <p class="system-note">研究参考为构件布置、协作策略和状态反馈提供方法脉络；本原型聚焦其中的双机可控执行、动作验证与训练实验。</p>
         </section>
       </div>
     </section>
@@ -1232,7 +1261,7 @@
       <div class="story-stage">
         <figure class="story-media is-active" data-media="0">
           <video class="media-source is-current" data-start="0" data-end="0.44" src="images/UCL/Robot_Construction.mp4" muted playsinline preload="auto" aria-label="实体机器人与环境搭建过程"></video>
-          <img class="media-source light-asset" data-start="0.44" data-end="1.01" src="images/UCL/prototype_1.jpg" alt="两版机器人原型及 X、Y、J 与夹持机构示意" />
+          <img class="media-source light-asset" data-start="0.44" data-end="1.01" src="images/UCL/prototype_1.webp" alt="两版机器人原型及 X、Y、J 与夹持机构示意" />
           <figcaption class="stage-steps" aria-label="机器人系统组成">
             <span class="stage-step is-current" data-start="0" data-end="0.25"><b>01</b>两个实体机器人与测试环境</span>
             <span class="stage-step" data-start="0.25" data-end="0.5"><b>02</b>X 轴滑动与轮组</span>
@@ -1241,7 +1270,7 @@
           </figcaption>
         </figure>
         <figure class="story-media has-light-source" data-media="1">
-          <img class="media-source light-asset is-current" data-start="0" data-end="0.34" src="images/UCL/prototype_2.jpg" alt="PC、Raspberry Pi、U2D2、Power Hub 与机器人控制链" />
+          <img class="media-source light-asset is-current" data-start="0" data-end="0.34" src="images/UCL/prototype_2.webp" alt="PC、Raspberry Pi、U2D2、Power Hub 与机器人控制链" />
           <video class="media-source" data-start="0.34" data-end="1.01" src="images/UCL/Robot_Test.mp4" muted playsinline preload="auto" aria-label="Unity 指令到实体机器人关节的动作验证"></video>
           <figcaption class="stage-steps" aria-label="控制链节点">
             <span class="stage-step is-current" data-start="0" data-end="0.24"><b>01</b>Unity / PC 发送目标</span>
@@ -1271,8 +1300,8 @@
         </figure>
         <figure class="story-media" data-media="4">
           <video class="media-source is-current" data-start="0" data-end="0.66" src="images/UCL/Team1_Robot_01_Construction.mp4" muted playsinline preload="auto" aria-label="实体机器人建造空间构件的过程"></video>
-          <img class="media-source light-asset" data-start="0.66" data-end="0.84" src="images/UCL/Spatial_Collective.jpg" alt="机器人在模块化建筑空间中工作的集体空间设计" />
-          <img class="media-source light-asset" data-start="0.84" data-end="1.01" src="images/UCL/Spatial_Prototype.jpg" alt="模块化建筑系统搭建完成后的实体空间原型" />
+          <img class="media-source light-asset" data-start="0.66" data-end="0.84" src="images/UCL/Spatial_Collective.webp" alt="机器人在模块化建筑空间中工作的集体空间设计" />
+          <img class="media-source light-asset" data-start="0.84" data-end="1.01" src="images/UCL/Spatial_Prototype.webp" alt="模块化建筑系统搭建完成后的实体空间原型" />
           <figcaption class="stage-steps" aria-label="从动作到空间的转化阶段">
             <span class="stage-step is-current" data-start="0" data-end="0.33"><b>01</b>Robot approaches the structure</span>
             <span class="stage-step" data-start="0.33" data-end="0.66"><b>02</b>Module placement</span>
@@ -1393,8 +1422,7 @@
           <p>目标动作、异常表现与修正后结果。</p>
         </header>
         <figure class="reel-card">
-          <!-- Replace this temporary source with the final robot success/failure reel. -->
-          <video src="images/llmToConstruction/final.mp4" autoplay loop muted playsinline preload="metadata" aria-label="动作验证短片的播放器占位"></video>
+          <video src="images/UCL/RobotCaseFilm-30s.mp4" controls autoplay loop muted playsinline preload="metadata" aria-label="机器人搭建、动作验证、强化学习与空间建造成片"></video>
         </figure>
       </div>
     </section>
@@ -1777,7 +1805,7 @@
       </div>
       <div class="index-overlay-grid">
             <a class="io-card" data-page="work-ucl.html" href="work-ucl.html">
-              <img src="images/UCL/STIG_00.jpg" alt="极端环境下的无人建造" loading="lazy" />
+              <img src="images/UCL/STIG_00.webp" alt="极端环境下的无人建造" loading="lazy" />
               <div class="io-card-body">
                 <div class="io-no">01</div>
                 <h3 class="io-name">极端环境下的无人建造</h3>
@@ -1785,7 +1813,7 @@
               </div>
             </a>
             <a class="io-card" data-page="work-ai-commerce.html" href="work-ai-commerce.html">
-              <img src="images/EC/0.jpg" alt="AI 电商素材生成平台" loading="lazy" />
+              <img src="images/EC/0.webp" alt="AI 电商素材生成平台" loading="lazy" />
               <div class="io-card-body">
                 <div class="io-no">02</div>
                 <h3 class="io-name">AI 电商素材生成平台</h3>
@@ -1793,7 +1821,7 @@
               </div>
             </a>
             <a class="io-card" data-page="work-LLM_to_Construction.html" href="work-LLM_to_Construction.html">
-              <img src="images/llmToConstruction/BRIDGE_00.jpg" alt="自然语言需求转化" loading="lazy" />
+              <img src="images/llmToConstruction/BRIDGE_00.webp" alt="自然语言需求转化" loading="lazy" />
               <div class="io-card-body">
                 <div class="io-no">03</div>
                 <h3 class="io-name">自然语言需求转化</h3>
@@ -1809,7 +1837,7 @@
               </div>
             </a>
             <a class="io-card" data-page="work-global-relay-conference.html" href="work-global-relay-conference.html">
-              <img src="images/AGR/Final Assets/2100s_2.jpg" alt="AI GLOBAL RELAY会议" loading="lazy" />
+              <img src="images/AGR/Final Assets/2100s_2.webp" alt="AI GLOBAL RELAY会议" loading="lazy" />
               <div class="io-card-body">
                 <div class="io-no">05</div>
                 <h3 class="io-name">AI GLOBAL RELAY会议</h3>

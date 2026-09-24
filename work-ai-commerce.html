@@ -474,6 +474,11 @@
       .campaign-regional-strip {
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
+
+      .merchant-demo-head {
+        grid-template-columns: 1fr;
+        align-items: start;
+      }
     }
 
     @media (max-width: 680px) {
@@ -524,6 +529,16 @@
       .campaign-copy h3 {
         font-size: clamp(34px, 12vw, 58px);
       }
+
+      .merchant-demo {
+        width: 100%;
+        padding: 18px 14px;
+        border-radius: 8px;
+      }
+
+      .merchant-demo-head h3 { font-size: clamp(32px, 11vw, 48px); }
+      .merchant-demo-link { width: 100%; justify-content: center; }
+      .merchant-demo-stage iframe { height: 690px; }
 
       .campaign-regional-strip {
         grid-template-columns: 1fr;
@@ -2019,6 +2034,142 @@
       transform: translateY(-2px);
     }
 
+    /* ===== 04 / 嵌入式商家工作台 ===== */
+    .merchant-demo {
+      width: min(100%, calc(var(--max) + (var(--pad) * 2)));
+      margin: 0 auto;
+      padding: clamp(22px, 3vw, 42px);
+      border: 1px solid rgba(8, 31, 92, 0.16);
+      border-radius: min(var(--radius), 12px);
+      background: #f5f8ff;
+      box-shadow: 0 20px 54px rgba(45, 55, 80, 0.10);
+    }
+
+    .merchant-demo-head {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: end;
+      gap: 24px;
+      padding-bottom: 18px;
+      border-bottom: 1px solid rgba(8, 31, 92, 0.16);
+    }
+
+    .merchant-demo-kicker {
+      margin: 0 0 8px;
+      color: var(--blue);
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .merchant-demo-head h3 {
+      max-width: 12ch;
+      color: var(--ink);
+      font-size: clamp(32px, 4.1vw, 62px);
+      line-height: 0.94;
+      font-weight: 930;
+      letter-spacing: -0.06em;
+    }
+
+    .merchant-demo-head p:last-child {
+      max-width: 38ch;
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.55;
+      font-weight: 650;
+    }
+
+    .merchant-demo-link {
+      display: inline-flex;
+      align-items: center;
+      min-height: 42px;
+      padding: 0 16px;
+      border: 1px solid var(--ink);
+      border-radius: 6px;
+      color: var(--ink);
+      font-size: 13px;
+      font-weight: 850;
+      white-space: nowrap;
+      transition: background 0.18s ease, color 0.18s ease;
+    }
+
+    .merchant-demo-link:hover,
+    .merchant-demo-link:focus-visible {
+      background: var(--ink);
+      color: var(--paper);
+    }
+
+    .merchant-demo-tabs {
+      display: flex;
+      gap: 8px;
+      padding: 16px 0;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .merchant-demo-tabs::-webkit-scrollbar { display: none; }
+
+    .merchant-demo-tab {
+      flex: 0 0 auto;
+      min-height: 38px;
+      padding: 0 14px;
+      border: 1px solid rgba(8, 31, 92, 0.22);
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.72);
+      color: #425272;
+      font-size: 13px;
+      font-weight: 850;
+      transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease;
+    }
+
+    .merchant-demo-tab:hover,
+    .merchant-demo-tab:focus-visible {
+      border-color: var(--blue);
+      color: var(--blue);
+    }
+
+    .merchant-demo-tab.is-active {
+      border-color: var(--blue);
+      background: var(--blue);
+      color: #fff;
+    }
+
+    .merchant-demo-stage {
+      overflow: hidden;
+      border: 1px solid rgba(8, 31, 92, 0.18);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .merchant-demo-stage iframe {
+      display: block;
+      width: 100%;
+      height: clamp(560px, 51vw, 760px);
+      border: 0;
+      background: #f6f7f4;
+    }
+
+    @media (max-width: 1000px) {
+      .merchant-demo-head {
+        grid-template-columns: 1fr;
+        align-items: start;
+      }
+    }
+
+    @media (max-width: 680px) {
+      .merchant-demo {
+        width: 100%;
+        padding: 18px 14px;
+        border-radius: 8px;
+      }
+
+      .merchant-demo-head h3 { font-size: clamp(32px, 11vw, 48px); }
+      .merchant-demo-link { width: 100%; justify-content: center; }
+      .merchant-demo-stage iframe { height: 690px; }
+    }
+
     @media (max-width: 1000px) {
       .loop-strip {
         grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -2118,9 +2269,105 @@
       background: currentColor; opacity: 0.8;
     }
 
+    /* Shared action language: aligned with the rounded project-entry controls on the robotics case. */
+    .demo-link-row a,
+    .merchant-demo-link,
+    .merchant-demo-tab,
+    .matrix-tab,
+    .deriv-step {
+      border-radius: 999px;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+    }
+
+    .demo-link-row a,
+    .merchant-demo-link {
+      min-height: 48px;
+      padding: 0 22px;
+      border: 1.5px solid var(--ink);
+      background: var(--paper);
+      box-shadow: 0 10px 26px rgba(8, 31, 92, 0.11);
+    }
+
+    .demo-link-row a:hover,
+    .demo-link-row a:focus-visible,
+    .merchant-demo-link:hover,
+    .merchant-demo-link:focus-visible {
+      transform: translateY(-2px);
+      box-shadow: 0 16px 34px rgba(8, 31, 92, 0.17);
+      outline: none;
+    }
+
+    .merchant-demo-tabs { gap: 10px; }
+
+    .merchant-demo-tab {
+      min-height: 44px;
+      padding: 0 18px;
+      border: 1.5px solid rgba(8, 31, 92, 0.28);
+      background: #fff;
+      box-shadow: 0 7px 18px rgba(8, 31, 92, 0.08);
+    }
+
+    .merchant-demo-tab:hover,
+    .merchant-demo-tab:focus-visible {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 25px rgba(8, 31, 92, 0.14);
+      outline: none;
+    }
+
+    .merchant-demo-tab.is-active {
+      border-color: var(--blue);
+      background: var(--blue);
+      color: #fff;
+      box-shadow: 0 10px 24px rgba(8, 31, 92, 0.24);
+    }
+
+    .matrix-tabs {
+      gap: 6px;
+      padding: 5px;
+      border-radius: 999px;
+    }
+
+    .matrix-tab {
+      min-height: 40px;
+      padding: 0 18px;
+    }
+
+    .matrix-tab:hover,
+    .matrix-tab:focus-visible {
+      color: var(--ink);
+      outline: none;
+    }
+
+    .deriv-steps { gap: 14px; }
+
+    .deriv-step {
+      padding: 12px 14px;
+      border: 1.5px solid transparent;
+      background: rgba(255, 255, 255, 0.78);
+      box-shadow: 0 8px 20px rgba(8, 31, 92, 0.06);
+    }
+
+    .deriv-step:hover,
+    .deriv-step:focus-visible {
+      transform: translateY(-2px);
+      border-color: rgba(51, 78, 172, 0.38);
+      box-shadow: 0 14px 28px rgba(8, 31, 92, 0.12);
+      outline: none;
+    }
+
+    .deriv-step.is-active {
+      border-color: #081F5C;
+      background: #fff;
+      box-shadow: 0 12px 26px rgba(8, 31, 92, 0.15);
+    }
+
     @media (max-width: 680px) {
       .view-toggle { font-size: 12px; gap: 6px; }
       .topbar.case-nav #indexOpen { margin-left: 0; }
+      .merchant-demo-tab { min-height: 42px; padding-inline: 16px; }
+      .matrix-tab { min-height: 38px; padding-inline: 15px; }
+      .deriv-steps { gap: 10px; }
+      .deriv-step { padding: 11px 12px; }
     }
   </style>
 </head>
@@ -2163,21 +2410,26 @@
           </div>
     </main>
 
-      <section class="section reveal">
+      <section class="section reveal" id="merchant-demo">
         <div class="campaign-assets">
           <article class="campaign-block">
             <div class="campaign-copy">
-              <h3>AI 电商素材生成平台</h3>
-              <p>围绕商品图、虚拟模特和视频素材，建立可比较、可路由的生成平台体验。</p>
+              <h3>商家工作台</h3>
+              <p>从商品图输入到候选结果、问题修正与素材采纳，展示一条完整的商家操作路径。</p>
             </div>
-            <div class="demo-link-row">
-              <a href="素材生成全流程Demo-v3.html">打开工作台 Demo</a>
-              <a href="demo-ai-commerce-results.html">结果选择</a>
-              <a href="demo-ai-commerce-benchmark.html">后台依据</a>
+            <div class="merchant-demo">
+              <div class="merchant-demo-head">
+                <div>
+                  <p class="merchant-demo-kicker">Interactive Prototype / Merchant Workspace</p>
+                  <h3>从商品输入到素材归档。</h3>
+                  <p>配置生成目标，检查结果，标记问题并重新生成，最后采纳可用素材。</p>
+                </div>
+                <a class="merchant-demo-link" href="素材生成全流程Demo-v3.html" target="_blank" rel="noopener">打开工作台 ↗</a>
+              </div>
+              <div class="merchant-demo-stage">
+                <iframe id="merchant-demo-frame" title="AI 电商素材生成工作台交互原型" src="素材生成全流程Demo-v3.html?embed=1" loading="lazy"></iframe>
+              </div>
             </div>
-            <figure class="campaign-feature">
-              <img src="images/EC/full_body_video_keyframes.jpg" alt="电商素材生成评测与结果对照" loading="lazy">
-            </figure>
           </article>
         </div>
       </section>
@@ -2348,11 +2600,11 @@
 
       <div class="proof-grid">
         <figure class="proof-card">
-          <img src="images/EC/full_body_video_keyframes.jpg" alt="服装展示视频关键帧模型对照" loading="lazy" />
+          <img src="images/EC/full_body_video_keyframes.webp" alt="服装展示视频关键帧模型对照" loading="lazy" />
           <figcaption class="caption">视频关键帧：用于判断人物一致性、服装稳定性、动作自然度和镜头控制。</figcaption>
         </figure>
         <figure class="proof-card">
-          <img src="images/EC/ring_closeup_video_keyframes.jpg" alt="戒指特写视频关键帧模型对照" loading="lazy" />
+          <img src="images/EC/ring_closeup_video_keyframes.webp" alt="戒指特写视频关键帧模型对照" loading="lazy" />
           <figcaption class="caption">珠宝特写：戒指锚定、手部结构和焦点稳定被作为硬指标。</figcaption>
         </figure>
       </div>
@@ -3215,7 +3467,7 @@
       </div>
       <div class="index-overlay-grid">
             <a class="io-card" data-page="work-ucl.html" href="work-ucl.html">
-              <img src="images/UCL/STIG_00.jpg" alt="极端环境下的无人建造" loading="lazy" />
+              <img src="images/UCL/STIG_00.webp" alt="极端环境下的无人建造" loading="lazy" />
               <div class="io-card-body">
                 <div class="io-no">01</div>
                 <h3 class="io-name">极端环境下的无人建造</h3>
@@ -3223,7 +3475,7 @@
               </div>
             </a>
             <a class="io-card" data-page="work-ai-commerce.html" href="work-ai-commerce.html">
-              <img src="images/EC/0.jpg" alt="AI 电商素材生成平台" loading="lazy" />
+              <img src="images/EC/0.webp" alt="AI 电商素材生成平台" loading="lazy" />
               <div class="io-card-body">
                 <div class="io-no">02</div>
                 <h3 class="io-name">AI 电商素材生成平台</h3>
@@ -3231,7 +3483,7 @@
               </div>
             </a>
             <a class="io-card" data-page="work-LLM_to_Construction.html" href="work-LLM_to_Construction.html">
-              <img src="images/llmToConstruction/BRIDGE_00.jpg" alt="自然语言需求转化" loading="lazy" />
+              <img src="images/llmToConstruction/BRIDGE_00.webp" alt="自然语言需求转化" loading="lazy" />
               <div class="io-card-body">
                 <div class="io-no">03</div>
                 <h3 class="io-name">自然语言需求转化</h3>
@@ -3247,7 +3499,7 @@
               </div>
             </a>
             <a class="io-card" data-page="work-global-relay-conference.html" href="work-global-relay-conference.html">
-              <img src="images/AGR/Final Assets/2100s_2.jpg" alt="AI GLOBAL RELAY会议" loading="lazy" />
+              <img src="images/AGR/Final Assets/2100s_2.webp" alt="AI GLOBAL RELAY会议" loading="lazy" />
               <div class="io-card-body">
                 <div class="io-no">05</div>
                 <h3 class="io-name">AI GLOBAL RELAY会议</h3>
