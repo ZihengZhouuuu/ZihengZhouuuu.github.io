@@ -28,15 +28,17 @@
       --paper: #ffffff;
 
       /* 卡片与 portal 共用同一组尺寸，保证形变后与目标卡片严格对齐（含响应式） */
-      --card-w: min(70vw, 820px);
-      --card-h: min(43.75vw, 512.5px);   /* = card-w * 10 / 16 */
-      --card-half-h: min(21.875vw, 256.25px);
+      /* 桌面端始终保留「左信息 / 中卡片 / 右索引」结构。
+         卡片只由一个宽度源驱动，高度与半高据此推导，避免不同断点各算一遍后失配。 */
+      --card-w: min(820px, calc(100vw - (var(--pad) * 2) - 500px), 99.2vh);
+      --card-h: calc(var(--card-w) * 0.625); /* 16:10 */
+      --card-half-h: calc(var(--card-h) * 0.5);
 
-      --compass-size: min(720px, 78vw, 70vh);
+      --compass-size: min(720px, 47vw, 70vh);
       --portal-size: calc(var(--compass-size) * 0.45);
 
       /* 卡片纵向堆叠间距（上一张/下一张与当前卡片的中心偏移） */
-      --stack-gap: 230px;
+      --stack-gap: clamp(190px, 24vh, 260px);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -386,9 +388,10 @@
     /* Meta / Controls */
     .meta {
       position: absolute; left: var(--pad); top: 50%; z-index: 20; transform: translateY(-50%);
+      width: clamp(220px, 18vw, 300px);
       display: flex; flex-direction: column; gap: 8px; pointer-events: none;
     }
-    .meta-name { font-size: clamp(22px, 3vw, 42px); font-weight: 950; line-height: 0.98; letter-spacing: -0.05em; max-width: 28vw; }
+    .meta-name { font-size: clamp(24px, 2.2vw, 42px); font-weight: 950; line-height: 0.98; letter-spacing: -0.05em; max-width: 100%; text-wrap: balance; }
     .meta-type { font-size: 13px; font-weight: 700; color: var(--muted); }
 
     .index-col {
@@ -523,38 +526,28 @@
        6. 响应式：宽屏 / 笔电 / 平板 / 手机
     ========================= */
 
-    /* 笔电：罗盘略缩 */
-    @media (max-width: 1400px) {
-      :root { --compass-size: min(440px, 60vw, 66vh); }
-    }
-
     /* 触摸设备与窄屏：无 hover 语义，HUD 切片直接隐藏 */
     @media (hover: none), (max-width: 900px) {
       .hud-panel { display: none; }
     }
 
-    /* 小屏桌面 / 平板：为卡片下方信息留出空间，避免标题压到卡面 */
-    @media (max-width: 1600px) {
+    /* 常见笔电与系统缩放后的桌面视口：缩窄左右信息栏，但不改变三栏关系。 */
+    @media (min-width: 901px) and (max-width: 1600px) {
       :root {
-        --card-h: min(43.75vw, 512.5px, 58vh);
-        --card-w: min(70vw, 820px, 92.8vh);
-        --card-half-h: min(21.875vw, 256.25px, 29vh);
-        --stack-gap: clamp(180px, 39vh, 300px);
+        --card-w: min(820px, calc(100vw - (var(--pad) * 2) - 440px), 99.2vh);
+        --stack-gap: clamp(170px, 23vh, 230px);
       }
-      .meta {
-        top: calc(50% + var(--card-half-h) + 20px);
-        bottom: auto; left: var(--pad); right: var(--pad);
-        transform: none; align-items: center; text-align: center;
-      }
-      .meta-name { max-width: none; font-size: clamp(22px, 4.4vw, 34px); }
+      .meta { width: clamp(190px, 17vw, 270px); }
+      .meta-name { font-size: clamp(22px, 2.25vw, 34px); }
+      .index-col { right: var(--pad); }
     }
 
-    /* 罗盘外置标注（引线 + 文字）在窄屏会超出画面，罗盘随之收窄（标注跨度约为罗盘的 1.78 倍） */
+    /* 平板 / 手机沿用原先的罗盘收窄逻辑。 */
     @media (max-width: 1000px) {
       :root { --compass-size: min(440px, 51vw, 50vh); }
     }
 
-    /* 平板 / 手机：卡片随短边收缩，并为标题与类型文字预留完整位置 */
+    /* 平板 / 手机：保持原有卡片尺寸与卡片下方信息布局。 */
     @media (max-width: 900px) {
       :root {
         --card-w: min(74vw, 820px, 92.8vh);
@@ -562,6 +555,21 @@
         --card-half-h: min(23.125vw, 256.25px, 29vh);
         --stack-gap: clamp(180px, 39vh, 300px);
       }
+      .viewport { height: 100dvh; }
+      .ring { width: 100%; height: min(72dvh, 640px); }
+      .meta {
+        top: calc(50% + var(--card-half-h) + 18px);
+        right: var(--pad); bottom: auto; left: var(--pad);
+        width: auto; max-width: none;
+        transform: none;
+        align-items: center; text-align: center;
+      }
+      .meta-name {
+        max-width: 100%;
+        font-size: clamp(22px, 5.6vw, 30px);
+        line-height: 1.04;
+      }
+      .meta-type { font-size: 12px; line-height: 1.35; }
       .index-col { display: none; }
       .scroll-hint { bottom: 22px; }
       .hero-intro { top: 70px; width: min(440px, 84vw); }
@@ -570,6 +578,15 @@
 
     @media (max-width: 900px) and (min-height: 850px) {
       :root { --stack-gap: clamp(220px, 26vh, 260px); }
+    }
+
+    /* 矮屏电脑只压缩尺寸与间距，不再把项目文字推到卡片下方。 */
+    @media (min-width: 901px) and (max-height: 800px) {
+      :root {
+        --card-w: min(760px, calc(100vw - (var(--pad) * 2) - 440px), 94vh);
+        --stack-gap: clamp(150px, 21vh, 190px);
+      }
+      .meta-name { font-size: clamp(21px, 2vw, 30px); }
     }
 
     /* 手机 */
@@ -604,13 +621,6 @@
       :root { --pad: 18px; }
     }
 
-    @media (min-width: 1601px) and (max-height: 600px) {
-      :root {
-        --card-h: min(43.75vw, 512.5px, 86vh);
-        --card-w: min(70vw, 820px, 137.6vh);
-      }
-    }
-
     /* 矮视口（笔电小窗）：罗盘缩一档给顶部标题让位 + 标题副标收紧。
        放在所有宽度断点之后，保证 :root 的 62vh 覆盖断点里的 66vh/50vh。 */
     @media (max-height: 800px) {
@@ -620,6 +630,42 @@
       .hero-intro { gap: 8px; }
       .hero-role { font-size: clamp(22px, 2.4vw, 28px); }
       .portfolio-thesis { line-height: 1.45; }
+    }
+
+    /* 短屏手机：整体上提核心图形，给项目说明、末条标签与滑动提示留出独立空间。 */
+    @media (max-width: 700px) and (max-height: 720px) {
+      .compass-box, .ring { transform: translateY(-24px); }
+      .meta { top: calc(50% + var(--card-half-h) - 6px); }
+      .scroll-hint { bottom: 12px; gap: 6px; }
+      .scroll-hint i { height: 22px; }
+    }
+
+    /* 横屏手机会超过常规宽度断点：用触摸能力与矮视口识别，避免误入电脑三栏布局。 */
+    @media (hover: none) and (pointer: coarse) and (orientation: landscape) and (max-height: 600px) {
+      :root {
+        --card-w: min(54vw, 78vh, 560px);
+        --card-h: min(33.75vw, 48.75vh, 350px);
+        --card-half-h: min(16.875vw, 24.375vh, 175px);
+        --stack-gap: clamp(120px, 34vh, 170px);
+      }
+      .viewport { height: 100dvh; }
+      .ring {
+        width: 65vw; height: min(78dvh, 420px);
+        margin-left: 27vw; transform: none;
+      }
+      .meta {
+        top: 50%; right: auto; left: var(--pad);
+        width: min(25vw, 220px);
+        transform: translateY(-50%);
+        align-items: flex-start; text-align: left;
+      }
+      .meta-name { font-size: clamp(20px, 3vw, 28px); }
+      .index-col, .hud-panel { display: none; }
+      .index-panel { width: calc(100vw - 44px); max-height: calc(100dvh - 76px); }
+      .index-head { margin-bottom: 14px; padding-bottom: 12px; }
+      .index-title { font-size: clamp(34px, 7vw, 54px); }
+      .work-grid { grid-template-columns: repeat(auto-fit, minmax(132px, 1fr)); gap: 10px; }
+      .scroll-hint { bottom: 10px; }
     }
 
     /* =========================

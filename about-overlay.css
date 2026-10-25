@@ -11,13 +11,15 @@
 }
 .about-overlay.is-open { visibility: visible; opacity: 1; transition: opacity .25s ease, visibility 0s; }
 html.about-lock, body.about-lock { overflow: hidden; }
-.about-scroll { height: 100%; overflow-y: auto; overscroll-behavior: contain; scrollbar-color: #555 #101012; }
+.about-scroll { min-height: 0; overflow-y: auto; overscroll-behavior: contain; scrollbar-color: #555 #101012; }
+.about-overlay .about-scroll { height: 100%; }
 #footerStage { background: #101012; padding: 0; }
-#footerStage .footer-mount { min-height: 0; flex: 1; margin-top: 64px; }
+#footerStage .footer-mount { height: auto; min-height: 0; flex: 1 1 auto; margin: 0; padding-top: 64px; }
 #footerStage .about-inner { padding-top: 24px; }
-#footerStage .footer-copyright { padding: 12px 28px; font-size: 11px; color: #90908e; }
+#footerStage .footer-copyright { flex: 0 0 auto; padding: 12px 28px; font-size: 11px; color: #90908e; }
 .about-inner {
   box-sizing: border-box;
+  width: min(1120px, calc(100% - 48px));
   max-width: 1120px;
   margin: auto;
   padding: 88px 44px 56px;
@@ -62,8 +64,14 @@ html.about-lock, body.about-lock { overflow: hidden; }
 .about-close { position: absolute; right: 22px; top: 20px; width: 44px; height: 44px; border: 1px solid #555; border-radius: 4px; background: #101012; color: #fff; font-size: 28px; line-height: 1; cursor: pointer; z-index: 1; }
 .about-close:hover { background: #303031; }
 .view-link[data-about-open] { appearance: none; border: 0; background: transparent; font: inherit; color: inherit; cursor: pointer; padding: 6px 0; }
+@media (min-width: 769px) and (max-height: 900px) {
+  #footerStage .footer-mount { padding-top: 58px; }
+  #footerStage .about-inner { padding-top: 18px; }
+  .about-inner { padding-bottom: 44px; }
+  .about-section, .about-contact { margin-top: 40px; }
+}
 @media (max-width: 760px) {
-  .about-inner { padding: 76px 24px 40px; }
+  .about-inner { width: 100%; padding: 76px 24px 40px; }
   .about-title { font-size: 34px; }
   .about-title span { display: block; margin: 10px 0 0; font-size: 23px; }
   .about-lede { font-size: 16px; }
